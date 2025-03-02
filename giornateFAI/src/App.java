@@ -1,32 +1,19 @@
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import it.unibs.fp.mylib.InputDati;
 
 public class App {
     public static void main(String[] args) throws Exception {
         System.out.println("Hello, World!");
 
-         Connection conn = ConnesioneSQL.getConnection();
-        if (conn != null) {
-            try {
+        Login login = new Login();
+        //prova di login con credenziali inserite dall'utente
+        System.err.println("Prova di login con credenziali gia registrate");
+        String nickname = InputDati.leggiStringa("Inserisci il tuo nickname");
+        String password = InputDati.leggiStringa("Inserisci la tua password");
+        if (login.loginConfiguratore(nickname, password)) {
+            Configuratore configuratore = new Configuratore(nickname);
+            System.err.println("Benvenuto " + configuratore.getNickname());
+        };
 
-                //inserisce un nuovo fruitore
-                String inserimentoProva = "INSERT INTO `dbingesw`.`fruitori` (`Nickname`, `Password`) VALUES ('paola3prova', 'qidubhiodb')";
-                conn.createStatement().executeUpdate(inserimentoProva);
-                System.out.println("Inserimento riuscito!");
 
-                //legge la tabella fruitori
-                String selectProva = "SELECT * FROM fruitori"; 
-                ResultSet rs = conn.createStatement().executeQuery(selectProva);
-                while (rs.next()) {
-                    System.out.println("Nickname: " + rs.getString("Nickname") + " Password: " + rs.getString("Password"));
-                }
-
-                conn.close(); // Chiude la connessione
-                System.out.println("Connessione chiusa.");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
