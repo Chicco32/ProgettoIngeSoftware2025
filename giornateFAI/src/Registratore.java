@@ -8,6 +8,8 @@ import org.w3c.dom.Element;
 
 public class Registratore {
 
+    private Connection connection;
+
     private int maxPartecipanti;
     private String areaCompetenza;
 
@@ -15,7 +17,8 @@ public class Registratore {
     private String password;
 
 
-    public Registratore() {
+    public Registratore(Connection connection) {
+        this.connection = connection;
         this.nickname = null;
         this.password = null;
 
@@ -52,11 +55,10 @@ public class Registratore {
         this.nickname = nickname;
         this.password = password;
         
-        Connection conn = ConnesioneSQL.getConnection();
-        if (conn != null) {
+        if (this.connection != null) {
             try {
                 String insert = "INSERT into `dbingesw`.`configuratore` (`Nickname`,`Password`) VALUES ('" + this.nickname + "', '" + this.password + "')";
-                conn.createStatement().executeUpdate(insert);
+                this.connection.createStatement().executeUpdate(insert);
                 System.err.println("Configuratore correttamente reigstrato!");
             } catch (Exception e) {
             e.printStackTrace();

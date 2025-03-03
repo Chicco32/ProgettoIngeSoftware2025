@@ -1,10 +1,8 @@
 public class Configuratore extends Utente {
     
-    public Configuratore(String nickname) {
-        this.nickname = nickname;
+    public Configuratore(boolean PrimoAccesso) {
+        super(PrimoAccesso);
+        this.setRuolo("Configuratore");
     }
 
-    public String getNickname() {
-        return this.nickname;
-    }
 }
