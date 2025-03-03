@@ -22,6 +22,10 @@ public abstract class Utente {
         return this.PrimoAccesso;
     }
 
+    protected void setPrimoAccesso(boolean PrimoAccesso) {
+        this.PrimoAccesso = PrimoAccesso;
+    }
+
     public String getNickname() {
         return this.nickname;
     }
@@ -29,4 +33,5 @@ public abstract class Utente {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
+
 }

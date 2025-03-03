@@ -1,6 +1,6 @@
 import java.io.File;
 import java.sql.Connection;
-
+import java.sql.SQLIntegrityConstraintViolationException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
@@ -39,7 +39,6 @@ public class Registratore {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                creaFileDefault();
             }
     }
 
@@ -47,26 +46,53 @@ public class Registratore {
      * Da finire, rispecchia il caso d'uso di inseirmento della prima volta di un configuratore
      */
     private void creaFileDefault() {
-        this.maxPartecipanti = 100;
-        this.areaCompetenza = "Tecnologia";
+        this.maxPartecipanti = CliUtente.chiediMaxPartecipanti();
+        this.areaCompetenza = CliUtente.chiediAreaCompetenza();
+
+        try {
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.newDocument();
+
+            Element root = doc.createElement("registratore");
+            doc.appendChild(root);
+
+            Element maxPartecipanti = doc.createElement("maxPartecipanti");
+            maxPartecipanti.appendChild(doc.createTextNode(String.valueOf(this.maxPartecipanti)));
+            root.appendChild(maxPartecipanti);
+
+            Element areaCompetenza = doc.createElement("areaCompetenza");
+            areaCompetenza.appendChild(doc.createTextNode(this.areaCompetenza));
+            root.appendChild(areaCompetenza);
+
+            // Scrive il contenuto nel file XML
+            File xmlFile = new File("default_data/registratore.xml");
+            xmlFile.getParentFile().mkdirs();
+            xmlFile.createNewFile();
+            xmlFile.setReadable(true);
+            
+            
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public void registraNuovoConfiguratore(String nickname, String password) {
-        this.nickname = nickname;
-        this.password = password;
-        
+    public boolean registraNuovoConfiguratore(String nickname, String password) {
+
         if (this.connection != null) {
             try {
-                String insert = "INSERT into `dbingesw`.`configuratore` (`Nickname`,`Password`) VALUES ('" + this.nickname + "', '" + this.password + "')";
+                String insert = "INSERT into `dbingesw`.`configuratore` (`Nickname`,`Password`) VALUES ('" + nickname + "', '" + password + "')";
                 this.connection.createStatement().executeUpdate(insert);
                 System.err.println("Configuratore correttamente reigstrato!");
+                return true;
+            } catch (SQLIntegrityConstraintViolationException e) {
+                CliUtente.nicknameGiaInUso();
             } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Errore nella registrazione!");
             }
         }
-
-        this.nickname = null;
-        this.password = null;
+        return false;
     }
 }

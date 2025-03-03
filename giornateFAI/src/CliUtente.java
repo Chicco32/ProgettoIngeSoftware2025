@@ -37,4 +37,35 @@ public class CliUtente {
         System.out.println("Credenziali errate!");
     }
 
+    //avviso di nickname già in uso
+    public static void nicknameGiaInUso() {
+        System.out.println("Nickname già in uso, inseriscine un altro!");
+    }
+
+    //chiede all'utente di inserire il campo area di competenza e di confermare la scelta
+    public static String chiediAreaCompetenza() {
+        boolean conferma = false;
+        do{
+            String area = InputDati.leggiStringaNonVuota("Inserisci la area di competenza della società");
+            conferma = InputDati.yesOrNo("Confermi l'area di competenza inserita? [S/N]");
+            if(conferma){
+                return area;
+            }
+        }while(!conferma);
+        return null;
+    }
+
+    //chiede all'utente di inserire il campo massimo partecipanti e di confermare la scelta
+    public static int chiediMaxPartecipanti() {
+        boolean conferma = false;
+        do{
+            int maxPartecipanti = InputDati.leggiIntero("Inserisci il numero massimo di partecipanti che lo stesso fruitore può avere", 1, 1000);
+            conferma = InputDati.yesOrNo("Confermi il numero massimo di partecipanti inserito? [S/N]");
+            if(conferma){
+                return maxPartecipanti;
+            }
+        }while(!conferma);
+        return 0;
+    }
+
 }

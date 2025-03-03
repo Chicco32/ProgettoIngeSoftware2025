@@ -16,15 +16,14 @@ public class Login {
     /*
      * Metodo di login per il configuratore
      */
-    public BackEnd loginConfiguratore(String nickname, String password) {
+    public Utente loginConfiguratore(String nickname, String password) {
         
         //se entra con le credenziali di default
         if (nickname.equals(defaultNickname) && password.equals(defaultPassword)) {
             CliUtente.loginRiuscito();
 
             //Segna che è il primo accesso
-            Utente utente = new Configuratore(true);
-            return new BackEnd(utente);
+            return new Configuratore(true);
         }
 
         //se entra con le credenziali di un utente già registrato
@@ -38,7 +37,7 @@ public class Login {
                     //immette l'utente nel backEnd
                     Utente utente = new Configuratore(false);
                     utente.setNickname(nickname);
-                    return new BackEnd(utente);
+                    return utente;
                 }
                 //se le credenziali sono sbagliate
                 else {
