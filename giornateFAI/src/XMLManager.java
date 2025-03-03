@@ -1,3 +1,177 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+
+/**
+ * Classe per la gestione dei file XML, provvede gli strumenti per la lettura e la scrittura di file XML
+ * e per la gestione dei file stessi. Per usare la libreria anzichè interagire direttamente con il file XML
+ * si interagisce con questa classe che si occuperà di gestire il file XML
+ */
 public class XMLManager {
+
+    //causa problemti con il path
+    public static final String pathRegistratore = "\"..\\default_data\\registratore.xml\"";
+    public static final String INIZIO_LETTURA = "Inizio la lettura di %s";
+    public static final String FINE_LETTURA = "Ho finito di leggere %s";
+    public static final String INIZIO_SCRITTURA = "Inizio la scrittura di %s";
+    public static final String FINE_SCRITTURA = "Ho finito di scrivere %s";
+
+    /**
+     * Inizializza un reader per il file XML
+     * @param path il percorso del file XML
+     * @return il reader inizializzato
+     */
+    public static XMLStreamReader inzializzaReader(String path) {
+        XMLInputFactory xmlif = null;
+        XMLStreamReader xmlr = null;
+        try {
+            xmlif = XMLInputFactory.newInstance();
+            xmlr = xmlif.createXMLStreamReader(path, new FileInputStream(path));
+        } catch (FileNotFoundException e) {
+            System.out.println("File non trovato");
+            System.out.println(e.getMessage());
+        } 
+        catch (Exception e) {
+            System.out.println("Errore nell'inizializzazione del reader:");
+            System.out.println(e.getMessage());
+        }
+        return xmlr;
+    }
+
+    /**
+     * Inizializza un writer per il file XML
+     * @param path il percorso del file XML
+     * @return il writer inizializzato
+     */
+    private static XMLStreamWriter inizializzaWriter(String path) {
+        XMLOutputFactory xmlof = null;
+        XMLStreamWriter xmlw = null;
+        try {
+            xmlof = XMLOutputFactory.newInstance();
+            xmlw = xmlof.createXMLStreamWriter(new FileOutputStream(path), "utf-8");
+            xmlw.writeStartDocument("utf-8", "1.0");
+        } catch (Exception e) {
+            System.out.println("Errore nell'inizializzazione del writer:");
+            System.out.println(e.getMessage());
+        }
+        return xmlw;
+    }
+
+    /**
+     * Chiude il reader
+     * @param xmlr il reader da chiudere
+     */
+    private static void chiudiReader(XMLStreamReader xmlr) {
+        try {
+            xmlr.close();
+        } catch (Exception e) {
+            System.out.println("Errore nella chiusura del reader:");
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Chiude il writer
+     * @param xmlw il writer da chiudere
+     */
+    private static void chiudiWriter(XMLStreamWriter xmlw) {
+        try {
+            xmlw.writeEndDocument();
+            xmlw.flush();
+            xmlw.close();
+        } catch (Exception e) {
+            System.out.println("Errore nella chiusura del writer:");
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Controlla se un file esiste
+     * @param path il percorso del file
+     * @return true se il file esiste, false altrimenti
+     */
+    public static boolean fileExists(String path) {
+        return new File(path).exists();
+    }
+
+    /**
+     * Crea un file
+     * @param path il percorso del file
+     */
+    public static void creaFile(String path) {
+        try {
+            File file = new File(path);
+            file.createNewFile();
+        } catch (Exception e) {
+            System.out.println("Errore nella creazione del file:");
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Legge una variabile da un file XML sapendone il tag associato.
+     * Questo metodo permette di leggere solo un valore e funziona solo se di quel tag c'è una sola occorrenza
+     * altrmenti legge la prima occorrenza disponibile nel file.
+     * @param path il percorso del file XML
+     * @param tag il tag associato alla variabile da leggere
+     * @return Il valore della variabile letta nel file XML
+     */
+    public static String leggiVariabile (String path, String tag) {
+        XMLStreamReader xmlr = inzializzaReader(path);
+        String variabile = null;
+        try {
+            while (xmlr.hasNext()) {
+                switch (xmlr.getEventType()) {
+                    case XMLStreamReader.START_ELEMENT:
+                        if (xmlr.getLocalName().equals(tag)) {
+                            System.out.println(String.format(INIZIO_LETTURA, tag));
+                            variabile = xmlr.getElementText();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                xmlr.next();
+            }
+            System.out.println(String.format(FINE_LETTURA, tag));
+        } catch (Exception e) {
+            System.out.println("Errore nella lettura del file:");
+            System.out.println(e.getMessage());
+        } finally {
+            chiudiReader(xmlr);
+        }
+        return variabile;
+    }
+
+    /**
+     * Scrive il file XML di default del registratore con i valori inseriti dall'utente
+     */
+    public static void scriviRegistratoreDefault () {
+        XMLStreamWriter xmlw = inizializzaWriter(pathRegistratore);
+        try {
+            xmlw.writeStartElement("registratore");
+            xmlw.writeCharacters(System.getProperty("line.separator"));
+            xmlw.writeStartElement("maxPartecipanti");
+            xmlw.writeStartElement(String.valueOf(CliUtente.chiediMaxPartecipanti()));
+            xmlw.writeEndElement();
+            xmlw.writeCharacters(System.getProperty("line.separator"));
+            xmlw.writeStartElement("areaCompetenza");
+            xmlw.writeCharacters(CliUtente.chiediAreaCompetenza());
+            xmlw.writeEndElement();
+            xmlw.writeCharacters(System.getProperty("line.separator"));
+            xmlw.writeEndElement();
+        } catch (Exception e) {
+            System.out.println("Errore nella scrittura del file:");
+            System.out.println(e.getMessage());
+        } finally {
+            chiudiWriter(xmlw);
+        }
+    }
 
 }
