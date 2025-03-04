@@ -1,11 +1,14 @@
 public class Configuratore extends Utente {
     
+    private Registratore registratore;
+
     public Configuratore(boolean PrimoAccesso) {
         super(PrimoAccesso);
         this.setRuolo("Configuratore");
+        this.registratore = new Registratore();
     }
 
-    public void registrati(Registratore registratore) {
+    public void registrati() {
         CliUtente.creaNuovoConfiguratore();
         do {
             // Chiede il nickname e la password finche' non vengono inseriti correttamente
@@ -14,4 +17,47 @@ public class Configuratore extends Utente {
         this.setPrimoAccesso(false);
     }
 
+    public void inserisciAreaCompetenza() {
+        String areaCompetenza = CliUtente.chiediAreaCompetenza();
+        registratore.modificaAreaCompetenza(areaCompetenza);
+    }
+
+    public void inserisciMaxPartecipanti() {
+        int maxPartecipanti = CliUtente.chiediMaxPartecipanti();
+        registratore.modificaMaxPartecipanti(maxPartecipanti);
+    }
+
+    /**
+     * Questo metodo permette di controllare se una tabella del database è vuota. In particolare questa funzione permette l'interazione
+     * fra il Configuratore e il database per controllare se una tabella è vuota.
+     * @param tabella la tabella da controllare accetta come valore "Luogo" o "Tipo di Visita"
+     * @return true se la tabella è vuota, false altrimenti
+     */
+    public boolean controllaDBVuoti(String tabella) {
+        try {
+            switch (tabella) {
+                case "Luogo":
+                    return this.visualizzatore.DBLuoghiIsEmpty();
+                case "Tipo di Visita":
+                    return this.visualizzatore.DBTipiVisiteIsEmpty();
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void visualizzaVolontari() {
+        this.visualizzatore.visualizzaVolontari();
+    }
+
+    public void visualizzaLuoghiDaVisitare() {
+        this.visualizzatore.visualizzaLuoghiDaVisitare();
+    }
+    
+    public void chiediStatoDaVisualizzare() {
+        this.visualizzatore.visualizzaVisite(CliUtente.chiediStatoVisita());
+    }
 }

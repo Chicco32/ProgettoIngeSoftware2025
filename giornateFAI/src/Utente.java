@@ -1,13 +1,15 @@
 public abstract class Utente {
 
-    String ruolo; //Configuratore, Fruitore o Volontario
-    String nickname;
-    Boolean PrimoAccesso;
+    private String ruolo; //Configuratore, Fruitore o Volontario
+    private String nickname;
+    private Boolean PrimoAccesso;
+    protected Visualizzatore visualizzatore;
     
 
     public Utente(boolean PrimoAccesso) {
         this.nickname = null; 
         this.PrimoAccesso = PrimoAccesso;
+        this.visualizzatore = new Visualizzatore();
     }
     
     public void setRuolo(String ruolo){
@@ -33,5 +35,18 @@ public abstract class Utente {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
+
+    public abstract void registrati();
+
+    /**
+     * Questo metodo permette di controllare se una tabella del database è vuota. In particolare questa funzione permette l'interazione
+     * fra L'Utente e il database per controllare se una tabella è vuota.
+     * A seconda del tipo di utente può avere accesso ad alcune tabelle anzichè ad altre.
+     * Il metodo ritornerà true se la tabella è vuota, false altrimenti.
+     * IL metodo si occupa anche della gesione degli errori e delle eccezioni.
+     * @param tabella la tabella da controllare
+     * @return true se la tabella è vuota, false altrimenti
+     */
+    public abstract boolean controllaDBVuoti (String tabella);
 
 }

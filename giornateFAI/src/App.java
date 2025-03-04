@@ -6,11 +6,14 @@ public class App {
         
         Login login = new Login();
         Utente utente = login.loginUtente(CliUtente.chiediNickname(), CliUtente.chiediPassword());
-
+        while (utente == null) {
+            utente = login.loginUtente(CliUtente.chiediNickname(), CliUtente.chiediPassword()); 
+        }
+        
         if (utente.isPrimoAccesso()) {
             switch (utente.getRuolo()) {
                 case "Configuratore":
-                    ((Configuratore) utente).registrati(new Registratore());
+                    ((Configuratore) utente).registrati();
                     break;
                 default:
                     break;

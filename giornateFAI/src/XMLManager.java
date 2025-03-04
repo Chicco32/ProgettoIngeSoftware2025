@@ -150,19 +150,21 @@ public class XMLManager {
     }
 
     /**
-     * Scrive il file XML di default del registratore con i valori inseriti dall'utente
+     * Scrive il file XML di default del registratore i valori inseriti.
+     * @param maxPartecipanti il numero massimo di partecipanti che lo stesso Fruitore può inserire
+     * @param areaCompetenza l'area geografica di competenza della società
      */
-    public static void scriviRegistratoreDefault () {
+    public static void scriviRegistratoreDefault (String areaCompetenza, int maxPartecipanti) {
         XMLStreamWriter xmlw = inizializzaWriter(pathRegistratore);
         try {
             xmlw.writeStartElement("registratore");
             xmlw.writeCharacters(System.getProperty("line.separator"));
             xmlw.writeStartElement("maxPartecipanti");
-            xmlw.writeStartElement(String.valueOf(CliUtente.chiediMaxPartecipanti()));
+            xmlw.writeStartElement(String.valueOf(maxPartecipanti));
             xmlw.writeEndElement();
             xmlw.writeCharacters(System.getProperty("line.separator"));
             xmlw.writeStartElement("areaCompetenza");
-            xmlw.writeCharacters(CliUtente.chiediAreaCompetenza());
+            xmlw.writeCharacters(areaCompetenza);
             xmlw.writeEndElement();
             xmlw.writeCharacters(System.getProperty("line.separator"));
             xmlw.writeEndElement();
