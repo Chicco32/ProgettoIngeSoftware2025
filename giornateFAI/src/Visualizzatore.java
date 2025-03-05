@@ -44,7 +44,7 @@ public class Visualizzatore {
     public void visualizzaVolontari() {
         try {
             if (connection != null) {
-                String query = "SELECT Nickname FROM dbingesw.volontario";
+                String query = "SELECT `Tipo di Visita`,`Volontario Nickname`,`Titolo` FROM dbingesw.`volontari disponibili` join dbingesw.`Tipo di Visita` on `volontari disponibili`.`Tipo di Visita` = `Tipo di Visita`.`Codice Tipo di Visita`;";
                 ResultSet results = connection.createStatement().executeQuery(query);
                 CliUtente.visualizzaRisulati(results, "Volontari");
             }
@@ -101,4 +101,6 @@ public class Visualizzatore {
         }
         return false;
     }
+
+    
 }

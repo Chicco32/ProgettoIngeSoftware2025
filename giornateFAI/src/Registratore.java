@@ -39,7 +39,6 @@ public class Registratore {
             }
     }
 
-
     /**
      * Funzione per la registrazione di un nuovo configuratore nel DB.
      * In particolare la funzione richiede al DB l'inserimento dei dati forniti e riporta la risposta del DB in caso di avvenuto inserimento o meno
@@ -91,6 +90,25 @@ public class Registratore {
             CliUtente.erroreRegistrazione();
             }
         }
+        return false;
+    }
+
+    /**
+     * TODO da finire
+     * Funzione per la registrazione di un nuovo luogo nel DB.
+     * In particolare la funzione richiede al DB l'inserimento dei dati forniti e riporta la risposta del DB in caso di avvenuto inserimento o meno
+     * La funzione ritorna true se la registrazione è andata a buon fine, false altrimenti.
+     * @param nome il nome del luogo
+     * @param descrizione la descrizione di al massimo 100 caratteri del luogo
+     * @param indirizzo l'inidirizzo di al massimo 45 caratteri
+     * @return lo stato della registrazione, true se è andata a buon fine, false altrimenti
+     */
+    public boolean registraNuovoLuogo (String nome, String descrizione, String indirizzo) {
+        return false;
+    }
+
+    //TODO compeltamente da pensare e fare 
+    public boolean registraNuovoTipoVisita() {
         return false;
     }
 

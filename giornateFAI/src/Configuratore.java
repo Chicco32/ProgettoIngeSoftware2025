@@ -70,4 +70,8 @@ public class Configuratore extends Utente {
         this.visualizzatore.visualizzaVisite(CliUtente.chiediStatoVisita(this.getNickname()));
     }
 
+    public void popolaDBLuoghiVisteVolontari() {
+        //tutto il corpo da inserie vedi casi d'uso e consegna
+    }
+
 }
