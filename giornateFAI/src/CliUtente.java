@@ -1,14 +1,41 @@
 import java.sql.ResultSet;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import it.unibs.fp.mylib.InputDati;
 
 public class CliUtente {
+
+    //Menu di intestazione con informazioni di base
+    public static void barraIntestazione(String utente) {
+         LocalDate data = LocalDate.now();
+         LocalDateTime ora = LocalDateTime.now();
+         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+         String oraFormattata = ora.format(formatter);
+         System.out.println(data + "\t\t\t" + oraFormattata + "    " + utente);
+    }
 
     //Interazione per la creazione di un nuovo Configuratore
     public static void creaNuovoConfiguratore() {
         System.out.println("Benvenuto! Per creare un nuovo Configuratore inserisci le seguenti informazioni:");
     }
 
+    //Interazione di Configuratore coorettamente registrato
+    public static void configuratoreCorrettamenteRegistrato() {
+        System.out.println("Configuratore correttamente reigstrato!");
+    }
+
+    //Interazione di errore nella registrazione
+    public static void erroreRegistrazione() {
+        System.out.println("Errore nella registrazione!");
+    }
+
+    //Interazione di Configuratore coorettamente registrato
+    public static void volontarioCorrettamenteRegistrato() {
+        System.out.println("Volontario correttamente reigstrato!");
+    }
+    
     //Interazione di bentoranto al Configuratore
     public static void benvenutoConfiguratore() {
         System.out.println("Benvenuto Configuratore! Stai per accedere al backEnd di sistema");
@@ -72,13 +99,14 @@ public class CliUtente {
     }
 
     // Menu di interazione con il configuratore
-    public static int menuConfiguratore() {
+    public static int menuConfiguratore(String utente) {
         boolean conferma = false;
         int scelta = 0;
         do {
             //codice demoniaco per invocare la pulizia dello schermo
             System.out.print("\033[H\033[2J");
             System.out.flush();
+            CliUtente.barraIntestazione(utente);
             System.out.println("Scegli un'opzione dal menu:");
             System.out.println("1. Modifica max numero partecipanti");
             System.out.println("2. Introduzione nuovo tipo di visita");
@@ -130,7 +158,8 @@ public class CliUtente {
         System.out.println("Visualizzazione delle visite con stato: " + stato);
     }
 
-    public static StatiVisite chiediStatoVisita() {
+    public static StatiVisite chiediStatoVisita(String utente) {
+        CliUtente.barraIntestazione(utente);
         System.out.println("Stati possibili su cui filtrare le visite: ");
         System.out.println("1. Proposta");
         System.out.println("2. Completa");
@@ -159,6 +188,11 @@ public class CliUtente {
                 break;
         }
         return stato;
+    }
+
+    public static void menuInserimentoVolontario() {
+        System.out.println("Configuratore, questa è la pagina per l'inserimento di nuovi volontari nel DB");
+        System.out.println("Di seguito puoi riportare i dati dei volontari");
     }
 
 }

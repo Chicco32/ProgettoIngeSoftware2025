@@ -27,6 +27,11 @@ public class Configuratore extends Utente {
         registratore.modificaMaxPartecipanti(maxPartecipanti);
     }
 
+    public void insersciVolontario() {
+        CliUtente.menuInserimentoVolontario();
+        this.registratore.registraNuovoVolontario(CliUtente.chiediNickname(), CliUtente.chiediPassword());
+    }
+
     /**
      * Questo metodo permette di controllare se una tabella del database è vuota. In particolare questa funzione permette l'interazione
      * fra il Configuratore e il database per controllare se una tabella è vuota.
@@ -56,8 +61,13 @@ public class Configuratore extends Utente {
     public void visualizzaLuoghiDaVisitare() {
         this.visualizzatore.visualizzaLuoghiDaVisitare();
     }
+
+    public void visualizzaTipiDiVisite() {
+        this.visualizzatore.visualizzaTipiDiVisite();
+    }
     
     public void chiediStatoDaVisualizzare() {
-        this.visualizzatore.visualizzaVisite(CliUtente.chiediStatoVisita());
+        this.visualizzatore.visualizzaVisite(CliUtente.chiediStatoVisita(this.getNickname()));
     }
+
 }

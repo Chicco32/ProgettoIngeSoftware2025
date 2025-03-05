@@ -42,7 +42,7 @@ public class Registratore {
 
     /**
      * Funzione per la registrazione di un nuovo configuratore nel DB.
-     * In particolare la funzione richiede al DB l'inserimento dei dati forniti e riporta la risposta del DB in caso di avvenuto inseirmento o meno
+     * In particolare la funzione richiede al DB l'inserimento dei dati forniti e riporta la risposta del DB in caso di avvenuto inserimento o meno
      * La funzione ritorna true se la registrazione è andata a buon fine, false altrimenti.
      * 
      * @param nickname il possibile nickname da registrare
@@ -55,13 +55,40 @@ public class Registratore {
             try {
                 String insert = "INSERT into `dbingesw`.`configuratore` (`Nickname`,`Password`) VALUES ('" + nickname + "', '" + password + "')";
                 this.connection.createStatement().executeUpdate(insert);
-                System.err.println("Configuratore correttamente reigstrato!");
+                CliUtente.configuratoreCorrettamenteRegistrato();
                 return true;
             } catch (SQLIntegrityConstraintViolationException e) {
                 CliUtente.nicknameGiaInUso();
             } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Errore nella registrazione!");
+            CliUtente.erroreRegistrazione();
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Funzione per la registrazione di un nuovo volontario nel DB.
+     * In particolare la funzione richiede al DB l'inserimento dei dati forniti e riporta la risposta del DB in caso di avvenuto inserimento o meno
+     * La funzione ritorna true se la registrazione è andata a buon fine, false altrimenti.
+     * 
+     * @param nickname il possibile nickname da registrare
+     * @param password la password inserita dall'utente
+     * @return lo stato della registrazione, true se è andata a buon fine, false altrimenti
+     */
+    public boolean registraNuovoVolontario (String nickname, String password) {
+     
+        if (this.connection != null) {
+            try {
+                String insert = "INSERT into `dbingesw`.`volontario` (`Nickname`,`Password`) VALUES ('" + nickname + "', '" + password + "')";
+                this.connection.createStatement().executeUpdate(insert);
+                CliUtente.volontarioCorrettamenteRegistrato();
+                return true;
+            } catch (SQLIntegrityConstraintViolationException e) {
+                CliUtente.nicknameGiaInUso();
+            } catch (Exception e) {
+            e.printStackTrace();
+            CliUtente.erroreRegistrazione();
             }
         }
         return false;

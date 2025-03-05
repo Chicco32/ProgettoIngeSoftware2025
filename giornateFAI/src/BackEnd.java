@@ -53,7 +53,7 @@ public class BackEnd {
             8. Esci"
              */
             
-            int scelta = CliUtente.menuConfiguratore();
+            int scelta = CliUtente.menuConfiguratore(configuratore.getNickname());
             switch (scelta) {
                 case 1:
                 configuratore.inserisciMaxPartecipanti();
@@ -63,6 +63,9 @@ public class BackEnd {
                     break;
                 case 5:
                     configuratore.visualizzaLuoghiDaVisitare();
+                    break;
+                case 6:
+                    configuratore.visualizzaTipiDiVisite();
                     break;
                 case 7:
                     configuratore.chiediStatoDaVisualizzare();

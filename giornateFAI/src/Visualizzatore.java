@@ -22,7 +22,6 @@ public class Visualizzatore {
     /*
      * Richiede al db la lista delle visite in base allo stato
      * e le mostra all'utente
-     * TODO: implementare
      */
     public void visualizzaVisite(StatiVisite stato) {
         try {
@@ -73,10 +72,18 @@ public class Visualizzatore {
     /*
      * Richiede al db la lista delle tipologie di visite
      * e le mostra all'utente
-     * TODO: implementare
-     */
-    public void visualizzaTipiDIVisite() {
 
+     */
+    public void visualizzaTipiDiVisite() {
+        try {
+            if (connection != null) {
+                String query = "SELECT * FROM dbingesw.`tipo di visita``";
+                ResultSet results = connection.createStatement().executeQuery(query);
+                CliUtente.visualizzaRisulati(results, "Luoghi");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean DBLuoghiIsEmpty() throws SQLException {
