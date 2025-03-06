@@ -25,6 +25,9 @@ public class Login {
     public Login() {
         this.connection = ConnesioneSQL.getConnection();
     }
+    public Login(String url, String user, String psw){
+	    this.connection=ConnessioneSQL.getConnection(url,user,psw);
+    }
 
     /**
      * Metodo di login per il configuratore

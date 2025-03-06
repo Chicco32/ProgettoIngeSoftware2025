@@ -9,12 +9,14 @@ public class ConnesioneSQL {
     private static final String PASSWORD = "root"; 
 
     public static Connection getConnection() {
+	return getConnection(URL,USER,PASSWORD);
+    public static Connection getConnection(String url, String user, String psw){
         try {
             // Carica il driver MySQL
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             // Crea la connessione
-            Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+            Connection conn = DriverManager.getConnection(url, user, psw);
             System.out.println("Connessione riuscita!");
             return conn;
 
