@@ -16,7 +16,7 @@ public class Visualizzatore {
     private Connection connection;
 
     public Visualizzatore() {
-        this.connection = ConnesioneSQL.getConnection();
+        this.connection = ConnessioneSQL.getConnection();
     }
 
     /*

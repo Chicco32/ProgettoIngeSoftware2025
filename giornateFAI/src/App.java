@@ -8,6 +8,8 @@ public class App {
 		login= new Login();
 	}else if(args.length==3){
 		login=new Login(args[0],args[1],args[2]);
+	}else{
+		login=new Login();
 	}
         Utente utente = login.loginUtente(CliUtente.chiediNickname(), CliUtente.chiediPassword());
         while (utente == null) {

@@ -2,7 +2,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class ConnesioneSQL {
+public class ConnessioneSQL {
     // Dati per la connessione
     private static final String URL = "jdbc:mysql://localhost:3306/dbingesw";
     private static final String USER = "root"; 

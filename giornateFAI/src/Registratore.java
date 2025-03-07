@@ -9,7 +9,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
  * Utilizza un file XML per la memorizzazione dei dati di default.
  * 
  * @see XMLManager
- * @see ConnesioneSQL
+ * @see ConnessioneSQL
  */
 public class Registratore {
 
@@ -19,7 +19,7 @@ public class Registratore {
 
 
     public Registratore() {
-        this.connection = ConnesioneSQL.getConnection();
+        this.connection = ConnessioneSQL.getConnection();
 
             try {
                 // Carica i dati di default dal file XML

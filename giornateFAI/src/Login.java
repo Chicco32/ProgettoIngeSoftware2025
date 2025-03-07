@@ -23,7 +23,7 @@ public class Login {
     private Connection connection;
 
     public Login() {
-        this.connection = ConnesioneSQL.getConnection();
+        this.connection = ConnessioneSQL.getConnection();
     }
     public Login(String url, String user, String psw){
 	    this.connection=ConnessioneSQL.getConnection(url,user,psw);
