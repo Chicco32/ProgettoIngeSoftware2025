@@ -1,6 +1,7 @@
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * Classe per la gestione della estrazione di elementi all'interno del DB e per la loro visualizzazione.
@@ -37,21 +38,31 @@ public class Visualizzatore {
 
     }
 
-    /*
-     * Richiede al db la lista dei volotari
-     * e le mostra all'utente
+    /**
+     * Chiede al DB e mostra la lista dei volontari. In particolare mostra le colonne Nickname, chiave del tipo di visita e titolo della stessa.
+     * Inoltre ritorna la lista dei nicknmae gia salvati
+     * @return
      */
-    public void visualizzaVolontari() {
+    public ArrayList<String> visualizzaVolontari() {
         try {
             if (connection != null) {
                 String query = "SELECT `Tipo di Visita`,`Volontario Nickname`,`Titolo` FROM dbingesw.`volontari disponibili` join dbingesw.`Tipo di Visita` on `volontari disponibili`.`Tipo di Visita` = `Tipo di Visita`.`Codice Tipo di Visita`;";
+                CliUtente.visualizzaRisulati(connection.createStatement().executeQuery(query), "Volontari");
+                ArrayList<String> volontari = new ArrayList<>();
+                
+                //riporta il puntatore all'inzio prima di salvare
                 ResultSet results = connection.createStatement().executeQuery(query);
-                CliUtente.visualizzaRisulati(results, "Volontari");
+                while (results.next()) {
+                    volontari.add(results.getString("Volontario Nickname"));
+                }
+                return volontari;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return null;
     }
+
 
     /*
      * Richiede al db la lista dei luoghi visitabili
@@ -89,7 +100,8 @@ public class Visualizzatore {
     public boolean DBLuoghiIsEmpty() throws SQLException {
         if (connection != null) {
             String query = "SELECT * FROM `dbingesw`.`luogo`";
-            return connection.createStatement().executeQuery(query).next();
+            //next da true se trova una riga e sposta il cursore su tale riga
+            return !connection.createStatement().executeQuery(query).next();
         }
         return false;
     }
@@ -97,7 +109,7 @@ public class Visualizzatore {
     public boolean DBTipiVisiteIsEmpty() throws SQLException {
         if (connection != null) {
             String query = "SELECT * FROM dbingesw.`tipo di visita`";
-            return connection.createStatement().executeQuery(query).next();
+            return !connection.createStatement().executeQuery(query).next();
         }
         return false;
     }

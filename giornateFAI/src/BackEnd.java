@@ -30,6 +30,8 @@ public class BackEnd {
         *nel database, deve iniziare la procedura di popolamento generale del corpo dei dati
         */
         if(configuratore.controllaDBVuoti("Luogo")) {
+
+            CliUtente.avvisoDBVuoto();
             //prima chiede all'utente di inserire l'area di competenza e il max numero partecipanti
             configuratore.inserisciAreaCompetenza();
             configuratore.inserisciMaxPartecipanti();

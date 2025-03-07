@@ -1,3 +1,8 @@
+import java.sql.Time;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 public class Configuratore extends Utente {
     
     private Registratore registratore;
@@ -72,6 +77,72 @@ public class Configuratore extends Utente {
 
     public void popolaDBLuoghiVisteVolontari() {
         //tutto il corpo da inserie vedi casi d'uso e consegna
+        //struttra ricorsiva scomposta nelle 3 funzioni private di popolamento
+        boolean altroLuogo = true;
+        while (altroLuogo) {
+            this.popolaDBLuoghi();
+            altroLuogo = CliUtente.aggiungiAltroLuogo();
+        }
+        
     }
 
+    private void popolaDBLuoghi () {
+        //pagina per i luoghi
+        CliUtente.inserimentoNuovoLuogo();
+        String nomeLuogo = CliUtente.inserimentoNuovoNome();
+        this.registratore.registraNuovoLuogo(nomeLuogo, CliUtente.inserimentoNuovaDescrizione(), CliUtente.inserimentoNuovoIndirizzo());
+        CliUtente.avvisoNuovoLuogo();
+        popolaDBTipiVisite(nomeLuogo);
+    }
+
+    private void popolaDBTipiVisite(String nomeLuogo) {
+        //pagina per i tipi di visite
+        CliUtente.inserimentoNuovoTipoVisita();
+        boolean altraVisita = true;
+        while (altraVisita) {
+            int nuovoCodice = this.registratore.generaNuovaChiave(Registratore.TABELLATIPOVISITE);
+            String titolo = CliUtente.inserimentoNuovoTitolo();
+            String descrizione = CliUtente.inserimentoNuovaDescrizione();
+            DateRange perido = CliUtente.inserimentoPeriodoAnno();
+            Time ora = CliUtente.inserimentoOraInizio();
+            int durata = CliUtente.inserimentoDurataVisita();
+            boolean biglietto = CliUtente.chiediNecessitaBiglietto();
+            int minPartecipanti =  CliUtente.inserimentoMinPartecipantiVisita();
+            int maxPartecipanti =  CliUtente.inserimentoMaxPartecipantiVisita(minPartecipanti);
+            this.registratore.registraNuovoTipoVisita(nuovoCodice, nomeLuogo, titolo, descrizione, perido.getStartDate(), perido.getEndDate(),
+             ora, durata, biglietto, minPartecipanti, maxPartecipanti, this.getNickname());
+            CliUtente.avvisoNuovoTipoVisita();
+            popolaDBVolontari(nuovoCodice);
+            altraVisita = CliUtente.aggiungiAltraVisitaLuogo();
+        }
+
+
+    }
+
+    private static ArrayList<String> sanificaLista(ArrayList<String> listaVolontari) {
+        // Usare un HashSet per rimuovere i duplicati
+        Set<String> setVolontari = new LinkedHashSet<>(listaVolontari);
+        
+        // Restituire una nuova ArrayList senza duplicati
+        return new ArrayList<>(setVolontari);
+    }
+
+    private void popolaDBVolontari(int CodiceVisita) {
+        boolean altroVolontario = true;
+        while (altroVolontario) {
+            //pagina per i volontari, prima mostra quelli gia registrati e chiede di sceglierne uno
+            ArrayList <String> volontariRegistrati = this.visualizzatore.visualizzaVolontari();
+            volontariRegistrati = sanificaLista(volontariRegistrati);
+            String volontarioSelezionato = CliUtente.selezionaVolontario(volontariRegistrati);
+            //altrimenti permette di inserire un nuovo volontario
+            if (volontarioSelezionato == null) {
+                volontarioSelezionato = CliUtente.chiediNickname();
+                this.registratore.registraNuovoVolontario(volontarioSelezionato, CliUtente.chiediPassword());
+            }
+            //parte di inserimento nel db della nuova coppia visita e volontario associato
+            this.registratore.associaVolontarioVisita(CodiceVisita, volontarioSelezionato);
+            altroVolontario = CliUtente.aggiungiAltroVolontarioVisita();
+        }
+
+    }
 }

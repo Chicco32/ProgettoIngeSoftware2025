@@ -1,6 +1,9 @@
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 
 /**
  * Classe per la gestione della registrazione di un nuovi uelementi nel DB.
@@ -16,6 +19,10 @@ public class Registratore {
     private Connection connection;
     private int maxPartecipanti;
     private String areaCompetenza;
+    public static final String TABELLATIPOVISITE = "tipo di visita";
+    public static final String TABELLAARCHIVIOVISITE = "archivio delle visite";
+    private static final String CODICETIPOVISITE = "Codice Tipo di Visita";
+    private static final String CODICEARCHIVIO = "Codice Archivio";
 
 
     public Registratore() {
@@ -94,7 +101,6 @@ public class Registratore {
     }
 
     /**
-     * TODO da finire
      * Funzione per la registrazione di un nuovo luogo nel DB.
      * In particolare la funzione richiede al DB l'inserimento dei dati forniti e riporta la risposta del DB in caso di avvenuto inserimento o meno
      * La funzione ritorna true se la registrazione è andata a buon fine, false altrimenti.
@@ -104,11 +110,143 @@ public class Registratore {
      * @return lo stato della registrazione, true se è andata a buon fine, false altrimenti
      */
     public boolean registraNuovoLuogo (String nome, String descrizione, String indirizzo) {
+        if (this.connection != null) {
+            try {
+                String insert = "INSERT into `dbingesw`.`luogo` (`Nome`,`Descrizione`, `Indirizzo`) VALUES ('" + nome + "','" + descrizione + "', '" + indirizzo + "')";
+                this.connection.createStatement().executeUpdate(insert);
+                CliUtente.LuogoCorrettamenteRegistrato();
+                return true;
+            } catch (SQLIntegrityConstraintViolationException e) {
+                CliUtente.NomeLuogoGiaInUso();
+            } catch (Exception e) {
+            e.printStackTrace();
+            CliUtente.erroreRegistrazione();
+            }
+        }
         return false;
     }
 
-    //TODO compeltamente da pensare e fare 
-    public boolean registraNuovoTipoVisita() {
+    private static String formatoDataPerSQL(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(date);
+    }
+
+    private static String formatoOrarioPerSQL(Time time) {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        return sdf.format(time);
+    }
+
+    //conta la quantita di elementi e ritorna il numero successivo come nuova chiave primaria in modo progressivo
+    public int generaNuovaChiave(String tabella) {
+
+        //il nome della colonna codici non è consistente fra le varie tabelle
+        String nomeColonna = "";
+        switch (tabella) {
+            case TABELLATIPOVISITE:
+                nomeColonna = CODICETIPOVISITE;
+                break;
+            case TABELLAARCHIVIOVISITE:
+                nomeColonna = CODICEARCHIVIO;
+            default:
+                break;
+        }
+
+        int nuovaChiave = 0;
+        if (this.connection != null) {
+            try {
+            String query = "SELECT MAX(`" + nomeColonna + "`) AS maxCodice FROM `dbingesw`.`" + tabella + "`";
+            var resultSet = this.connection.createStatement().executeQuery(query);
+            if (resultSet.next()) {
+                nuovaChiave = resultSet.getInt("maxCodice") + 1;
+            } else {
+                nuovaChiave = 1;
+            }
+            } catch (Exception e) {
+            e.printStackTrace();
+            }
+        }
+        return nuovaChiave;
+    }
+
+    /**
+     * Funzione che registra un nuovo tipo di visita nel DB. 
+     * @param codice
+     * @param luogo
+     * @param titolo
+     * @param descrizione
+     * @param dataInizio
+     * @param dataFine
+     * @param oraInizio
+     * @param durata
+     * @param necessitaBiglietto
+     * @param minPartecipanti
+     * @param maxPartecipanti
+     * @param configuratore
+     * @return true se la registrazione è andata a buon fine, false altrimenti
+     */
+    public boolean registraNuovoTipoVisita(int codice, String luogo, String titolo, String descrizione, Date dataInizio, Date dataFine, 
+    Time oraInizio, int durata, boolean necessitaBiglietto, int minPartecipanti, int maxPartecipanti, String configuratore) {
+        
+        int biglietto;
+        if (necessitaBiglietto) biglietto = 1;
+        else biglietto = 0;
+        String dataIniziosql = formatoDataPerSQL(dataInizio);
+        String dataFinesql = formatoDataPerSQL(dataFine);
+        String oraInziosql = formatoOrarioPerSQL(oraInizio);
+        
+        if (this.connection != null) {
+            try {
+                String insert = "INSERT INTO `dbingesw`.`tipo di visita`" +
+                                        "(`Codice Tipo di Visita`," +
+                                        "`Punto di Incontro`," +
+                                        "`Titolo`," +
+                                        "`Descrizione`," +
+                                        "`Giorno di Inizio (periodo anno)`," + 
+                                        "`Giorno di Fine (periodo anno)`," +
+                                        "`Ora di inizio`," +
+                                        "`Durata`," +
+                                        "`Necessita Biglietto`," +
+                                        "`Min Partecipanti`," +
+                                        "`Max Partecipanti`," +
+                                        "`Configuratore referente`)" +
+                                        "VALUES" +
+                                        "("+ codice +"," +
+                                        "'" + luogo + "'," + 
+                                        "'" + titolo + "'," + 
+                                        "'" + descrizione + "'," + 
+                                        "'" + dataIniziosql + "'," + 
+                                        "'" + dataFinesql + "'," + 
+                                        "'" + oraInziosql + "'," +  
+                                        "" + durata + "," + 
+                                        "" + biglietto +"," + 
+                                        "" + minPartecipanti + "," + 
+                                        "" + maxPartecipanti + "," + 
+                                        "'" +  configuratore + "')";
+                this.connection.createStatement().executeUpdate(insert);
+                CliUtente.visitaCorrettamenteRegistrata();
+                return true;
+            } catch (Exception e) {
+            e.printStackTrace();
+            CliUtente.erroreRegistrazione();
+            }
+        }
+        return false;
+    }
+
+    public boolean associaVolontarioVisita(int codiceVisita, String volontarioSelezionato) {
+        if (this.connection != null) {
+            try {
+                String insert = "INSERT INTO `dbingesw`.`volontari disponibili` (`Tipo di Visita`,`Volontario Nickname`) VALUES (" + codiceVisita +",'" + volontarioSelezionato +"');";
+                this.connection.createStatement().executeUpdate(insert);
+                CliUtente.volontarioCorrettamenteRegistrato();
+                return true;
+            } catch (SQLIntegrityConstraintViolationException e) {
+                CliUtente.volontarioGiaAbbinatoVisita();
+            } catch (Exception e) {
+            e.printStackTrace();
+            CliUtente.erroreRegistrazione();
+            }
+        }
         return false;
     }
 
