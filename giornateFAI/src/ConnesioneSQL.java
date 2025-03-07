@@ -10,6 +10,7 @@ public class ConnesioneSQL {
 
     public static Connection getConnection() {
 	return getConnection(URL,USER,PASSWORD);
+    }
     public static Connection getConnection(String url, String user, String psw){
         try {
             // Carica il driver MySQL
