@@ -44,7 +44,7 @@ public class Login {
             CliUtente.loginRiuscito();
 
             //Segna che è il primo accesso
-            return new Configuratore(true);
+            return new Configuratore(true,connection);
         }
 
         //se entra con le credenziali di un utente già registrato
@@ -56,7 +56,7 @@ public class Login {
                     CliUtente.loginRiuscito();
 
                     //immette l'utente nel backEnd
-                    Utente utente = new Configuratore(false);
+                    Utente utente = new Configuratore(false,connection);
                     utente.setNickname(nickname);
                     return utente;
                 }

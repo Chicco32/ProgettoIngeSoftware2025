@@ -18,28 +18,28 @@ public class Registratore {
     private String areaCompetenza;
 
 
-    public Registratore() {
-        this.connection = ConnessioneSQL.getConnection();
+	public Registratore() {
+		new Registratore(ConnessioneSQL.getConnection());
+	}
 
-            try {
-                // Carica i dati di default dal file XML
-                if (XMLManager.fileExists(XMLManager.pathRegistratore)) {
-                this.maxPartecipanti = Integer.parseInt(XMLManager.leggiVariabile(XMLManager.pathRegistratore, "maxPartecipanti"));
-                this.areaCompetenza = XMLManager.leggiVariabile(XMLManager.pathRegistratore, "areaCompetenza");
-                }
-
-                //avvia la creazione di un nuovo file default
-                else {
-                    XMLManager.creaFile(XMLManager.pathRegistratore);
-                    this.areaCompetenza = null;
-                    this.maxPartecipanti = 0;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+	public Registratore(Connection conn){
+		this.connection=conn;
+		try {
+			// Carica i dati di default dal file XML
+        		if (XMLManager.fileExists(XMLManager.pathRegistratore)) {
+                	this.maxPartecipanti = Integer.parseInt(XMLManager.leggiVariabile(XMLManager.pathRegistratore, "maxPartecipanti"));
+        		this.areaCompetenza = XMLManager.leggiVariabile(XMLManager.pathRegistratore, "areaCompetenza");
+        		}
+                	//avvia la creazione di un nuovo file default
+                	else {
+                	    XMLManager.creaFile(XMLManager.pathRegistratore);
+        		    this.areaCompetenza = null;
+        		    this.maxPartecipanti = 0;
+                	}
+            	} catch (Exception e) {
+        	    e.printStackTrace();
+    		}
     }
-
-
     /**
      * Funzione per la registrazione di un nuovo configuratore nel DB.
      * In particolare la funzione richiede al DB l'inserimento dei dati forniti e riporta la risposta del DB in caso di avvenuto inseirmento o meno

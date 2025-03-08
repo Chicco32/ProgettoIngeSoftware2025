@@ -19,6 +19,10 @@ public class Visualizzatore {
         this.connection = ConnessioneSQL.getConnection();
     }
 
+    public Visualizzatore(Connection conn){
+	    this.connection=conn;
+    }
+
     /*
      * Richiede al db la lista delle visite in base allo stato
      * e le mostra all'utente

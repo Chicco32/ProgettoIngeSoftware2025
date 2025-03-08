@@ -6,7 +6,7 @@ public class App {
         Login login;
 	if(args.length==0){
 		login= new Login();
-	}else if(args.length==3){
+	}else if(args.length>=3){
 		login=new Login(args[0],args[1],args[2]);
 	}else{
 		login=new Login();

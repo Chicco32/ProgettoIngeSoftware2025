@@ -1,11 +1,13 @@
+import java.sql.Connection;
+
 public class Configuratore extends Utente {
     
     private Registratore registratore;
 
-    public Configuratore(boolean PrimoAccesso) {
-        super(PrimoAccesso);
+    public Configuratore(boolean PrimoAccesso, Connection conn) {
+        super(PrimoAccesso,conn);
         this.setRuolo("Configuratore");
-        this.registratore = new Registratore();
+        this.registratore = new Registratore(conn);
     }
 
     public void registrati() {

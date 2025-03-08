@@ -1,3 +1,5 @@
+import java.sql.Connection;
+
 public abstract class Utente {
 
     private String ruolo; //Configuratore, Fruitore o Volontario
@@ -6,10 +8,10 @@ public abstract class Utente {
     protected Visualizzatore visualizzatore;
     
 
-    public Utente(boolean PrimoAccesso) {
+    public Utente(boolean PrimoAccesso,Connection conn) {
         this.nickname = null; 
         this.PrimoAccesso = PrimoAccesso;
-        this.visualizzatore = new Visualizzatore();
+        this.visualizzatore = new Visualizzatore(conn);
     }
     
     public void setRuolo(String ruolo){

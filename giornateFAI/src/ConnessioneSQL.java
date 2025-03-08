@@ -17,7 +17,7 @@ public class ConnessioneSQL {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             // Crea la connessione
-            Connection conn = DriverManager.getConnection(url, user, psw);
+            Connection conn = DriverManager.getConnection("jdbc:mysql://"+url, user, psw);
             System.out.println("Connessione riuscita!");
             return conn;
 
