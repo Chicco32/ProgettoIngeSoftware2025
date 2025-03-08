@@ -1,6 +1,7 @@
 
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
@@ -58,9 +59,13 @@ public class Registratore {
     public boolean registraNuovoConfiguratore (String nickname, String password) throws SQLIntegrityConstraintViolationException, Exception {
 
         if (this.connection != null) {
-            String insert = "INSERT into `dbingesw`.`configuratore` (`Nickname`,`Password`) VALUES ('" + nickname + "', '" + password + "')";
-            this.connection.createStatement().executeUpdate(insert);
-            return true;            
+            String insert = "INSERT into `dbingesw`.`configuratore` (`Nickname`,`Password`) VALUES (?,?)";
+            try (PreparedStatement stmt = connection.prepareStatement(insert)) {
+                stmt.setString(1, nickname);
+                stmt.setString(2, password);
+                stmt.executeUpdate();
+                return true;
+            }
         }
         return false;
     }

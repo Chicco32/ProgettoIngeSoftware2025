@@ -51,6 +51,11 @@ public class CliUtente {
         System.out.println("Volontario correttamente registrato!");
     }
 
+    //Interazione di Configuratore correttamente associato
+    public static void volontarioCorrettamenteAssociato() {
+        System.out.println("Volontario correttamente associato!");
+    }
+
     //Interazione di Configuratore coorettamente registrato
     public static void LuogoCorrettamenteRegistrato() {
         System.out.println("Luogo correttamente registrato!");

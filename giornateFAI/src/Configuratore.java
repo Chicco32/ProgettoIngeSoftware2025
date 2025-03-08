@@ -16,16 +16,19 @@ public class Configuratore extends Utente {
 
     public void registrati() {
         CliUtente.creaNuovoConfiguratore();
-        try {
-            do {
+        boolean registrato = false;
+        while (!registrato) {
+            try {
                 // Chiede il nickname e la password finche' non vengono inseriti correttamente
                 this.setNickname(CliUtente.chiediNickname());
-            } while (!registratore.registraNuovoConfiguratore(this.getNickname(), CliUtente.chiediPassword()));
-        } catch (SQLIntegrityConstraintViolationException e) {
-            CliUtente.nicknameGiaInUso();
-            e.printStackTrace();
-        } catch (Exception e) {
-            CliUtente.erroreRegistrazione();
+                registrato = registratore.registraNuovoConfiguratore(this.getNickname(), CliUtente.chiediPassword());
+            } catch (SQLIntegrityConstraintViolationException e) {
+                CliUtente.nicknameGiaInUso();
+                e.printStackTrace();
+            } catch (Exception e) {
+                CliUtente.erroreRegistrazione();
+                e.printStackTrace();
+            }   
         }
         CliUtente.configuratoreCorrettamenteRegistrato();
         this.setPrimoAccesso(false);
@@ -188,7 +191,7 @@ public class Configuratore extends Utente {
             //parte di inserimento nel db della nuova coppia visita e volontario associato
             try {
                 this.registratore.associaVolontarioVisita(CodiceVisita, volontarioSelezionato);
-                CliUtente.volontarioCorrettamenteRegistrato();
+                CliUtente.volontarioCorrettamenteAssociato();
             } catch (SQLIntegrityConstraintViolationException e) {
                 CliUtente.volontarioGiaAbbinatoVisita();
             } catch (Exception e) {
