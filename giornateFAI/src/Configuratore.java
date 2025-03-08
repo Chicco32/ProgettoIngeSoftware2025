@@ -1,3 +1,4 @@
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -15,10 +16,18 @@ public class Configuratore extends Utente {
 
     public void registrati() {
         CliUtente.creaNuovoConfiguratore();
-        do {
-            // Chiede il nickname e la password finche' non vengono inseriti correttamente
-            this.setNickname(CliUtente.chiediNickname());
-        } while (!registratore.registraNuovoConfiguratore(this.getNickname(), CliUtente.chiediPassword()));
+        try {
+            do {
+                // Chiede il nickname e la password finche' non vengono inseriti correttamente
+                this.setNickname(CliUtente.chiediNickname());
+            } while (!registratore.registraNuovoConfiguratore(this.getNickname(), CliUtente.chiediPassword()));
+        } catch (SQLIntegrityConstraintViolationException e) {
+            CliUtente.nicknameGiaInUso();
+            e.printStackTrace();
+        } catch (Exception e) {
+            CliUtente.erroreRegistrazione();
+        }
+        CliUtente.configuratoreCorrettamenteRegistrato();
         this.setPrimoAccesso(false);
     }
 
@@ -34,7 +43,16 @@ public class Configuratore extends Utente {
 
     public void insersciVolontario() {
         CliUtente.menuInserimentoVolontario();
-        this.registratore.registraNuovoVolontario(CliUtente.chiediNickname(), CliUtente.chiediPassword());
+        try {
+            this.registratore.registraNuovoVolontario(CliUtente.chiediNickname(), CliUtente.chiediPassword());
+            CliUtente.volontarioCorrettamenteRegistrato();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            CliUtente.nicknameGiaInUso();
+            e.printStackTrace();
+        } catch (Exception e) {
+            CliUtente.erroreRegistrazione();
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -90,7 +108,15 @@ public class Configuratore extends Utente {
         //pagina per i luoghi
         CliUtente.inserimentoNuovoLuogo();
         String nomeLuogo = CliUtente.inserimentoNuovoNome();
-        this.registratore.registraNuovoLuogo(nomeLuogo, CliUtente.inserimentoNuovaDescrizione(), CliUtente.inserimentoNuovoIndirizzo());
+        try {
+            this.registratore.registraNuovoLuogo(nomeLuogo, CliUtente.inserimentoNuovaDescrizione(), CliUtente.inserimentoNuovoIndirizzo());
+            CliUtente.LuogoCorrettamenteRegistrato();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            CliUtente.NomeLuogoGiaInUso();
+        } catch (Exception e) {
+            CliUtente.erroreRegistrazione();
+            e.printStackTrace();
+        }
         CliUtente.avvisoNuovoLuogo();
         popolaDBTipiVisite(nomeLuogo);
     }
@@ -109,8 +135,14 @@ public class Configuratore extends Utente {
             boolean biglietto = CliUtente.chiediNecessitaBiglietto();
             int minPartecipanti =  CliUtente.inserimentoMinPartecipantiVisita();
             int maxPartecipanti =  CliUtente.inserimentoMaxPartecipantiVisita(minPartecipanti);
-            this.registratore.registraNuovoTipoVisita(nuovoCodice, nomeLuogo, titolo, descrizione, perido.getStartDate(), perido.getEndDate(),
-             ora, durata, biglietto, minPartecipanti, maxPartecipanti, this.getNickname());
+            try {
+                this.registratore.registraNuovoTipoVisita(nuovoCodice, nomeLuogo, titolo, descrizione, perido.getStartDate(), perido.getEndDate(),
+                 ora, durata, biglietto, minPartecipanti, maxPartecipanti, this.getNickname());
+                CliUtente.visitaCorrettamenteRegistrata();
+                } catch (Exception e) {
+                CliUtente.erroreRegistrazione();
+                e.printStackTrace();
+            }
             CliUtente.avvisoNuovoTipoVisita();
             popolaDBVolontari(nuovoCodice);
             altraVisita = CliUtente.aggiungiAltraVisitaLuogo();
@@ -137,10 +169,26 @@ public class Configuratore extends Utente {
             //altrimenti permette di inserire un nuovo volontario
             if (volontarioSelezionato == null) {
                 volontarioSelezionato = CliUtente.chiediNickname();
-                this.registratore.registraNuovoVolontario(volontarioSelezionato, CliUtente.chiediPassword());
+                try {
+                    this.registratore.registraNuovoVolontario(volontarioSelezionato, CliUtente.chiediPassword());
+                    CliUtente.volontarioCorrettamenteRegistrato();
+                } catch (SQLIntegrityConstraintViolationException e) {
+                    CliUtente.nicknameGiaInUso();
+                } catch (Exception e) {
+                    CliUtente.erroreRegistrazione();
+                    e.printStackTrace();
+                }
             }
             //parte di inserimento nel db della nuova coppia visita e volontario associato
-            this.registratore.associaVolontarioVisita(CodiceVisita, volontarioSelezionato);
+            try {
+                this.registratore.associaVolontarioVisita(CodiceVisita, volontarioSelezionato);
+                CliUtente.volontarioCorrettamenteRegistrato();
+            } catch (SQLIntegrityConstraintViolationException e) {
+                CliUtente.volontarioGiaAbbinatoVisita();
+            } catch (Exception e) {
+                CliUtente.erroreRegistrazione();
+                e.printStackTrace();
+            }
             altroVolontario = CliUtente.aggiungiAltroVolontarioVisita();
         }
 

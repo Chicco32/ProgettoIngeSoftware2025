@@ -55,20 +55,12 @@ public class Registratore {
      * @param password la password inserita dall'utente
      * @return lo stato della registrazione, true se è andata a buon fine, false altrimenti
      */
-    public boolean registraNuovoConfiguratore(String nickname, String password) {
+    public boolean registraNuovoConfiguratore (String nickname, String password) throws SQLIntegrityConstraintViolationException, Exception {
 
         if (this.connection != null) {
-            try {
-                String insert = "INSERT into `dbingesw`.`configuratore` (`Nickname`,`Password`) VALUES ('" + nickname + "', '" + password + "')";
-                this.connection.createStatement().executeUpdate(insert);
-                CliUtente.configuratoreCorrettamenteRegistrato();
-                return true;
-            } catch (SQLIntegrityConstraintViolationException e) {
-                CliUtente.nicknameGiaInUso();
-            } catch (Exception e) {
-            e.printStackTrace();
-            CliUtente.erroreRegistrazione();
-            }
+            String insert = "INSERT into `dbingesw`.`configuratore` (`Nickname`,`Password`) VALUES ('" + nickname + "', '" + password + "')";
+            this.connection.createStatement().executeUpdate(insert);
+            return true;            
         }
         return false;
     }
@@ -82,20 +74,12 @@ public class Registratore {
      * @param password la password inserita dall'utente
      * @return lo stato della registrazione, true se è andata a buon fine, false altrimenti
      */
-    public boolean registraNuovoVolontario (String nickname, String password) {
+    public boolean registraNuovoVolontario (String nickname, String password) throws SQLIntegrityConstraintViolationException, Exception{
      
         if (this.connection != null) {
-            try {
-                String insert = "INSERT into `dbingesw`.`volontario` (`Nickname`,`Password`) VALUES ('" + nickname + "', '" + password + "')";
-                this.connection.createStatement().executeUpdate(insert);
-                CliUtente.volontarioCorrettamenteRegistrato();
-                return true;
-            } catch (SQLIntegrityConstraintViolationException e) {
-                CliUtente.nicknameGiaInUso();
-            } catch (Exception e) {
-            e.printStackTrace();
-            CliUtente.erroreRegistrazione();
-            }
+            String insert = "INSERT into `dbingesw`.`volontario` (`Nickname`,`Password`) VALUES ('" + nickname + "', '" + password + "')";
+            this.connection.createStatement().executeUpdate(insert);
+            return true;
         }
         return false;
     }
@@ -109,19 +93,11 @@ public class Registratore {
      * @param indirizzo l'inidirizzo di al massimo 45 caratteri
      * @return lo stato della registrazione, true se è andata a buon fine, false altrimenti
      */
-    public boolean registraNuovoLuogo (String nome, String descrizione, String indirizzo) {
+    public boolean registraNuovoLuogo (String nome, String descrizione, String indirizzo) throws SQLIntegrityConstraintViolationException, Exception {
         if (this.connection != null) {
-            try {
-                String insert = "INSERT into `dbingesw`.`luogo` (`Nome`,`Descrizione`, `Indirizzo`) VALUES ('" + nome + "','" + descrizione + "', '" + indirizzo + "')";
-                this.connection.createStatement().executeUpdate(insert);
-                CliUtente.LuogoCorrettamenteRegistrato();
-                return true;
-            } catch (SQLIntegrityConstraintViolationException e) {
-                CliUtente.NomeLuogoGiaInUso();
-            } catch (Exception e) {
-            e.printStackTrace();
-            CliUtente.erroreRegistrazione();
-            }
+            String insert = "INSERT into `dbingesw`.`luogo` (`Nome`,`Descrizione`, `Indirizzo`) VALUES ('" + nome + "','" + descrizione + "', '" + indirizzo + "')";
+            this.connection.createStatement().executeUpdate(insert);
+            return true;
         }
         return false;
     }
@@ -185,7 +161,8 @@ public class Registratore {
      * @return true se la registrazione è andata a buon fine, false altrimenti
      */
     public boolean registraNuovoTipoVisita(int codice, String luogo, String titolo, String descrizione, Date dataInizio, Date dataFine, 
-    Time oraInizio, int durata, boolean necessitaBiglietto, int minPartecipanti, int maxPartecipanti, String configuratore) {
+    Time oraInizio, int durata, boolean necessitaBiglietto, int minPartecipanti, int maxPartecipanti, String configuratore)
+    throws Exception {
         
         int biglietto;
         if (necessitaBiglietto) biglietto = 1;
@@ -195,57 +172,51 @@ public class Registratore {
         String oraInziosql = formatoOrarioPerSQL(oraInizio);
         
         if (this.connection != null) {
-            try {
-                String insert = "INSERT INTO `dbingesw`.`tipo di visita`" +
-                                        "(`Codice Tipo di Visita`," +
-                                        "`Punto di Incontro`," +
-                                        "`Titolo`," +
-                                        "`Descrizione`," +
-                                        "`Giorno di Inizio (periodo anno)`," + 
-                                        "`Giorno di Fine (periodo anno)`," +
-                                        "`Ora di inizio`," +
-                                        "`Durata`," +
-                                        "`Necessita Biglietto`," +
-                                        "`Min Partecipanti`," +
-                                        "`Max Partecipanti`," +
-                                        "`Configuratore referente`)" +
-                                        "VALUES" +
-                                        "("+ codice +"," +
-                                        "'" + luogo + "'," + 
-                                        "'" + titolo + "'," + 
-                                        "'" + descrizione + "'," + 
-                                        "'" + dataIniziosql + "'," + 
-                                        "'" + dataFinesql + "'," + 
-                                        "'" + oraInziosql + "'," +  
-                                        "" + durata + "," + 
-                                        "" + biglietto +"," + 
-                                        "" + minPartecipanti + "," + 
-                                        "" + maxPartecipanti + "," + 
-                                        "'" +  configuratore + "')";
-                this.connection.createStatement().executeUpdate(insert);
-                CliUtente.visitaCorrettamenteRegistrata();
-                return true;
-            } catch (Exception e) {
-            e.printStackTrace();
-            CliUtente.erroreRegistrazione();
-            }
+            String insert = "INSERT INTO `dbingesw`.`tipo di visita`" +
+                                    "(`Codice Tipo di Visita`," +
+                                    "`Punto di Incontro`," +
+                                    "`Titolo`," +
+                                    "`Descrizione`," +
+                                    "`Giorno di Inizio (periodo anno)`," + 
+                                    "`Giorno di Fine (periodo anno)`," +
+                                    "`Ora di inizio`," +
+                                    "`Durata`," +
+                                    "`Necessita Biglietto`," +
+                                    "`Min Partecipanti`," +
+                                    "`Max Partecipanti`," +
+                                    "`Configuratore referente`)" +
+                                    "VALUES" +
+                                    "("+ codice +"," +
+                                    "'" + luogo + "'," + 
+                                    "'" + titolo + "'," + 
+                                    "'" + descrizione + "'," + 
+                                    "'" + dataIniziosql + "'," + 
+                                    "'" + dataFinesql + "'," + 
+                                    "'" + oraInziosql + "'," +  
+                                    "" + durata + "," + 
+                                    "" + biglietto +"," + 
+                                    "" + minPartecipanti + "," + 
+                                    "" + maxPartecipanti + "," + 
+                                    "'" +  configuratore + "')";
+            this.connection.createStatement().executeUpdate(insert);
+            return true;
         }
         return false;
     }
 
-    public boolean associaVolontarioVisita(int codiceVisita, String volontarioSelezionato) {
+    /**
+     * Funziona per inserire le disponibilità dei volontari a uno specifico tipo di visita
+     * @param codiceVisita il codice del tipo di visita da associare
+     * @param volontarioSelezionato il nickname del volontario
+     * @return true se l'inserimento è andato a buon fine, false altrimenti
+     * @throws SQLIntegrityConstraintViolationException
+     * @throws Exception
+     */
+    public boolean associaVolontarioVisita (int codiceVisita, String volontarioSelezionato) throws SQLIntegrityConstraintViolationException, Exception {
         if (this.connection != null) {
-            try {
-                String insert = "INSERT INTO `dbingesw`.`volontari disponibili` (`Tipo di Visita`,`Volontario Nickname`) VALUES (" + codiceVisita +",'" + volontarioSelezionato +"');";
-                this.connection.createStatement().executeUpdate(insert);
-                CliUtente.volontarioCorrettamenteRegistrato();
-                return true;
-            } catch (SQLIntegrityConstraintViolationException e) {
-                CliUtente.volontarioGiaAbbinatoVisita();
-            } catch (Exception e) {
-            e.printStackTrace();
-            CliUtente.erroreRegistrazione();
-            }
+            String insert = "INSERT INTO `dbingesw`.`volontari disponibili` (`Tipo di Visita`,`Volontario Nickname`) VALUES (" + codiceVisita +",'" + volontarioSelezionato +"');";
+            this.connection.createStatement().executeUpdate(insert);
+            return true;
         }
         return false;
     }
