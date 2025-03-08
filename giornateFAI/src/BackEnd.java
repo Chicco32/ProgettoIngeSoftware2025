@@ -60,6 +60,7 @@ public class BackEnd {
                     break;
                 case 2:
                     configuratore.inserisciNuovoTipoDiVisita();
+                    break;
                 case 3:
                     configuratore.insersciVolontario();
                     break;

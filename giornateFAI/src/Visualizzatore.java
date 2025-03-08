@@ -65,9 +65,10 @@ public class Visualizzatore {
     }
 
 
-    /*
-     * Richiede al db la lista dei luoghi visitabili
-     * e le mostra all'utente
+    /**
+     * La funzione legge la lista di luoghi dalla tabella luogo e li mostra all'utente in forma tabelllare.
+     * Inoltre ritorna un arraylist con le chiavi associate a ogni luogo, ovvvero il nome dello stesso
+     * @return la lista di nomi dei luoghi visualizzati
      */
     public ArrayList<String> visualizzaLuoghiDaVisitare() {
         try {
