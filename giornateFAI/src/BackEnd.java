@@ -58,6 +58,8 @@ public class BackEnd {
                 case 1:
                     configuratore.inserisciMaxPartecipanti();
                     break;
+                case 2:
+                    configuratore.inserisciNuovoTipoDiVisita();
                 case 3:
                     configuratore.insersciVolontario();
                     break;

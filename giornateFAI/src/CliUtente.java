@@ -164,7 +164,7 @@ public class CliUtente {
         return scelta;
     }
 
-    public static void visualizzaRisulati(ResultSet results, String tabella) {
+    public static void visualizzaRisultati(ResultSet results, String tabella) {
         System.out.println("Visualizzazione dei risultati della tabella: " + tabella);
         try {
 
@@ -227,7 +227,7 @@ public class CliUtente {
         return stato;
     }
 
-    public static void menuInserimentoVolontario() {
+    public static void inserimentoVolontario() {
         CliUtente.pulisciSchermo();
         System.out.println("Configuratore, questa è la pagina per l'inserimento di nuovi volontari nel DB");
         System.out.println("Di seguito puoi riportare i dati dei volontari");
@@ -411,6 +411,33 @@ public class CliUtente {
         return null;
     }
 
+    public static String selezionaLuogo (ArrayList<String> luoghiRegistrati) {
+
+        System.out.println("Luoghi registrati:");
+        for (int i = 0; i < luoghiRegistrati.size(); i++) {
+            System.out.println((i + 1) + ". " + luoghiRegistrati.get(i));
+        }
+
+        boolean indietro = false;
+        indietro = CliUtente.tornareIndietro();
+        if (indietro) return null;
+                
+        boolean conferma = false;
+        while (!conferma) {
+            int scelta = InputDati.leggiIntero("Seleziona il numero del luogo: ", 1, luoghiRegistrati.size());
+            String luogoSelezionato = luoghiRegistrati.get(scelta - 1);
+            conferma = InputDati.yesOrNo("Hai selezionato " + luogoSelezionato + ". Confermi? ");
+            if (conferma){
+                return luogoSelezionato;
+            }
+        }
+        return null;
+    }
+
+    private static boolean tornareIndietro() {
+        return InputDati.yesOrNo("Desideri tornare indietro?");        
+    }
+        
     public static boolean aggiungiAltroLuogo () {
         boolean input = InputDati.yesOrNo("Vuoi aggiungere un ulteriore luogo?");
         CliUtente.pulisciSchermo();

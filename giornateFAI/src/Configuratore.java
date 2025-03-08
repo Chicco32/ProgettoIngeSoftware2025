@@ -42,7 +42,7 @@ public class Configuratore extends Utente {
     }
 
     public void insersciVolontario() {
-        CliUtente.menuInserimentoVolontario();
+        CliUtente.inserimentoVolontario();
         try {
             this.registratore.registraNuovoVolontario(CliUtente.chiediNickname(), CliUtente.chiediPassword());
             CliUtente.volontarioCorrettamenteRegistrato();
@@ -53,6 +53,12 @@ public class Configuratore extends Utente {
             CliUtente.erroreRegistrazione();
             e.printStackTrace();
         }
+    }
+
+    public void inserisciNuovoTipoDiVisita () {
+        ArrayList<String> luoghiDisponibili = this.visualizzatore.visualizzaLuoghiDaVisitare();
+        String luogoSelezionato = CliUtente.selezionaLuogo(luoghiDisponibili);
+        if (luogoSelezionato != null) popolaDBTipiVisite(luogoSelezionato);
     }
 
     /**
@@ -148,8 +154,8 @@ public class Configuratore extends Utente {
             altraVisita = CliUtente.aggiungiAltraVisitaLuogo();
         }
 
-
     }
+
 
     private static ArrayList<String> sanificaLista(ArrayList<String> listaVolontari) {
         // Usare un HashSet per rimuovere i duplicati
