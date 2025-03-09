@@ -135,7 +135,7 @@ public class Configuratore extends Utente {
         CliUtente.inserimentoNuovoTipoVisita();
         boolean altraVisita = true;
         while (altraVisita) {
-            int nuovoCodice = this.registratore.generaNuovaChiave(Registratore.TABELLATIPOVISITE);
+            int nuovoCodice = this.registratore.generaNuovaChiave(CostantiDB.TIPO_VISITA);
             String titolo = CliUtente.inserimentoNuovoTitolo();
             String descrizione = CliUtente.inserimentoNuovaDescrizione();
             DateRange perido = CliUtente.inserimentoPeriodoAnno();

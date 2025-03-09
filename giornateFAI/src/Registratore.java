@@ -2,6 +2,7 @@
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
@@ -20,10 +21,6 @@ public class Registratore {
     private Connection connection;
     private int maxPartecipanti;
     private String areaCompetenza;
-    public static final String TABELLATIPOVISITE = "tipo di visita";
-    public static final String TABELLAARCHIVIOVISITE = "archivio delle visite";
-    private static final String CODICETIPOVISITE = "Codice Tipo di Visita";
-    private static final String CODICEARCHIVIO = "Codice Archivio";
 
 
     public Registratore() {
@@ -82,9 +79,13 @@ public class Registratore {
     public boolean registraNuovoVolontario (String nickname, String password) throws SQLIntegrityConstraintViolationException, Exception{
      
         if (this.connection != null) {
-            String insert = "INSERT into `dbingesw`.`volontario` (`Nickname`,`Password`) VALUES ('" + nickname + "', '" + password + "')";
-            this.connection.createStatement().executeUpdate(insert);
+        String insert = "INSERT into `dbingesw`.`volontario` (`Nickname`,`Password`) VALUES (?,?)";
+        try (PreparedStatement stmt = connection.prepareStatement(insert)) {
+            stmt.setString(1, nickname);
+            stmt.setString(2, password);
+            stmt.executeUpdate();
             return true;
+            }
         }
         return false;
     }
@@ -100,9 +101,14 @@ public class Registratore {
      */
     public boolean registraNuovoLuogo (String nome, String descrizione, String indirizzo) throws SQLIntegrityConstraintViolationException, Exception {
         if (this.connection != null) {
-            String insert = "INSERT into `dbingesw`.`luogo` (`Nome`,`Descrizione`, `Indirizzo`) VALUES ('" + nome + "','" + descrizione + "', '" + indirizzo + "')";
-            this.connection.createStatement().executeUpdate(insert);
-            return true;
+            String insert = "INSERT into `dbingesw`.`luogo` (`Nome`,`Descrizione`, `Indirizzo`) VALUES (?,?,?)";
+            try (PreparedStatement stmt = connection.prepareStatement(insert)) {
+                stmt.setString(1, nome);
+                stmt.setString(2, descrizione);
+                stmt.setString(3,indirizzo);
+                stmt.executeUpdate();
+                return true;
+            }
         }
         return false;
     }
@@ -117,53 +123,67 @@ public class Registratore {
         return sdf.format(time);
     }
 
-    //conta la quantita di elementi e ritorna il numero successivo come nuova chiave primaria in modo progressivo
-    public int generaNuovaChiave(String tabella) {
+    /**
+     * Il metodo genera una nuova chiave univoca valida per la tabella selezionata. In particolare la funzione conta il numero più alto fra le chiavi e ritorna il
+     * numero progressivo successivo come numero da usare come chiave, in questa maniera permette la generazione di chiavi anche in caso di eliminazioni di righe dalla tabella. 
+     * 
+     * @param tabella la tabella da selezionare in cui generare la chiave
+     * @return un {@code int} che rappresenta il valore della chiave da inserire. In caso di tabella di tabella vuota restitutisce valore {@code 1} e in caso di errori nella generezione restituisce {@code -1}
+     */
+    public int generaNuovaChiave(CostantiDB tabella) {
 
         //il nome della colonna codici non è consistente fra le varie tabelle
-        String nomeColonna = "";
+        CostantiDB nomeColonna;
+        int nuovaChiave = -1;
         switch (tabella) {
-            case TABELLATIPOVISITE:
-                nomeColonna = CODICETIPOVISITE;
+            case TIPO_VISITA:
+                nomeColonna = CostantiDB.CHIAVE_TIPO_VISITA;
                 break;
-            case TABELLAARCHIVIOVISITE:
-                nomeColonna = CODICEARCHIVIO;
+            case CHIAVE_ARCHIVIO_VISITE:
+                nomeColonna = CostantiDB.CHIAVE_ARCHIVIO_VISITE;
+                break;
             default:
-                break;
+                return nuovaChiave;
         }
 
-        int nuovaChiave = 0;
+        ResultSet resultSet;
         if (this.connection != null) {
+            String query = "SELECT MAX(" + nomeColonna.getNome() + ") AS maxCodice FROM `dbingesw`." + tabella.getNome() + "";
             try {
-            String query = "SELECT MAX(`" + nomeColonna + "`) AS maxCodice FROM `dbingesw`.`" + tabella + "`";
-            var resultSet = this.connection.createStatement().executeQuery(query);
-            if (resultSet.next()) {
-                nuovaChiave = resultSet.getInt("maxCodice") + 1;
-            } else {
-                nuovaChiave = 1;
-            }
+                resultSet = connection.createStatement().executeQuery(query);
+                if (resultSet.next()) {
+                    nuovaChiave = resultSet.getInt("maxCodice") + 1;
+                }
             } catch (Exception e) {
-            e.printStackTrace();
+                e.printStackTrace();
+                return nuovaChiave;
             }
         }
         return nuovaChiave;
     }
 
     /**
-     * Funzione che registra un nuovo tipo di visita nel DB. 
-     * @param codice
-     * @param luogo
-     * @param titolo
-     * @param descrizione
-     * @param dataInizio
-     * @param dataFine
-     * @param oraInizio
-     * @param durata
-     * @param necessitaBiglietto
-     * @param minPartecipanti
-     * @param maxPartecipanti
-     * @param configuratore
+     * Funzione che registra un nuovo tipo di visita nel DB.
+     * La funzione richiede le funzioni aggiuntive:  
+     * <PRE>
+     *  this.formatoDataPerSQL(Date date); formatoOrarioPerSQL(Time time);
+     * </PRE>
+     * @param codice codice univoco che identifica il tipo di visita
+     * @param luogo il luogo in cui si tiene, deve essere gia registrato nella tabella luoghi
+     * @param titolo il titolo che riassume la visita
+     * @param descrizione una breve descriizione dell'evento
+     * @param dataInizio un oggetto di tipo {@code Date} che serve per rappresentare l'inzio del periodo del'evento
+     * @param dataFine  un oggetto di tipo {@code Date} che serve per rappresentare la fine del periodo del'evento
+     * @param oraInizio l'ora in cui l'evento si svolge
+     * @param durata la durata in minuti dell'evento
+     * @param necessitaBiglietto un oggetto {@code boolean} che rappreseta se la visita ha bisongo di un biglietto
+     * @param minPartecipanti il numero minino di partecipanti affinche l'evento sia effettuato
+     * @param maxPartecipanti il numero massimo di partecipanti che l'evento può ospitare
+     * @param configuratore il nickname del configuratore che ha inserito l'evento
      * @return true se la registrazione è andata a buon fine, false altrimenti
+     * 
+     * @see java.sql.Date
+     * @see java.sql.Time
      */
     public boolean registraNuovoTipoVisita(int codice, String luogo, String titolo, String descrizione, Date dataInizio, Date dataFine, 
     Time oraInizio, int durata, boolean necessitaBiglietto, int minPartecipanti, int maxPartecipanti, String configuratore)
@@ -190,21 +210,23 @@ public class Registratore {
                                     "`Min Partecipanti`," +
                                     "`Max Partecipanti`," +
                                     "`Configuratore referente`)" +
-                                    "VALUES" +
-                                    "("+ codice +"," +
-                                    "'" + luogo + "'," + 
-                                    "'" + titolo + "'," + 
-                                    "'" + descrizione + "'," + 
-                                    "'" + dataIniziosql + "'," + 
-                                    "'" + dataFinesql + "'," + 
-                                    "'" + oraInziosql + "'," +  
-                                    "" + durata + "," + 
-                                    "" + biglietto +"," + 
-                                    "" + minPartecipanti + "," + 
-                                    "" + maxPartecipanti + "," + 
-                                    "'" +  configuratore + "')";
-            this.connection.createStatement().executeUpdate(insert);
-            return true;
+                                    "VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+            try (PreparedStatement stmt = connection.prepareStatement(insert)) {
+                stmt.setInt(1, codice);
+                stmt.setString(2, luogo);
+                stmt.setString(3, titolo);
+                stmt.setString(4, descrizione);
+                stmt.setString(5, dataIniziosql);
+                stmt.setString(6, dataFinesql);
+                stmt.setString(7, oraInziosql);
+                stmt.setInt(8, durata);
+                stmt.setInt(9, biglietto);
+                stmt.setInt(10, minPartecipanti);
+                stmt.setInt(11, maxPartecipanti);
+                stmt.setString(12, configuratore);
+                stmt.executeUpdate();
+                return true;
+            }
         }
         return false;
     }
@@ -219,9 +241,13 @@ public class Registratore {
      */
     public boolean associaVolontarioVisita (int codiceVisita, String volontarioSelezionato) throws SQLIntegrityConstraintViolationException, Exception {
         if (this.connection != null) {
-            String insert = "INSERT INTO `dbingesw`.`volontari disponibili` (`Tipo di Visita`,`Volontario Nickname`) VALUES (" + codiceVisita +",'" + volontarioSelezionato +"');";
-            this.connection.createStatement().executeUpdate(insert);
-            return true;
+            String insert = "INSERT INTO `dbingesw`.`volontari disponibili` (`Tipo di Visita`,`Volontario Nickname`) VALUES (?,?);";
+            try (PreparedStatement stmt = connection.prepareStatement(insert)) {
+                stmt.setInt(1, codiceVisita);
+                stmt.setString(2, volontarioSelezionato);
+                stmt.executeUpdate();
+                return true;
+            }
         }
         return false;
     }
