@@ -2,6 +2,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -175,5 +178,103 @@ public class XMLManager {
             chiudiWriter(xmlw);
         }
     }
-
+	/**
+	 * Scrive il file XML delle date precluse del mese corrente e del successivo.
+	 * @param path il path a cui trovare il file
+	 * @param month il mese della data odierna
+	 * @param current l'array di date precluse del mese corrente
+	 * @param future l'array di date precluse del prossimo mese
+	 */
+    private static void scriviDatePrecluse(String path,int month,Date[] current, Date[] future){
+	    XMLStreamWriter wri = inizializzaWriter(path);
+	    try{
+		wri.writeStartElement("registro");
+		wri.writeStartElement("meseCorrente");
+		wri.writeCharacters(((Integer)month).toString());
+		wri.writeEndElement();
+		wri.writeStartElement("datePrecluse");
+		wri.writeCharacters("[");
+		for(int i=0;i<current.length-1;i++){
+			wri.writeCharacters(current[i].toString()+",");
+		}
+		wri.writeCharacters(current[current.length].toString()+"]");
+		wri.writeEndElement();
+		wri.writeStartElement("datePrecluseProssimoMese");
+		wri.writeCharacters("[");
+		for(int i=0;i<input.length-1;i++){
+			wri.writeCharacters(input[i].toString()+",");
+		}
+		wri.writeCharacters(input[input.length].toString()+"]");
+		wri.writeEndElement();
+		wri.writeEndElement();
+	    }catch(Exception e){
+		    System.out.println("Errore nella scrittura del log del registro delle date:");
+		    e.printStackTrace();
+	    }finally{
+		    chiudiWriter(wri);
+	    }
+    }
+    /**
+     * Funzione per la scrittura su file XML delle date precluse del mese prossimo
+     * @param path il path al file XML
+     * @param input l'array di date precluse
+     */
+    public static void scriviDatePrecluseFuture(String path, Date[] input){
+	    scriviDatePrecluse(path,Integer.parseInt(XMLManager.leggiVariabile(path, "meseCorrente")),leggiDatePrecluse(path),input);
+    }
+	/**
+	 * Funzione che legge le date precluse per il mese corrente
+	 * @param path il path al file XML da interrogare
+	 * @return l'array di date precluse del mese corrente
+	 */
+    public static Date[] leggiDatePrecluse(String path){
+	String[] aux={leggiVariabile(path,"datePrecluse")};
+	aux=aux[0].substring(1,aux[0].length()-1).split(",");
+	Date[] res=new Date[aux.length];
+	for(int i=0;i<aux.length;i++){
+		DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+		try{
+			res[i]=df.parse(aux[i]);
+		}catch(Exception e){
+			System.out.println("Errore nella lettura della data:");
+			e.printStackTrace();
+		}
+	}
+	return res;
+    }
+	/**
+	 * funzione che legge le date precluse per il prossimo mese
+	 * @param path il path al file XML da interrogare
+	 * @return l'array di date precluse del mese prossimo
+	 */
+    private static Date[] leggiDatePrecluseFuture(String path){
+	String[] aux={leggiVariabile(path,"datePrecluseProssimoMese")};
+	aux=aux[0].substring(1,aux[0].length()-1).split(",");
+	Date[] res=new Date[aux.length];
+	for(int i=0;i<aux.length;i++){
+		DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+		try{
+			res[i]=df.parse(aux[i]);
+		}catch(Exception e){
+			System.out.println("Errore nella lettura della data:");
+			e.printStackTrace();
+		}
+	}
+	return res;
+    }
+	/**
+	 * funzione che carica le date precluse del prossimo mese al mese attuale e incrementa il mese
+	 * @param path il path al file XML
+	 */
+	public static void cambioMese(String path){
+		scriviDatePrecluse(path,Integer.parseInt(XMLManager.leggiVariabile(path, "meseCorrente"))+1,leggiDatePrecluseFuture(path), new Date[0]);
+	}
+	/**
+	 * funzione che resetta gli array delle date precluse e aggiorna il mese
+	 * @param path il path al file XML
+	 * @param mese il numero del mese corrente
+	 */
+	public static void cleanDates(String path,int mese){
+		scriviDatePrecluse(path,mese,new Date[0],new Date[0]);
+	}
 }
