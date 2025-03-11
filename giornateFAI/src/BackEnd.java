@@ -1,4 +1,6 @@
+package giornateFAI;
 
+import giornateFAI.*;
 /**
  * Questa classe rappresenta il back-end del sistema, ovvero la parte che si occupa di gestire i dati e le operazioni
  * che il configuratore può fare sul sistema. Questa classe si occupa dell'interazione con l'utente e delega le operazioni

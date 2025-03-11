@@ -1,3 +1,6 @@
+package giornateFAI;
+
+import giornateFAI.*;
 import java.sql.Connection;
 
 public class Configuratore extends Utente {

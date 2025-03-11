@@ -1,3 +1,6 @@
+package giornateFAI;
+
+import giornateFAI.*;
 
 public class App {
     public static void main(String[] args) throws Exception {

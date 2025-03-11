@@ -1,3 +1,6 @@
+package giornateFAI;
+
+import giornateFAI.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -193,18 +196,22 @@ public class XMLManager {
 		wri.writeCharacters(((Integer)month).toString());
 		wri.writeEndElement();
 		wri.writeStartElement("datePrecluse");
-		wri.writeCharacters("[");
-		for(int i=0;i<current.length-1;i++){
-			wri.writeCharacters(current[i].toString()+",");
+		if(current.length!=0){
+			wri.writeCharacters("[");
+			for(int i=0;i<current.length-1;i++){
+				wri.writeCharacters(current[i].toString()+",");
+			}
+			wri.writeCharacters(current[current.length-1].toString()+"]");
 		}
-		wri.writeCharacters(current[current.length].toString()+"]");
 		wri.writeEndElement();
 		wri.writeStartElement("datePrecluseProssimoMese");
-		wri.writeCharacters("[");
-		for(int i=0;i<input.length-1;i++){
-			wri.writeCharacters(input[i].toString()+",");
+		if(future.length!=0){
+			wri.writeCharacters("[");
+			for(int i=0;i<future.length-1;i++){
+				wri.writeCharacters(future[i].toString()+",");
+			}
+			wri.writeCharacters(future[future.length-1].toString()+"]");
 		}
-		wri.writeCharacters(input[input.length].toString()+"]");
 		wri.writeEndElement();
 		wri.writeEndElement();
 	    }catch(Exception e){
@@ -229,17 +236,20 @@ public class XMLManager {
 	 */
     public static Date[] leggiDatePrecluse(String path){
 	String[] aux={leggiVariabile(path,"datePrecluse")};
-	aux=aux[0].substring(1,aux[0].length()-1).split(",");
-	Date[] res=new Date[aux.length];
-	for(int i=0;i<aux.length;i++){
-		DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
-		try{
-			res[i]=df.parse(aux[i]);
-		}catch(Exception e){
-			System.out.println("Errore nella lettura della data:");
-			e.printStackTrace();
+	Date[] res; 
+	if(!aux[0].equals("")){aux=aux[0].substring(1,aux[0].length()-1).split(",");
+		res=new Date[aux.length];
+		for(int i=0;i<aux.length;i++){
+			DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+			try{
+				res[i]=df.parse(aux[i]);
+			}catch(Exception e){
+				System.out.println("Errore nella lettura della data:");
+				e.printStackTrace();
+			}
 		}
 	}
+	res=new Date[0];
 	return res;
     }
 	/**
@@ -249,17 +259,20 @@ public class XMLManager {
 	 */
     private static Date[] leggiDatePrecluseFuture(String path){
 	String[] aux={leggiVariabile(path,"datePrecluseProssimoMese")};
-	aux=aux[0].substring(1,aux[0].length()-1).split(",");
-	Date[] res=new Date[aux.length];
-	for(int i=0;i<aux.length;i++){
-		DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
-		try{
-			res[i]=df.parse(aux[i]);
-		}catch(Exception e){
-			System.out.println("Errore nella lettura della data:");
-			e.printStackTrace();
+	Date[] res; 
+	if(!aux[0].equals("")){aux=aux[0].substring(1,aux[0].length()-1).split(",");
+		res=new Date[aux.length];
+		for(int i=0;i<aux.length;i++){
+			DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+			try{
+				res[i]=df.parse(aux[i]);
+			}catch(Exception e){
+				System.out.println("Errore nella lettura della data:");
+				e.printStackTrace();
+			}
 		}
 	}
+	res=new Date[0];
 	return res;
     }
 	/**

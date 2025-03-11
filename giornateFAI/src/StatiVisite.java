@@ -1,3 +1,7 @@
+package giornateFAI;
+
+import giornateFAI.*;
+
 public enum StatiVisite {
     PROPONIBILE,
     PROPOSTA,

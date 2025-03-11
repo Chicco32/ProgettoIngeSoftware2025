@@ -1,3 +1,6 @@
+package giornateFAI;
+
+import giornateFAI.*;
 import java.sql.ResultSet;
 
 import it.unibs.fp.mylib.InputDati;
