@@ -37,22 +37,23 @@ public class RegistroDate extends GregorianCalendar{
 			if(XMLManager.fileExists(path)){
 				if(getMonth()!=Integer.parseInt(XMLManager.leggiVariabile(path, "meseCorrente"))){
 					if(getMonth()==Integer.parseInt(XMLManager.leggiVariabile(path, "meseCorrente"))+1){
+						System.out.println("Cambio mese");
 						XMLManager.cambioMese(path);
 					}else{
+						System.out.println("Pulizia Date");
 						XMLManager.cleanDates(path,getMonth());
 					}
 				}
-				if(giornoDiConfigurazione()){
-					System.out.println("Oggi è disponibile la configurazione delle date precluse");
-				}
-				this.datePrecluse=XMLManager.leggiDatePrecluse(path);
 			}else{
 				XMLManager.cleanDates(path, getMonth());
 			}
+			if(giornoDiConfigurazione()){
+				System.out.println("Oggi è disponibile la configurazione delle date precluse");
+			}
+			this.datePrecluse=XMLManager.leggiDatePrecluse(path);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		System.out.println(this.giornoDiConfigurazione());
 	}
 	public boolean giornoDiConfigurazione(){
 		return getDay()>=16&&eLavorativo();
@@ -77,5 +78,10 @@ public class RegistroDate extends GregorianCalendar{
 	}
 	public static Date getDate(int year, int month, int day){
 		return (new GregorianCalendar(year,month,day).getTime());
+	}
+
+	public Date[] getDatePrecluse(){
+		System.out.println("Mandando date precluse in quantità di "+this.datePrecluse.length);
+		return this.datePrecluse;
 	}
 }

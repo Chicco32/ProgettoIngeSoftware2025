@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import javax.swing.text.DateFormatter;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -21,6 +22,7 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public class XMLManager {
 
+	private static final DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
     //causa problemti con il path
     public static final String pathRegistratore = "\"..\\default_data\\registratore.xml\"";
     public static final String INIZIO_LETTURA = "Inizio la lettura di %s";
@@ -189,6 +191,8 @@ public class XMLManager {
 	 * @param future l'array di date precluse del prossimo mese
 	 */
     private static void scriviDatePrecluse(String path,int month,Date[] current, Date[] future){
+	    System.out.println("Inizio Scrittura");
+	    DateFormatter form=new DateFormatter(df);
 	    XMLStreamWriter wri = inizializzaWriter(path);
 	    try{
 		wri.writeStartElement("registro");
@@ -199,18 +203,18 @@ public class XMLManager {
 		if(current.length!=0){
 			wri.writeCharacters("[");
 			for(int i=0;i<current.length-1;i++){
-				wri.writeCharacters(current[i].toString()+",");
+				wri.writeCharacters(form.valueToString(current[i])+",");
 			}
-			wri.writeCharacters(current[current.length-1].toString()+"]");
+			wri.writeCharacters(form.valueToString(current[current.length-1])+"]");
 		}
 		wri.writeEndElement();
 		wri.writeStartElement("datePrecluseProssimoMese");
 		if(future.length!=0){
 			wri.writeCharacters("[");
 			for(int i=0;i<future.length-1;i++){
-				wri.writeCharacters(future[i].toString()+",");
+				wri.writeCharacters(form.valueToString(future[i])+",");
 			}
-			wri.writeCharacters(future[future.length-1].toString()+"]");
+			wri.writeCharacters(form.valueToString(future[future.length-1])+"]");
 		}
 		wri.writeEndElement();
 		wri.writeEndElement();
@@ -220,6 +224,7 @@ public class XMLManager {
 	    }finally{
 		    chiudiWriter(wri);
 	    }
+	    System.out.println("Fine scrittura");
     }
     /**
      * Funzione per la scrittura su file XML delle date precluse del mese prossimo
@@ -240,7 +245,6 @@ public class XMLManager {
 	if(!aux[0].equals("")){aux=aux[0].substring(1,aux[0].length()-1).split(",");
 		res=new Date[aux.length];
 		for(int i=0;i<aux.length;i++){
-			DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
 			try{
 				res[i]=df.parse(aux[i]);
 			}catch(Exception e){
@@ -248,7 +252,7 @@ public class XMLManager {
 				e.printStackTrace();
 			}
 		}
-	}
+	}else
 	res=new Date[0];
 	return res;
     }
@@ -271,7 +275,7 @@ public class XMLManager {
 				e.printStackTrace();
 			}
 		}
-	}
+	}else
 	res=new Date[0];
 	return res;
     }
