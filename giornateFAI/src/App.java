@@ -20,13 +20,7 @@ public class App {
         }
         
         if (utente.isPrimoAccesso()) {
-            switch (utente.getRuolo()) {
-                case "Configuratore":
-                    ((Configuratore) utente).registrati();
-                    break;
-                default:
-                    break;
-            }
+           utente.registrati();
         }
 
         switch (utente.getRuolo()) {

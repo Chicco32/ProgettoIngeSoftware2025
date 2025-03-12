@@ -17,7 +17,7 @@ public abstract class Utente {
         this.visualizzatore = new Visualizzatore(conn);
     }
     
-    public void setRuolo(String ruolo){
+    protected void setRuolo(String ruolo){
         this.ruolo = ruolo;
     }
 
@@ -37,7 +37,7 @@ public abstract class Utente {
         return this.nickname;
     }
 
-    public void setNickname(String nickname) {
+    protected void setNickname(String nickname) {
         this.nickname = nickname;
     }
 

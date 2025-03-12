@@ -28,18 +28,18 @@ public class BackEnd {
         Configuratore configuratore = (Configuratore) this.utente;
         Boolean continua = true;
 
-        //Se è la prima volta che il configuratore accede al db dei luoghi e non ci sono dati
+        /*Se è la prima volta che il configuratore accede al db dei luoghi e non ci sono dati
+        *nel database, deve iniziare la procedura di popolamento generale del corpo dei dati
+        */
         if(configuratore.controllaDBVuoti("Luogo")) {
-            //prima chiede all'utente di inserire l'area di competenza
+
+            CliUtente.avvisoDBVuoto();
+            //prima chiede all'utente di inserire l'area di competenza e il max numero partecipanti
             configuratore.inserisciAreaCompetenza();
-            //configuratore.inserisciNuoviLuoghi();
-        }
-        
-        //Se è la prima volta che il configuratore accede al db delle visite e non ci sono dati
-        if (configuratore.controllaDBVuoti("Tipo di Visita")) {
-            //prima chiede all'utente di inserire il numero massimo di partecipanti
             configuratore.inserisciMaxPartecipanti();
-            //configuratore.inserisciNuoveVisite();
+
+            //poi gli chiede di popolare il corpo dei dati
+            configuratore.popolaDBLuoghiVisteVolontari();
         }
 
         while (continua) {
@@ -55,16 +55,25 @@ public class BackEnd {
             8. Esci"
              */
             
-            int scelta = CliUtente.menuConfiguratore();
+            int scelta = CliUtente.menuConfiguratore(configuratore.getNickname());
             switch (scelta) {
                 case 1:
-                configuratore.inserisciMaxPartecipanti();
+                    configuratore.inserisciMaxPartecipanti();
+                    break;
+                case 2:
+                    configuratore.inserisciNuovoTipoDiVisita();
+                    break;
+                case 3:
+                    configuratore.insersciVolontario();
                     break;
                 case 4:
                     configuratore.visualizzaVolontari();
                     break;
                 case 5:
                     configuratore.visualizzaLuoghiDaVisitare();
+                    break;
+                case 6:
+                    configuratore.visualizzaTipiDiVisite();
                     break;
                 case 7:
                     configuratore.chiediStatoDaVisualizzare();
