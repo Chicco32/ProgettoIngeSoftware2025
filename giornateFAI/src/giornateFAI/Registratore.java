@@ -1,9 +1,7 @@
 package giornateFAI;
 
-import giornateFAI.*;
-
 import java.sql.Connection;
-import java.sql.Date;
+import java.util.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -34,19 +32,19 @@ public class Registratore {
 		this.connection=conn;
 		try {
 			// Carica i dati di default dal file XML
-        		if (XMLManager.fileExists(XMLManager.pathRegistratore)) {
-                	this.maxPartecipanti = Integer.parseInt(XMLManager.leggiVariabile(XMLManager.pathRegistratore, "maxPartecipanti"));
+        	if (XMLManager.fileExists(XMLManager.pathRegistratore)) {
+                this.maxPartecipanti = Integer.parseInt(XMLManager.leggiVariabile(XMLManager.pathRegistratore, "maxPartecipanti"));
         		this.areaCompetenza = XMLManager.leggiVariabile(XMLManager.pathRegistratore, "areaCompetenza");
-        		}
-                	//avvia la creazione di un nuovo file default
-                	else {
-                	    XMLManager.creaFile(XMLManager.pathRegistratore);
-        		    this.areaCompetenza = null;
-        		    this.maxPartecipanti = 0;
-                	}
-            	} catch (Exception e) {
-        	    e.printStackTrace();
-    		}
+        	}
+            //avvia la creazione di un nuovo file default
+            else {
+            	XMLManager.creaFile(XMLManager.pathRegistratore);
+        	    this.areaCompetenza = null;
+    		    this.maxPartecipanti = 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+    	}
     }
 
     /**

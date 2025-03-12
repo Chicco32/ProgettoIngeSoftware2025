@@ -1,7 +1,7 @@
 package giornateFAI;
 
-import giornateFAI.*;
 import java.sql.Connection;
+import java.util.Date;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Time;
 import java.util.ArrayList;
@@ -203,7 +203,11 @@ public class Configuratore extends Utente {
                 e.printStackTrace();
             }
             altroVolontario = CliUtente.aggiungiAltroVolontarioVisita();
-        }
-
+        }        
     }
+
+    public void aggiungiDatePrecluse(RegistroDate registro) {
+        Date[] input = CliUtente.chiediDatePrecluse(registro);
+        registro.registraDatePrecluse(input);
+    } 
 }

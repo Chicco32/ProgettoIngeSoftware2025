@@ -1,12 +1,13 @@
 package giornateFAI;
 
-import giornateFAI.*;
 import java.util.GregorianCalendar;
 import java.util.Date;
 
 public class RegistroDate extends GregorianCalendar{
+
 	private Date[] datePrecluse;
 	private String path;
+
 	public RegistroDate(String path){
 		super();
 		try{
@@ -30,6 +31,8 @@ public class RegistroDate extends GregorianCalendar{
 			e.printStackTrace();
 		}
 	}
+
+	//costruttore implementato per debugging
 	public RegistroDate(String path, int year, int month, int day){
 		super(year,month,day);
 		try{
@@ -55,27 +58,40 @@ public class RegistroDate extends GregorianCalendar{
 			e.printStackTrace();
 		}
 	}
+
+	//di seguito metodi di utilità, creare classe calendairo per le loro responsablità
+
 	public boolean giornoDiConfigurazione(){
 		return getDay()>=16&&eLavorativo();
 	}
-	public boolean eLavorativo(){
+
+	private boolean eLavorativo(){
 		int today=getDOW();
-		int saturday=this.SATURDAY;
-		int sunday=this.SUNDAY;
+		int saturday=SATURDAY;
+		int sunday=SUNDAY;
 		return today!=saturday&&today!=sunday;
 	}
+
 	public void registraDatePrecluse(Date[] input){
 		XMLManager.scriviDatePrecluseFuture(this.path, input);
 	}
+
 	private int getDOW(){
-		return this.get(this.DAY_OF_WEEK);
+		return this.get(DAY_OF_WEEK);
 	}
-	private int getDay(){
-		return this.get(this.DAY_OF_MONTH);
+
+	public int getDay(){
+		return this.get(DAY_OF_MONTH);
 	}
-	private int getMonth(){
-		return this.get(this.MONTH);
+
+	public int getMonth(){
+		return this.get(MONTH);
 	}
+	
+	public int getYear() {
+		return this.get(YEAR);
+	}
+
 	public static Date getDate(int year, int month, int day){
 		return (new GregorianCalendar(year,month,day).getTime());
 	}

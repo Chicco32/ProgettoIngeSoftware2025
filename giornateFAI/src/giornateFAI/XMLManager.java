@@ -1,6 +1,5 @@
 package giornateFAI;
 
-import giornateFAI.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,8 +22,10 @@ import javax.xml.stream.XMLStreamWriter;
 public class XMLManager {
 
 	private static final DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
-    //causa problemti con il path
-    public static final String pathRegistratore = "\"..\\default_data\\registratore.xml\"";
+
+    public static final String pathRegistratore = "giornateFAI\\default_data\\registratore.xml";
+    public static final String pathDatePrecluse = "giornateFAI\\default_data\\datePrecluse.xml";
+
     public static final String INIZIO_LETTURA = "Inizio la lettura di %s";
     public static final String FINE_LETTURA = "Ho finito di leggere %s";
     public static final String INIZIO_SCRITTURA = "Inizio la scrittura di %s";
@@ -138,7 +139,7 @@ public class XMLManager {
                 switch (xmlr.getEventType()) {
                     case XMLStreamReader.START_ELEMENT:
                         if (xmlr.getLocalName().equals(tag)) {
-                            System.out.println(String.format(INIZIO_LETTURA, tag));
+                            //System.out.println(String.format(INIZIO_LETTURA, tag));
                             variabile = xmlr.getElementText();
                         }
                         break;
@@ -147,7 +148,7 @@ public class XMLManager {
                 }
                 xmlr.next();
             }
-            System.out.println(String.format(FINE_LETTURA, tag));
+            //System.out.println(String.format(FINE_LETTURA, tag));
         } catch (Exception e) {
             System.out.println("Errore nella lettura del file:");
             System.out.println(e.getMessage());
@@ -165,10 +166,11 @@ public class XMLManager {
     public static void scriviRegistratoreDefault (String areaCompetenza, int maxPartecipanti) {
         XMLStreamWriter xmlw = inizializzaWriter(pathRegistratore);
         try {
+            xmlw.writeCharacters(System.getProperty("line.separator"));
             xmlw.writeStartElement("registratore");
             xmlw.writeCharacters(System.getProperty("line.separator"));
             xmlw.writeStartElement("maxPartecipanti");
-            xmlw.writeStartElement(String.valueOf(maxPartecipanti));
+            xmlw.writeCharacters(String.valueOf(maxPartecipanti));
             xmlw.writeEndElement();
             xmlw.writeCharacters(System.getProperty("line.separator"));
             xmlw.writeStartElement("areaCompetenza");

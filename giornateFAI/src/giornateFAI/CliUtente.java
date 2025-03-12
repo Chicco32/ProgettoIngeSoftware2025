@@ -1,16 +1,18 @@
 package giornateFAI;
 
-import giornateFAI.*;
-import java.sql.Date;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.sql.ResultSet;
 import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-
+import java.util.List;
 import it.unibs.fp.mylib.InputDati;
 
 public class CliUtente {
@@ -316,17 +318,18 @@ public class CliUtente {
         System.out.println("Inserisci il periodo dell'anno:");
         do {
             try {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 String dataInizioStr = InputDati.leggiStringa("Data di inizio (yyyy-MM-dd): ");
-                dataInizio = Date.valueOf(dataInizioStr);
+                dataInizio = format.parse(dataInizioStr);
                 String dataFineStr = InputDati.leggiStringa("Data di fine (yyyy-MM-dd): ");
-                dataFine = Date.valueOf(dataFineStr);
+                dataFine = format.parse(dataFineStr);
                 //non posso invertire le date
                 if (!dataFine.after(dataInizio)) {
                     System.out.println("La data di fine non può precedere quella di inizio");
                     throw new IllegalArgumentException();
                 }
                 conferma = InputDati.yesOrNo("Confermi il periodo inserito? ");
-            } catch (IllegalArgumentException e) {
+            } catch (ParseException e) {
                 System.out.println("Formato data non valido. Riprova.");
             }
         } while (!conferma);
@@ -466,6 +469,61 @@ public class CliUtente {
 
     public static void volontarioGiaAbbinatoVisita() {
         System.out.println("Questo volontario è gia stato registrato per questo tipo di visita");
+    }
+
+    public static Date[] chiediDatePrecluse(RegistroDate calendario) {
+    List<Date> datePrecluse = new ArrayList<>();
+
+    int meseCorrente = calendario.getMonth();
+    int annoCorrente = calendario.getYear();
+
+    //controlla se si trova nei primi 15 o meno 
+    if (calendario.getDay() <= 15) {
+        meseCorrente --;
+        if (meseCorrente == -1) {
+            meseCorrente = 11;
+            annoCorrente ++;
+        }
+    }
+
+    // Calcola il mese di interesse
+    int meseRichiesto = (meseCorrente + 3) % 12;
+    int annoRichiesto = annoCorrente;
+    if (meseRichiesto < meseCorrente) {
+        annoRichiesto++; // Se il mese richiesto è gennaio dopo ottobre, incrementiamo l'anno
+    }
+
+    // Otteniamo il primo e l'ultimo giorno del mese richiesto
+    GregorianCalendar calMeseRichiesto = new GregorianCalendar(annoRichiesto, meseRichiesto, 1); 
+    Date primoGiornoMese = calMeseRichiesto.getTime();
+    //spostalo a fine del mese richiesto
+    calMeseRichiesto.add(GregorianCalendar.DATE, calMeseRichiesto.getActualMaximum(GregorianCalendar.DATE) -1 );
+    Date ultimoGiornoMese = calMeseRichiesto.getTime();
+    DateRange range = new DateRange(primoGiornoMese, ultimoGiornoMese);
+
+    System.out.println("Inserisci le date precluse per "+ (meseRichiesto + 1)  + "/" + annoRichiesto);
+    boolean continua = true;
+    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    do {
+        try {
+            String dataStr = InputDati.leggiStringa("Inserisci una data preclusa (yyyy-MM-dd) o 'fine' per terminare: ");
+            if (dataStr.equalsIgnoreCase("fine")) {
+                continua = false;
+            }
+            Date dataInserita = format.parse(dataStr);
+            if (!range.insideRange(dataInserita)) {
+                System.out.println("La data non rientra nel mese richiesto. Riprova.");
+            } else {
+                datePrecluse.add(dataInserita);
+            }
+        } catch (Exception e) {
+            System.out.println("Formato data non valido. Riprova.");
+            e.printStackTrace();
+        }
+    } while (continua);
+
+    Date[] arrayDatePrecluse = datePrecluse.toArray(new Date[0]);
+    return arrayDatePrecluse;
     }
 
 

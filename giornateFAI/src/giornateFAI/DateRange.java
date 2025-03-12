@@ -1,4 +1,6 @@
-import java.sql.Date;
+package giornateFAI;
+
+import java.util.Date;
 
 /**
  * Struttura dati per passare due date consecutive. Attenzione che alla creazione se la data successiva non è strettamente
