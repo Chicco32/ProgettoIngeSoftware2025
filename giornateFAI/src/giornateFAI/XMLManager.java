@@ -188,18 +188,17 @@ public class XMLManager {
 	/**
 	 * Scrive il file XML delle date precluse del mese corrente e del successivo.
 	 * @param path il path a cui trovare il file
-	 * @param month il mese della data odierna
-	 * @param current l'array di date precluse del mese corrente
-	 * @param future l'array di date precluse del prossimo mese
+	 * @param today la data odierna
+	 * @param current l'array di date precluse
 	 */
-    private static void scriviDatePrecluse(String path,int month,Date[] current, Date[] future){
+    public static void scriviDatePrecluse(String path,Date today,Date[] current){
 	    System.out.println("Inizio Scrittura");
 	    DateFormatter form=new DateFormatter(df);
 	    XMLStreamWriter wri = inizializzaWriter(path);
 	    try{
 		wri.writeStartElement("registro");
 		wri.writeStartElement("meseCorrente");
-		wri.writeCharacters(((Integer)month).toString());
+		wri.writeCharacters(form.valueToString(today));
 		wri.writeEndElement();
 		wri.writeStartElement("datePrecluse");
 		if(current.length!=0){
@@ -208,15 +207,6 @@ public class XMLManager {
 				wri.writeCharacters(form.valueToString(current[i])+",");
 			}
 			wri.writeCharacters(form.valueToString(current[current.length-1])+"]");
-		}
-		wri.writeEndElement();
-		wri.writeStartElement("datePrecluseProssimoMese");
-		if(future.length!=0){
-			wri.writeCharacters("[");
-			for(int i=0;i<future.length-1;i++){
-				wri.writeCharacters(form.valueToString(future[i])+",");
-			}
-			wri.writeCharacters(form.valueToString(future[future.length-1])+"]");
 		}
 		wri.writeEndElement();
 		wri.writeEndElement();
@@ -228,18 +218,10 @@ public class XMLManager {
 	    }
 	    System.out.println("Fine scrittura");
     }
-    /**
-     * Funzione per la scrittura su file XML delle date precluse del mese prossimo
-     * @param path il path al file XML
-     * @param input l'array di date precluse
-     */
-    public static void scriviDatePrecluseFuture(String path, Date[] input){
-	    scriviDatePrecluse(path,Integer.parseInt(XMLManager.leggiVariabile(path, "meseCorrente")),leggiDatePrecluse(path),input);
-    }
 	/**
 	 * Funzione che legge le date precluse per il mese corrente
 	 * @param path il path al file XML da interrogare
-	 * @return l'array di date precluse del mese corrente
+	 * @return l'array di date precluse
 	 */
     public static Date[] leggiDatePrecluse(String path){
 	String[] aux={leggiVariabile(path,"datePrecluse")};
@@ -258,42 +240,10 @@ public class XMLManager {
 	res=new Date[0];
 	return res;
     }
-	/**
-	 * funzione che legge le date precluse per il prossimo mese
-	 * @param path il path al file XML da interrogare
-	 * @return l'array di date precluse del mese prossimo
+    	/**
+	 * Funzione che resetta le date precluse
 	 */
-    private static Date[] leggiDatePrecluseFuture(String path){
-	String[] aux={leggiVariabile(path,"datePrecluseProssimoMese")};
-	Date[] res; 
-	if(!aux[0].equals("")){aux=aux[0].substring(1,aux[0].length()-1).split(",");
-		res=new Date[aux.length];
-		for(int i=0;i<aux.length;i++){
-			DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
-			try{
-				res[i]=df.parse(aux[i]);
-			}catch(Exception e){
-				System.out.println("Errore nella lettura della data:");
-				e.printStackTrace();
-			}
-		}
-	}else
-	res=new Date[0];
-	return res;
-    }
-	/**
-	 * funzione che carica le date precluse del prossimo mese al mese attuale e incrementa il mese
-	 * @param path il path al file XML
-	 */
-	public static void cambioMese(String path){
-		scriviDatePrecluse(path,Integer.parseInt(XMLManager.leggiVariabile(path, "meseCorrente"))+1,leggiDatePrecluseFuture(path), new Date[0]);
-	}
-	/**
-	 * funzione che resetta gli array delle date precluse e aggiorna il mese
-	 * @param path il path al file XML
-	 * @param mese il numero del mese corrente
-	 */
-	public static void cleanDates(String path,int mese){
-		scriviDatePrecluse(path,mese,new Date[0],new Date[0]);
+	public static void cleanDates(String path,Date data){
+		scriviDatePrecluse(path,data,new Date[0]);
 	}
 }

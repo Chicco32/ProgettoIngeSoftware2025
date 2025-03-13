@@ -2,6 +2,8 @@ package giornateFAI;
 
 import java.util.GregorianCalendar;
 import java.util.Date;
+import java.util.Arrays;
+import java.util.ArrayList;
 
 public class RegistroDate extends GregorianCalendar{
 
@@ -13,19 +15,12 @@ public class RegistroDate extends GregorianCalendar{
 		try{
 			this.path=path;
 			if(XMLManager.fileExists(path)){
-				if(getMonth()!=Integer.parseInt(XMLManager.leggiVariabile(path, "meseCorrente"))){
-					if(getMonth()==Integer.parseInt(XMLManager.leggiVariabile(path, "meseCorrente"))+1){
-						XMLManager.cambioMese(path);
-					}else{
-						XMLManager.cleanDates(path,getMonth());
-					}
-				}
 				if(giornoDiConfigurazione()){
 					System.out.println("Oggi è disponibile la configurazione delle date precluse");
 				}
 				this.datePrecluse=XMLManager.leggiDatePrecluse(path);
 			}else{
-				XMLManager.cleanDates(path, getMonth());
+				XMLManager.cleanDates(path, getTime());
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -38,22 +33,13 @@ public class RegistroDate extends GregorianCalendar{
 		try{
 			this.path=path;
 			if(XMLManager.fileExists(path)){
-				if(getMonth()!=Integer.parseInt(XMLManager.leggiVariabile(path, "meseCorrente"))){
-					if(getMonth()==Integer.parseInt(XMLManager.leggiVariabile(path, "meseCorrente"))+1){
-						System.out.println("Cambio mese");
-						XMLManager.cambioMese(path);
-					}else{
-						System.out.println("Pulizia Date");
-						XMLManager.cleanDates(path,getMonth());
-					}
+				if(giornoDiConfigurazione()){
+					System.out.println("Oggi è disponibile la configurazione delle date precluse");
 				}
+				this.datePrecluse=XMLManager.leggiDatePrecluse(path);
 			}else{
-				XMLManager.cleanDates(path, getMonth());
+				XMLManager.cleanDates(path, getTime());
 			}
-			if(giornoDiConfigurazione()){
-				System.out.println("Oggi è disponibile la configurazione delle date precluse");
-			}
-			this.datePrecluse=XMLManager.leggiDatePrecluse(path);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -73,7 +59,10 @@ public class RegistroDate extends GregorianCalendar{
 	}
 
 	public void registraDatePrecluse(Date[] input){
-		XMLManager.scriviDatePrecluseFuture(this.path, input);
+		ArrayList<Date> aux=new ArrayList<Date>(Arrays.asList(datePrecluse));
+		aux.addAll(Arrays.asList(input));
+		datePrecluse=aux.toArray(new Date[aux.size()]);
+		XMLManager.scriviDatePrecluse(this.path,getTime(), datePrecluse);
 	}
 
 	private int getDOW(){
