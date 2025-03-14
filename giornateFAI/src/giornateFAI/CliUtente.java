@@ -471,7 +471,7 @@ public class CliUtente {
         System.out.println("Questo volontario è gia stato registrato per questo tipo di visita");
     }
 
-    public static Date[] chiediDatePrecluse(RegistroDate calendario) {
+    public static Date[] chiediDatePrecluse(Calendario calendario) {
     List<Date> datePrecluse = new ArrayList<>();
 
     int meseCorrente = calendario.getMonth();
@@ -482,7 +482,7 @@ public class CliUtente {
         meseCorrente --;
         if (meseCorrente == -1) {
             meseCorrente = 11;
-            annoCorrente ++;
+            annoCorrente --;
         }
     }
 
@@ -494,7 +494,7 @@ public class CliUtente {
     }
 
     // Otteniamo il primo e l'ultimo giorno del mese richiesto
-    GregorianCalendar calMeseRichiesto = new GregorianCalendar(annoRichiesto, meseRichiesto, 1); 
+    Calendario calMeseRichiesto = new Calendario(annoRichiesto, meseRichiesto, 1); 
     Date primoGiornoMese = calMeseRichiesto.getTime();
     //spostalo a fine del mese richiesto
     calMeseRichiesto.add(GregorianCalendar.DATE, calMeseRichiesto.getActualMaximum(GregorianCalendar.DATE) -1 );

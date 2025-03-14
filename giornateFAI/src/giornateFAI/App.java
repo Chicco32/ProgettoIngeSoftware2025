@@ -23,12 +23,13 @@ public class App {
            utente.registrati();
         }
 
-        RegistroDate date = new RegistroDate(XMLManager.pathDatePrecluse, 2025, 2, 17);
+	Calendario cal=new Calendario(2025,2,17);
+        RegistroDate registro = new RegistroDate(XMLManager.pathDatePrecluse, cal);
 
         switch (utente.getRuolo()) {
             case "Configuratore":
-            if (date.giornoDiConfigurazione()) {
-                ((Configuratore) utente).aggiungiDatePrecluse(date);
+            if (cal.giornoDiConfigurazione()) {
+                ((Configuratore) utente).aggiungiDatePrecluse(cal,registro);
             }
             CliUtente.benvenutoConfiguratore();
             BackEnd backEnd = new BackEnd(utente);
