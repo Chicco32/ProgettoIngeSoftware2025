@@ -206,8 +206,9 @@ public class Configuratore extends Utente {
         }        
     }
 
-    public void aggiungiDatePrecluse(Calendario cal,RegistroDate registro) {
-        Date[] input = CliUtente.chiediDatePrecluse(cal);
+    public void aggiungiDatePrecluse(Calendario calendario,RegistroDate registro) {
+        CliUtente.avvisaGiornoConfiguraizone();
+        Date[] input = CliUtente.chiediDatePrecluse(calendario);
         registro.registraDatePrecluse(input);
     } 
 }

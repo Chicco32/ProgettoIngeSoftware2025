@@ -185,13 +185,14 @@ public class XMLManager {
             chiudiWriter(xmlw);
         }
     }
+
 	/**
 	 * Scrive il file XML delle date precluse del mese corrente e del successivo.
 	 * @param path il path a cui trovare il file
 	 * @param today la data odierna
 	 * @param current l'array di date precluse
 	 */
-    public static void scriviDatePrecluse(String path,Date today,Date[] current){
+    public static void scriviDatePrecluse(String path, Date today, Date[] current) {
 	    System.out.println("Inizio Scrittura");
 	    DateFormatter form=new DateFormatter(df);
 	    XMLStreamWriter wri = inizializzaWriter(path);
@@ -218,6 +219,7 @@ public class XMLManager {
 	    }
 	    System.out.println("Fine scrittura");
     }
+
 	/**
 	 * Funzione che legge le date precluse per il mese corrente
 	 * @param path il path al file XML da interrogare
@@ -236,13 +238,18 @@ public class XMLManager {
 				e.printStackTrace();
 			}
 		}
-	}else
-	res=new Date[0];
+	} 
+    else {
+	    res=new Date[0];
+    }
 	return res;
     }
-    	/**
-	 * Funzione che resetta le date precluse
-	 */
+
+    /**
+     * Funzione che resetta le date precluse salvate sul file
+     * @param path il percorso del file dove sono salvate le date precluse
+     * @param data la data odierna
+     */
 	public static void cleanDates(String path,Date data){
 		scriviDatePrecluse(path,data,new Date[0]);
 	}

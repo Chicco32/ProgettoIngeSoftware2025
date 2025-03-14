@@ -471,62 +471,63 @@ public class CliUtente {
         System.out.println("Questo volontario è gia stato registrato per questo tipo di visita");
     }
 
+    public static void avvisaGiornoConfiguraizone() {
+        System.out.println("Oggi è disponibile la configurazione delle date precluse");
+    }
+
     public static Date[] chiediDatePrecluse(Calendario calendario) {
-    List<Date> datePrecluse = new ArrayList<>();
+        List<Date> datePrecluse = new ArrayList<>();
 
-    int meseCorrente = calendario.getMonth();
-    int annoCorrente = calendario.getYear();
+        int meseCorrente = calendario.getMonth();
+        int annoCorrente = calendario.getYear();
 
-    //controlla se si trova nei primi 15 o meno 
-    if (calendario.getDay() <= 15) {
-        meseCorrente --;
-        if (meseCorrente == -1) {
-            meseCorrente = 11;
-            annoCorrente --;
-        }
-    }
-
-    // Calcola il mese di interesse
-    int meseRichiesto = (meseCorrente + 3) % 12;
-    int annoRichiesto = annoCorrente;
-    if (meseRichiesto < meseCorrente) {
-        annoRichiesto++; // Se il mese richiesto è gennaio dopo ottobre, incrementiamo l'anno
-    }
-
-    // Otteniamo il primo e l'ultimo giorno del mese richiesto
-    Calendario calMeseRichiesto = new Calendario(annoRichiesto, meseRichiesto, 1); 
-    Date primoGiornoMese = calMeseRichiesto.getTime();
-    //spostalo a fine del mese richiesto
-    calMeseRichiesto.add(GregorianCalendar.DATE, calMeseRichiesto.getActualMaximum(GregorianCalendar.DATE) -1 );
-    Date ultimoGiornoMese = calMeseRichiesto.getTime();
-    DateRange range = new DateRange(primoGiornoMese, ultimoGiornoMese);
-
-    System.out.println("Inserisci le date precluse per "+ (meseRichiesto + 1)  + "/" + annoRichiesto);
-    boolean continua = true;
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-    do {
-        try {
-            String dataStr = InputDati.leggiStringa("Inserisci una data preclusa (yyyy-MM-dd) o 'fine' per terminare: ");
-            if (dataStr.equalsIgnoreCase("fine")) {
-                continua = false;
+        //controlla se si trova nei primi 15 o meno 
+        if (calendario.getDay() <= 15) {
+            meseCorrente --;
+            if (meseCorrente == -1) {
+                meseCorrente = 11;
+                annoCorrente --;
             }
-            Date dataInserita = format.parse(dataStr);
-            if (!range.insideRange(dataInserita)) {
-                System.out.println("La data non rientra nel mese richiesto. Riprova.");
-            } else {
-                datePrecluse.add(dataInserita);
-            }
-        } catch (Exception e) {
-            System.out.println("Formato data non valido. Riprova.");
-            e.printStackTrace();
+        }   
+
+        // Calcola il mese di interesse
+        int meseRichiesto = (meseCorrente + 3) % 12;
+        int annoRichiesto = annoCorrente;
+        if (meseRichiesto < meseCorrente) {
+            annoRichiesto++; // Se il mese richiesto è gennaio dopo ottobre, incrementiamo l'anno
         }
-    } while (continua);
 
-    Date[] arrayDatePrecluse = datePrecluse.toArray(new Date[0]);
-    return arrayDatePrecluse;
+        // Otteniamo il primo e l'ultimo giorno del mese richiesto
+        Calendario calMeseRichiesto = new Calendario(annoRichiesto, meseRichiesto, 1); 
+        Date primoGiornoMese = calMeseRichiesto.getTime();
+        //spostalo a fine del mese richiesto
+        calMeseRichiesto.add(GregorianCalendar.DATE, calMeseRichiesto.getActualMaximum(GregorianCalendar.DATE) -1 );
+        Date ultimoGiornoMese = calMeseRichiesto.getTime();
+        DateRange range = new DateRange(primoGiornoMese, ultimoGiornoMese);
+
+        System.out.println("Inserisci le date precluse per "+ (meseRichiesto + 1)  + "/" + annoRichiesto);
+        boolean continua = true;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        do {
+            try {
+                String dataStr = InputDati.leggiStringa("Inserisci una data preclusa (yyyy-MM-dd) o 'fine' per terminare: ");
+                if (dataStr.equalsIgnoreCase("fine")) {
+                    continua = false;
+                    break;
+                }
+                Date dataInserita = format.parse(dataStr);
+                if (!range.insideRange(dataInserita)) {
+                    System.out.println("La data non rientra nel mese richiesto. Riprova.");
+                } else {
+                    datePrecluse.add(dataInserita);
+                }
+            } catch (Exception e) {
+                System.out.println("Formato data non valido. Riprova.");
+            }
+        } while (continua);
+
+        Date[] arrayDatePrecluse = datePrecluse.toArray(new Date[0]);
+        return arrayDatePrecluse;
     }
-
-
-
 
 }
