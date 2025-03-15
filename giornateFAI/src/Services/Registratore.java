@@ -1,7 +1,12 @@
-package giornateFAI;
+package Services;
 
 import java.sql.Connection;
 import java.util.Date;
+import ConfigurationFiles.ConnessioneSQL;
+import ConfigurationFiles.CostantiDB;
+import ConfigurationFiles.PercorsiFiles;
+import ConfigurationFiles.XMLConfigurator;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -12,10 +17,14 @@ import java.text.SimpleDateFormat;
  * Classe per la gestione della registrazione di un nuovi uelementi nel DB.
  * Quasi tutte le sue funzioni sono void in quanto non ritornanto nulla ma inseriscono i valori richiesti nel DB.
  * Per inserire i dati necessita di connettersi al DB con un connettore.
- * Utilizza un file XML per la memorizzazione dei dati di default.
+ * Richiede un implementazione dell'interfaccia Gestore Configurazione e in questo caso 
+ * utilizza un file XML per la memorizzazione dei dati di default ma può essere sostiuto cambiando il gestore della scrittura.
+ * I path sono salvati nella classe Percorsi files ma essendo richiesti solo in fase di creaizone possono essere modificati
  * 
- * @see XMLManager
+ * @see IGestoreFilesConfigurazione
+ * @see XMLConfigurator
  * @see ConnessioneSQL
+ * @see PercorsiFiles
  */
 public class Registratore {
 
@@ -23,22 +32,22 @@ public class Registratore {
     private int maxPartecipanti;
     private String areaCompetenza;
 
+    private IGestoreFilesConfigurazione fileManager;
 
-	public Registratore() {
-		new Registratore(ConnessioneSQL.getConnection());
-	}
+	public Registratore(String path){
 
-	public Registratore(Connection conn){
-		this.connection=conn;
+		this.connection = ConnessioneSQL.getConnection();
+        this.fileManager = new XMLConfigurator(path);
+
 		try {
-			// Carica i dati di default dal file XML
-        	if (XMLManager.fileExists(XMLManager.pathRegistratore)) {
-                this.maxPartecipanti = Integer.parseInt(XMLManager.leggiVariabile(XMLManager.pathRegistratore, "maxPartecipanti"));
-        		this.areaCompetenza = XMLManager.leggiVariabile(XMLManager.pathRegistratore, "areaCompetenza");
+			// Carica i dati di default dal file
+        	if (IGestoreFilesConfigurazione.fileExists(path)) {
+                this.maxPartecipanti = Integer.parseInt(fileManager.leggiVariabile("maxPartecipanti"));
+        		this.areaCompetenza = fileManager.leggiVariabile( "areaCompetenza");
         	}
             //avvia la creazione di un nuovo file default
             else {
-            	XMLManager.creaFile(XMLManager.pathRegistratore);
+            	IGestoreFilesConfigurazione.creaFile(path);
         	    this.areaCompetenza = null;
     		    this.maxPartecipanti = 0;
             }
@@ -256,25 +265,25 @@ public class Registratore {
     }
 
     /**
-     * Modifica l'area di competenza della società, Ogni volta che viene invocata questa funzione viene anche scritta nel file XML
+     * Modifica l'area di competenza della società, Ogni volta che viene invocata questa funzione viene anche scritta nel file
      * di default. Puo' essere modificata solo da un Configuratore.
      * Può essere invocata la prima volta per settare il primo valore  in caso non fosse ancora inserito.
      * @param areaCompetenza la nuova area di competenza in cui adopera la società che riguardeà i luoghi da inserire.
      */
     public void modificaAreaCompetenza(String areaCompetenza) {
         this.areaCompetenza = areaCompetenza;
-        XMLManager.scriviRegistratoreDefault(areaCompetenza, maxPartecipanti);
+       fileManager.scriviRegistratoreDefault(areaCompetenza, maxPartecipanti);
     }
 
     /**
-     * Modifica il max numero di partecipanti che possono essere iscritti. Ogni volta che viene invocata questa funzione viene anche scritta nel file XML
+     * Modifica il max numero di partecipanti che possono essere iscritti. Ogni volta che viene invocata questa funzione viene anche scritta nel file
      * di default. Puo' essere modificata solo da un Configuratore.
      * Può essere invocata la prima volta per settare il primo valore in caso non fosse ancora inserito.
      * @param areaCompetenza la nuova area di competenza in cui adopera la società che riguardeà i luoghi da inserire.
      */
     public void modificaMaxPartecipanti(int maxPartecipanti) {
         this.maxPartecipanti = maxPartecipanti;
-        XMLManager.scriviRegistratoreDefault(areaCompetenza, maxPartecipanti);
+        fileManager.scriviRegistratoreDefault(areaCompetenza, maxPartecipanti);
     }
 
 }   

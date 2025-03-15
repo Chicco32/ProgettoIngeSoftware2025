@@ -1,4 +1,4 @@
-package giornateFAI;
+package Services;
 
 public enum StatiVisite {
     PROPONIBILE,

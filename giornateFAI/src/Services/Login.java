@@ -1,8 +1,10 @@
-package giornateFAI;
+package Services;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import ConfigurationFiles.ConnessioneSQL;
 
 /**
  * Classe per il login, si occupa di verificare le credenziali inserite dall'utente
@@ -27,9 +29,6 @@ public class Login {
     public Login() {
         this.connection = ConnessioneSQL.getConnection();
     }
-    public Login(String url, String user, String psw){
-	    this.connection=ConnessioneSQL.getConnection(url,user,psw);
-    }
 
     /**
      * Metodo di login per il configuratore
@@ -39,36 +38,39 @@ public class Login {
      * 
      * @throws SQLException in caso di errore di connessione al database
      */
-    public Utente loginUtente(String nickname, String password) {
+    public Utente loginUtente(String nickname, String password) throws SQLException {
         
         //se entra con le credenziali di default
         if (nickname.equals(defaultNickname) && password.equals(defaultPassword)) {
-            CliUtente.loginRiuscito();
 
             //Segna che è il primo accesso
-            return new Configuratore(true,connection);
+            return new Configuratore(true, defaultNickname);
         }
 
         //se entra con le credenziali di un utente già registrato
         else if (connection != null) {
-            try {
-                String selectProva = "SELECT Nickname FROM `dbingesw`.`configuratore` WHERE Nickname = '" + nickname + "' AND Password = '" + password + "'";
-                ResultSet rs = this.connection.createStatement().executeQuery(selectProva);
-                if (rs.next()) {
-                    CliUtente.loginRiuscito();
+            
+            ResultSet rs;
 
-                    //immette l'utente nel backEnd
-                    Utente utente = new Configuratore(false,connection);
-                    utente.setNickname(nickname);
-                    return utente;
-                }
-                //se le credenziali sono sbagliate
-                else {
-                    CliUtente.credenzialiErrate();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            //Non funziona, trovare motivo
+            /*String loginQuery = "SELECT Nickname FROM `dbingesw`.`configuratore` WHERE Nickname = ? AND Password = ?;";
+            try (PreparedStatement stmt = connection.prepareStatement(loginQuery)) {
+                stmt.setString(1, nickname);
+                stmt.setString(2, password);
+                System.out.println();
+                rs = stmt.executeQuery();
+            } */
+
+            String query = "SELECT Nickname FROM `dbingesw`.`configuratore` WHERE Nickname = '" + nickname + "' AND Password = '" + password + "';";
+            rs = connection.createStatement().executeQuery(query); 
+
+            if (rs.next()) {
+                //immette l'utente nel backEnd
+                Utente utente = new Configuratore(false, nickname);
+                rs.close();
+                return utente;
             }
+            rs.close();
         }
         return null;
     }

@@ -1,31 +1,26 @@
-package giornateFAI;
+package Controller;
 
-import java.sql.Connection;
-import java.util.Date;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public class Configuratore extends Utente {
-    
-    private Registratore registratore;
+import ConfigurationFiles.CostantiDB;
+import ConfigurationFiles.PercorsiFiles;
+import Services.Configuratore;
+import Services.DateRange;
+import Services.Utente;
 
-    public Configuratore(boolean PrimoAccesso, Connection conn) {
-        super(PrimoAccesso,conn);
-        this.setRuolo("Configuratore");
-        this.registratore = new Registratore(conn);
-    }
+public class ConfiguratoreController {
 
-    public void registrati() {
+    public void registrati(Configuratore configuratore) {
         CliUtente.creaNuovoConfiguratore();
         boolean registrato = false;
         while (!registrato) {
             try {
-                // Chiede il nickname e la password finche' non vengono inseriti correttamente
-                this.setNickname(CliUtente.chiediNickname());
-                registrato = registratore.registraNuovoConfiguratore(this.getNickname(), CliUtente.chiediPassword());
+                registrato = configuratore.registrati(chiedinickname(), CliUtente.chiediPassword());
             } catch (SQLIntegrityConstraintViolationException e) {
                 CliUtente.nicknameGiaInUso();
                 e.printStackTrace();
@@ -35,10 +30,9 @@ public class Configuratore extends Utente {
             }   
         }
         CliUtente.configuratoreCorrettamenteRegistrato();
-        this.setPrimoAccesso(false);
     }
 
-    public void inserisciAreaCompetenza() {
+     public void inserisciAreaCompetenza() {
         String areaCompetenza = CliUtente.chiediAreaCompetenza();
         registratore.modificaAreaCompetenza(areaCompetenza);
     }
@@ -77,9 +71,9 @@ public class Configuratore extends Utente {
     public boolean controllaDBVuoti(String tabella) {
         try {
             switch (tabella) {
-                case "Luogo":
+                case "luogo":
                     return this.visualizzatore.DBLuoghiIsEmpty();
-                case "Tipo di Visita":
+                case "tipo di Visita":
                     return this.visualizzatore.DBTipiVisiteIsEmpty();
                 default:
                     break;
@@ -163,7 +157,6 @@ public class Configuratore extends Utente {
 
     }
 
-
     private static ArrayList<String> sanificaLista(ArrayList<String> listaVolontari) {
         // Usare un HashSet per rimuovere i duplicati
         Set<String> setVolontari = new LinkedHashSet<>(listaVolontari);
@@ -206,9 +199,13 @@ public class Configuratore extends Utente {
         }        
     }
 
-    public void aggiungiDatePrecluse(Calendario calendario,RegistroDate registro) {
+    public void aggiungiDatePrecluse() {
         CliUtente.avvisaGiornoConfiguraizone();
         Date[] input = CliUtente.chiediDatePrecluse(calendario);
-        registro.registraDatePrecluse(input);
+        registroDate.registraDatePrecluse(input);
     } 
+
+    public boolean giornoDiConfigurazione () {
+        return calendario.giornoDiConfigurazione() && !registroDate.meseGiaConfigurato(PercorsiFiles.pathDatePrecluse);
+    }
 }

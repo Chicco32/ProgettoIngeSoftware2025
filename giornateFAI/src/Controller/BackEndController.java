@@ -1,4 +1,8 @@
-package giornateFAI;
+package Controller;
+
+import Presentation.CliUtente;
+import Services.Configuratore;
+import Services.Utente;
 
 /**
  * Questa classe rappresenta il back-end del sistema, ovvero la parte che si occupa di gestire i dati e le operazioni
@@ -8,11 +12,11 @@ package giornateFAI;
  * @see Utente
  * @see Configuratore
  */
-public class BackEnd {
+public class BackEndController {
 
     private Utente utente;
 
-    public BackEnd(Utente utente) {
+    public BackEndController(Utente utente) {
         this.utente = utente;
         
     }
@@ -22,6 +26,7 @@ public class BackEnd {
      */
     public void menuConfiguratore() {
 
+        CliUtente.benvenutoConfiguratore();
         //posso fare un casting sicuro a configuratore dopo il login
         Configuratore configuratore = (Configuratore) this.utente;
         Boolean continua = true;
@@ -40,9 +45,14 @@ public class BackEnd {
             configuratore.popolaDBLuoghiVisteVolontari();
         }
 
+        //manda alla pagina di configuazione se rileva che è il giorno di configurazione
+        if (configuratore.giornoDiConfigurazione()) {
+            configuratore.aggiungiDatePrecluse();
+        }
+
         while (continua) {
             
-            /* Completamente da fare e moidifcare il menu. di seguito la lista nel cli
+            /* Di seguito la lista nel cli
             1. Modifica max numero partecipanti
             2. Introduzione nuovo tipo di visita
             3. Introduzione nuovo volontario

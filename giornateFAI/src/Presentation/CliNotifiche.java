@@ -1,0 +1,42 @@
+package Presentation;
+
+public enum CliNotifiche {
+
+    CONNESSIONE_RIUSCITA("Connessione al database riuscita, database operativo e raggiungibile"),
+    BENVENUTO("Benvenuto nel servizio di gestione delle visite guidate di GiornateFAI, per prima cosa esegui l'accesso:"),
+    BENVENUTO_CONFIGURATORE("Benvenuto! Per creare un nuovo Configuratore inserisci le seguenti informazioni:"),
+    CONFIGURATORE_CORRETTAMENTE_REGISTRATO ("Configuratore correttamente reigstrato!"),
+    VOLONTARIO_CORRETTAMENTE_REGISTRATO ("Volontario correttamente registrato"),
+    LUOGO_CORRETTAMENTE_REGISTRATO ("Luogo correttamente registrato"),
+    VISITA_CORRETTAMENTE_REGISTRATA ("Visita correttamente registrata"),
+    ERRORE_REGISTRAZIONE("Errore nella registrazione!"),
+    VOLONTARIO_CORRETTAMENTE_ASSOCIATO("Volontario correttamente associato!"),
+    CREA_PROFILO("Ti rimandiamo alla creazione del tuo profilo!"),
+    LOGIN_RIUSCITO("Login riuscito!"),
+    CREDENZIALI_ERRATE("Credenziali errate!"),
+    NICKNAME_GIA_USATO("Nickname già in uso, inseriscine un altro!"),
+    NOME_LUOGO_GIA_USATO("Questo luogo risulta gia inserito o ve nè un'altro con lo stesso nome, inseriscine un altro!"),
+    VOLONTARIO_GIA_ABBINATO_VISITA("Questo volontario è gia stato registrato per questo tipo di visita"),
+    GIORNO_CONFIGURAZIONE("Oggi è disponibile la configurazione delle date precluse"),
+    ERRORE_CONNESSIONE ("Errore nella connesisone col DB, controlla che sia acceso e che l'indirizzo sia giusto"),
+    ERRORE_DRIVER("Driver non trovato! Controlla che il driver sia correttamente installato"),
+    ERRORE_LETTURA_FILE ("Errore nella lettura del file"),
+    ERROE_CREAZIONE_FILE("Errore nella creazione del file"),
+    ERRORE_ACCESSO("Errore durante l'accesso");
+
+
+
+    private final String nome;
+    
+    private CliNotifiche(String string) {
+        this.nome = string;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public static void avvisa(CliNotifiche notifica) {
+        System.out.println(notifica.getNome());
+    }
+}

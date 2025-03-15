@@ -1,4 +1,4 @@
-package giornateFAI;
+package ConfigurationFiles;
 
 /**
  * Classe contenitore con tutti i nomi di schemi e chiavi per poter accedere ai valori corretti durante le query senza ambiguità.

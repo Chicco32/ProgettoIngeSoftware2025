@@ -1,6 +1,8 @@
-package giornateFAI;
+package Services;
 
 import java.util.Date;
+import ConfigurationFiles.XMLConfigurator;
+
 import java.util.Arrays;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -9,30 +11,30 @@ import java.util.ArrayList;
 
 /**
  * La classe per la scrittura lettura e salvataggio delle date, in particolare delle date precluse. La classe scrive le date registrate su file XML e si appoggia sul gestore per
- * la gestione dei file XML e utilizza la classe Calendario per poter ottenere info sulle date
+ * la gestione dei file XML e utilizza la classe Calendario per poter ottenere info sulle date.
+ * Si basa anch'essa sull'interfaccia dei file di configruazione per accedere ai dati dei files.
  * 
+ * @see IGestoreFilesConfigurazione
  * @see XMLManager 
  * @see Calendario
  */
 public class RegistroDate{
 
-	private static final DateFormat formatoData =new SimpleDateFormat("yyyy-MM-dd");
+	private static final DateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd");
 	private Calendario cal;
 	private Date[] datePrecluse;
-	private String path;
+	private IGestoreFilesConfigurazione fileManager;
 
-	public RegistroDate(String path,Calendario cal){
-		this.cal=cal;
-		try{
-			this.path=path;
-			if(XMLManager.fileExists(path)){
-				this.datePrecluse=XMLManager.leggiDatePrecluse(path);
-			}else{
-				XMLManager.cleanDates(path, cal.getTime());
-			}
-		}catch(Exception e){
-			CliUtente.erroreRegistrazione();
+	public RegistroDate (String path,Calendario calendario) {
+
+		this.fileManager = new XMLConfigurator(path);
+		this.cal=calendario;
+		if(IGestoreFilesConfigurazione.fileExists(path)){
+			this.datePrecluse=fileManager.leggiDatePrecluse();
+		}else{
+			fileManager.cleanDates(cal.getTime());
 		}
+
 	}
 
 	//costruttore implementato per debugging
@@ -54,23 +56,19 @@ public class RegistroDate{
 	} */
 
 	/**
-	 * Funzione che controlla se il mese salavato nel file XML corrisponde effetitvamente al mese corrente, ovvero che per il mese corrente la 
+	 * Funzione che controlla se il mese salavato nel file corrisponde effetitvamente al mese corrente, ovvero che per il mese corrente la 
 	 * configuraizone è gia avvenuta.
 	 * @param path il path in cui cercare il file XML
 	 * @return false se il mese corrente è superiore al mese registrato o se non trova il file XML, true altrimenti
 	 */
-	public boolean meseGiaConfigurato(String path) {
-		if(XMLManager.fileExists(path)){
-			String  ultimaDataStr = XMLManager.leggiVariabile(path, "meseCorrente");
-			try {
-				Date ultimaDataSalvata = formatoData.parse(ultimaDataStr);
-				int ultimoMese = new Calendario(ultimaDataSalvata).getMonth();
-				int meseOdierno = new Calendario().getMonth();
-				if (meseOdierno > ultimoMese) return false;
-				else return true;
-			} catch (ParseException e) {
-				CliUtente.erroreRegistrazione();
-			}
+	public boolean meseGiaConfigurato(String path)  throws ParseException {
+		if(IGestoreFilesConfigurazione.fileExists(path)){
+			String  ultimaDataStr = fileManager.leggiVariabile("meseCorrente");
+			Date ultimaDataSalvata = formatoData.parse(ultimaDataStr);
+			int ultimoMese = new Calendario(ultimaDataSalvata).getMonth();
+			int meseOdierno = new Calendario().getMonth();
+			if (meseOdierno > ultimoMese) return false;
+			else return true;
 		}
 		return false;
 	}
@@ -93,7 +91,7 @@ public class RegistroDate{
 		datePrecluse=aux.toArray(new Date[aux.size()]);
 
 		//mando in scrittura la lista di date aggiornata
-		XMLManager.scriviDatePrecluse(this.path,cal.getTime(), datePrecluse);
+		fileManager.scriviDatePrecluse(cal.getTime(), datePrecluse);
 	}
 
 	public Date[] getDatePrecluse(){
