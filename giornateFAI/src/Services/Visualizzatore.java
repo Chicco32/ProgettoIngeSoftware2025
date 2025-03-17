@@ -1,10 +1,12 @@
 package Services;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Map;
+
 import ConfigurationFiles.ConnessioneSQL;
 import ConfigurationFiles.Queries;
 
@@ -39,14 +41,20 @@ public class Visualizzatore {
         return null;
     }
 
-    /*
-     * Richiede al db la lista delle visite in base allo stato
-     * e le mostra all'utente
+    /**
+     * Richiede al DB di filtrare le istanze di visita in cui lo stato equivale a quello richiesto
+     * @param stato lo stato delle visite su cui filtrare
+     * @return un oggetto {@code ResulSet} con i risultati della query
+     * @throws SQLException Se lo stato inserito è uno stato invalido
      */
     public ResultSet visualizzaVisite(StatiVisite stato)  throws SQLException {
         if (connection != null) {
-            String query = "SELECT `Codice Archivio`,`Tipo di Visita`,`Volontaro Selezionato`,`Data programmata`,`Punto di Incontro`,`Titolo` FROM dbingesw.`archivio delle visite` join dbingesw.`tipo di visita` on `archivio delle visite`.`Tipo di visita` = `tipo di visita`. `Codice Tipo di Visita` WHERE `Stato Visita` = '" + StatiVisite.toString(stato) + "'";
-            return connection.createStatement().executeQuery(query);
+            String query = Queries.SELEZIONA_VISITE_ARCHIVIO.getQuery();  // Usa le parentesi graffe per chiamare la stored procedure
+            CallableStatement stmt = null;
+            stmt = connection.prepareCall(query);
+            stmt.setString(1, stato.toString());
+            return stmt.executeQuery();
+            
         }
         return null;
     }
@@ -81,7 +89,7 @@ public class Visualizzatore {
         ArrayList<String> valori = new ArrayList<>();
 
         while (results.next()) {
-            valori.add(results.getString("Nome"));
+            valori.add(results.getString(campo));
         }
         return valori;
     }

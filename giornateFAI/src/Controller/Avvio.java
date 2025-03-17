@@ -40,21 +40,16 @@ public class Avvio {
                 utente = login.loginUtente(CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_NICKNAME, CliInput.MAX_CARATTERI_NICKNAME),
                 CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_PASSWORD, CliInput.MAX_CARATTERI_PASSWORD));
             } catch (SQLException e) {
-                CliNotifiche.avvisa(CliNotifiche.ERRORE_ACCESSO);
+                CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
             }
         } while (utente == null);
 
-        if (utente.isPrimoAccesso()) {
-           utente.registrati();
-        }
+        UtenteController controller = FactoryController.associaController(utente);
 
-        switch (utente.getRuolo()) {
-            case "Configuratore":
-            BackEndController backEnd = new BackEndController(utente);
-            backEnd.menuConfiguratore();
-                break;
-            default:
-                break;
+        if (utente.isPrimoAccesso()) {
+           controller.registrati();
         }
+        
+        controller.accediSistema();
     }
 }

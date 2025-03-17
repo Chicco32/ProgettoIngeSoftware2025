@@ -41,4 +41,12 @@ public abstract class Utente {
         this.nickname = nickname;
     }
 
+    public Visualizzatore getVisualizzatore() {
+        return this.visualizzatore;
+    }
+
+    public Calendario getCalendario() {
+        return this.calendario;
+    }
+
 }

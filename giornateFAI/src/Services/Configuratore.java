@@ -13,7 +13,7 @@ public class Configuratore extends Utente {
         super(PrimoAccesso, nickname);
         this.setRuolo("Configuratore");
         this.registratore = new Registratore(PercorsiFiles.pathRegistratore);
-        this.registroDate = new RegistroDate(PercorsiFiles.pathDatePrecluse, new Calendario());
+        this.registroDate = new RegistroDate(PercorsiFiles.pathDatePrecluse, this.calendario);
     }
 
     public boolean registrati(String nickname, String password) throws SQLIntegrityConstraintViolationException, Exception {

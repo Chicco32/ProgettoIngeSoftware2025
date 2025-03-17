@@ -4,8 +4,8 @@ public enum Queries {
 
     SELEZIONA_VOLONTARI("SELECT `Tipo di Visita`,`Volontario Nickname`,`Titolo` FROM dbingesw.`volontari disponibili` join dbingesw.`Tipo di Visita` on `volontari disponibili`.`Tipo di Visita` = `Tipo di Visita`.`Codice Tipo di Visita`;"),
     SELEZIONA_LUOGHI("SELECT * FROM `dbingesw`.`luogo`"),
-    SELEZIONA_TIPI_VISITE("SELECT * FROM dbingesw.`tipo di visita`");
-
+    SELEZIONA_TIPI_VISITE("SELECT * FROM dbingesw.`tipo di visita`"),
+    SELEZIONA_VISITE_ARCHIVIO("{call GetVisite(?)}");
 
     private final String query;
     
@@ -16,4 +16,5 @@ public enum Queries {
     public String getQuery() {
         return query;
     }
+    
 }

@@ -4,13 +4,13 @@ public enum CliNotifiche {
 
     CONNESSIONE_RIUSCITA("Connessione al database riuscita, database operativo e raggiungibile"),
     BENVENUTO("Benvenuto nel servizio di gestione delle visite guidate di GiornateFAI, per prima cosa esegui l'accesso:"),
-    BENVENUTO_CONFIGURATORE("Benvenuto! Per creare un nuovo Configuratore inserisci le seguenti informazioni:"),
+    BENVENUTO_NUOVO_CONFIGURATORE("Benvenuto! Per creare un nuovo Configuratore inserisci le seguenti informazioni:"),
     CONFIGURATORE_CORRETTAMENTE_REGISTRATO ("Configuratore correttamente reigstrato!"),
     VOLONTARIO_CORRETTAMENTE_REGISTRATO ("Volontario correttamente registrato"),
     LUOGO_CORRETTAMENTE_REGISTRATO ("Luogo correttamente registrato"),
     VISITA_CORRETTAMENTE_REGISTRATA ("Visita correttamente registrata"),
     ERRORE_REGISTRAZIONE("Errore nella registrazione!"),
-    VOLONTARIO_CORRETTAMENTE_ASSOCIATO("Volontario correttamente associato!"),
+    VOLONTARIO_CORRETTAMENTE_ASSOCIATO("Volontario correttamente associato"),
     CREA_PROFILO("Ti rimandiamo alla creazione del tuo profilo!"),
     LOGIN_RIUSCITO("Login riuscito!"),
     CREDENZIALI_ERRATE("Credenziali errate!"),
@@ -22,7 +22,9 @@ public enum CliNotifiche {
     ERRORE_DRIVER("Driver non trovato! Controlla che il driver sia correttamente installato"),
     ERRORE_LETTURA_FILE ("Errore nella lettura del file"),
     ERROE_CREAZIONE_FILE("Errore nella creazione del file"),
-    ERRORE_ACCESSO("Errore durante l'accesso");
+    ERRORE_ACCESSO("Errore durante l'accesso"),
+    ERROE_INSERIMENTO("Attenzione hai inserito un valore non valido"),
+    ERRORE_QUERY("Errore durante l'inserimento della query, potrebbe essere che non ha trovato la tabella o i parametri sono errati");
 
 
 

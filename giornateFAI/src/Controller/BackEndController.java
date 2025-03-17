@@ -1,6 +1,10 @@
 package Controller;
 
-import Presentation.CliUtente;
+import java.util.HashMap;
+import java.util.Map;
+import ConfigurationFiles.Queries;
+import Presentation.CliInput;
+import Presentation.CliVisualizzazione;
 import Services.Configuratore;
 import Services.Utente;
 
@@ -14,29 +18,22 @@ import Services.Utente;
  */
 public class BackEndController {
 
-    private Utente utente;
-
-    public BackEndController(Utente utente) {
-        this.utente = utente;
-        
+    public BackEndController() {
     }
 
     /**
      * Questa funzione servirà da menu in cui il configuratore potra decidere a che opzione accedere
      */
-    public void menuConfiguratore() {
+    public void menuConfiguratore(ConfiguratoreController configuratore) {
 
-        CliUtente.benvenutoConfiguratore();
-        //posso fare un casting sicuro a configuratore dopo il login
-        Configuratore configuratore = (Configuratore) this.utente;
-        Boolean continua = true;
+        CliVisualizzazione.benvenutoBackendConfiguratore();
 
         /*Se è la prima volta che il configuratore accede al db dei luoghi e non ci sono dati
         *nel database, deve iniziare la procedura di popolamento generale del corpo dei dati
         */
-        if(configuratore.controllaDBVuoti("Luogo")) {
+        if(configuratore.controllaDBVuoti("luogo")) {
 
-            CliUtente.avvisoDBVuoto();
+            CliVisualizzazione.avvisoDBVuoto();
             //prima chiede all'utente di inserire l'area di competenza e il max numero partecipanti
             configuratore.inserisciAreaCompetenza();
             configuratore.inserisciMaxPartecipanti();
@@ -50,52 +47,32 @@ public class BackEndController {
             configuratore.aggiungiDatePrecluse();
         }
 
-        while (continua) {
-            
-            /* Di seguito la lista nel cli
-            1. Modifica max numero partecipanti
-            2. Introduzione nuovo tipo di visita
-            3. Introduzione nuovo volontario
-            4. Visualizza elenco volontari
-            5. Visualizza luoghi visitabili
-            6. Visualizza tipi di visite
-            7. Visualizza visite in archivio a seconda dello stato
-            8. Esci"
-             */
-            
-            int scelta = CliUtente.menuConfiguratore(configuratore.getNickname());
-            switch (scelta) {
-                case 1:
-                    configuratore.inserisciMaxPartecipanti();
-                    break;
-                case 2:
-                    configuratore.inserisciNuovoTipoDiVisita();
-                    break;
-                case 3:
-                    configuratore.insersciVolontario();
-                    break;
-                case 4:
-                    configuratore.visualizzaVolontari();
-                    break;
-                case 5:
-                    configuratore.visualizzaLuoghiDaVisitare();
-                    break;
-                case 6:
-                    configuratore.visualizzaTipiDiVisite();
-                    break;
-                case 7:
-                    configuratore.chiediStatoDaVisualizzare();
-                    break;
-                //per per uscire
-                case 8:
-                    continua = false;
-                    break;
-                default:
-                    continua = false;
-                    break;
-            }
+        //per nuove funzioni agigungere nuove righe
+        Map<Integer, Runnable> actions = new HashMap<>();
+        actions.put(1, configuratore::inserisciMaxPartecipanti);
+        actions.put(2, configuratore::inserisciNuovoTipoDiVisita);
+        actions.put(3, configuratore::insersciVolontario);
+        actions.put(4, () -> configuratore.visualizzaTabellaDatabase(Queries.SELEZIONA_VOLONTARI, "Volontari"));
+        actions.put(5, () -> configuratore.visualizzaTabellaDatabase(Queries.SELEZIONA_LUOGHI, "Luoghi"));
+        actions.put(6, () -> configuratore.visualizzaTabellaDatabase(Queries.SELEZIONA_TIPI_VISITE, "Tipi di visite"));
+        actions.put(7, configuratore::chiediStatoDaVisualizzare);
 
+        while (true) {
+            int scelta = CliInput.menuConfiguratore(configuratore.getModel().getNickname());
+            if (scelta > actions.size()) break;
+            actions.get(scelta).run();
         }
+
+        /* Di seguito la lista nel cli
+        1. Modifica max numero partecipanti
+        2. Introduzione nuovo tipo di visita
+        3. Introduzione nuovo volontario
+        4. Visualizza elenco volontari
+        5. Visualizza luoghi visitabili
+        6. Visualizza tipi di visite
+        7. Visualizza visite in archivio a seconda dello stato
+        8. Esci" */
+        
     }
     
 }

@@ -4,7 +4,7 @@ public enum StatiVisite {
     PROPONIBILE,
     PROPOSTA,
     COMPLETA,
-    ANNULLATA,
+    CANCELLATA,
     CONFERMATA,
     EFFETTUATA;
 
@@ -16,8 +16,8 @@ public enum StatiVisite {
                 return "proposta";
             case COMPLETA:
                 return "completa";
-            case ANNULLATA:
-                return "annullata";
+            case CANCELLATA:
+                return "cancellata";
             case CONFERMATA:
                 return "confermata";
             case EFFETTUATA:
@@ -33,8 +33,8 @@ public enum StatiVisite {
                 return PROPOSTA;
             case "Completa":
                 return COMPLETA;
-            case "Annullata":
-                return ANNULLATA;
+            case "cancellata":
+                return CANCELLATA;
             case "Confermata":
                 return CONFERMATA;
             case "Effettuata":

@@ -33,7 +33,7 @@ public class CliInput {
 
     //Interazione per chiedere una variabile di lunghezza massima nota
     public static String chiediConLunghezzaMax(String variabile, int lunghezzaMax) {
-        String nome = InputDati.leggiStringa(variabile + ": ");
+        String nome = InputDati.leggiStringaNonVuota(variabile + ": ");
         while (nome.length() > lunghezzaMax) {
             System.out.println("Valore troppo lungo, inseriscine uno più breve");
             nome = InputDati.leggiStringa(variabile + ": ");
@@ -81,17 +81,16 @@ public class CliInput {
         return scelta;
     }
 
-    public static StatiVisite chiediStatoVisita(String utente) {
-        CliVisualizzazione.barraIntestazione(utente);
+    public static StatiVisite chiediStatoVisita() {
         //cerca gli stati possibili
         StatiVisite[] stati = StatiVisite.values();
         Map<Integer, StatiVisite> statiMappa = new HashMap<>();
         //li carica nella mappa da mostrare
         for (int i = 0; i < stati.length; i++) {
             statiMappa.put(i + 1, stati[i]);
-            System.out.println((i + 1) + ". " + stati[i]);  // Stampa le opzioni dinamicamente
+            System.out.println((i + 1) + ") " + stati[i]);  // Stampa le opzioni dinamicamente
         }
-        int scelta = InputDati.leggiIntero("Inserisci il numero dello stato da visualizzare: ", 1, 5);
+        int scelta = InputDati.leggiIntero("Inserisci il numero dello stato da visualizzare: ", 1, stati.length);
         return statiMappa.getOrDefault(scelta, null);
     }
 
@@ -228,7 +227,7 @@ public class CliInput {
      * Funzione che chiede se riavviare la pagina di inserimento di un tipo di dato dipendende da un altro. 
      * In particolare il dato da rinserire è campo da aggiungere, mentre la pagina corrente è il valore da cui dipende.
      * Se il campo da aggiungere non dipende da nessun altro campo, inserire null a paginaCorrente
-     * @param campoDaAggiungere il vlaore su cui si interroga se ricominciare
+     * @param campoDaAggiungere il valore su cui si interroga se ricominciare
      * @param paginaCorrente la pagina su ci si trova ora l'utente
      * @return true se l'utente vuole inserire un altra istanza di capo da agigungere, false altrimenti
      */

@@ -7,8 +7,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import Services.StatiVisite;
-
 public class CliVisualizzazione {
 
     public static final String VARIABILE_NICKNAME = "Nickname";
@@ -41,18 +39,10 @@ public class CliVisualizzazione {
     }
 
     //Interazione di bentoranto al Configuratore
-    public static void benvenutoConfiguratore() {
+    public static void benvenutoBackendConfiguratore() {
         System.out.println("Benvenuto Configuratore! Stai per accedere al backEnd di sistema");
         CliInput.invioPerContinuare();
     }
-
-    //Intestazione della pagina di rindirizzamento per l'inserimento di un certo tipo di dato
-    public static void intestazionePaginaInserimento(String campo) {
-        CliVisualizzazione.pulisciSchermo();
-        System.out.println("Configuratore, questa è la pagina per l'inserimento di " + campo + " nel DB");
-        System.out.println("Di seguito puoi riportare i dati su " + campo);
-    }
-
 
     public static void visualizzaRisultati(ResultSet results, String tabella) {
         System.out.println("\n<========= " + tabella.toUpperCase() + " =========>");
@@ -84,10 +74,6 @@ public class CliVisualizzazione {
         CliInput.invioPerContinuare();
     }
 
-    public static void visualizzaArchivioVisite(StatiVisite stato) {
-        System.out.println("Visualizzazione delle visite con stato: " + stato);
-    }
-
     public static void avvisoDBVuoto() {
         System.out.println("Configuratore il DB deve ancora essere popolato per poter avviare l'applicazione a regime.");
         System.out.println("Verrai Reindirizzato alla pagina per la creazione del corpo dei dati");
@@ -95,12 +81,19 @@ public class CliVisualizzazione {
         pulisciSchermo();        
     }
 
+    //Intestazione della pagina di rindirizzamento per l'inserimento di un certo tipo di dato
+    public static void intestazionePaginaInserimento(String campo) {
+        CliVisualizzazione.pulisciSchermo();
+        System.out.println("Configuratore, questa è la pagina per l'inserimento di " + campo + " nel DB");
+        System.out.println("Di seguito puoi riportare i dati su " + campo);
+    }    
+
     /**
      * Avviso di rindirizzamento alla pagina di inserimento di un nuovo campo.
      * @param campo il campo su cui si viene reindirizzati per l'inserimento
      * @param paginaCorrente la pagina su cui si trova al momento l'utente
      */
-    public static void avvisoNuovoCampo(String campo, String paginaCorrente) {
+    public static void avvisaReindirizzamentoNuovoCampo(String campo, String paginaCorrente) {
         System.out.println("Configuratore, per ogni nuovo " + paginaCorrente + " bisogna associare almeno un " + campo + ", verrai rindirizzato alla pagina per la registrazione"); 
         CliInput.invioPerContinuare();
         pulisciSchermo(); 

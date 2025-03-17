@@ -1,7 +1,7 @@
-package Services;
+package Controller;
 import java.util.List;
 
-public interface IDAObject {
+public interface IDTObject {
 
     /**
      * Permette di ottenere una lista con tutti gli attributi
