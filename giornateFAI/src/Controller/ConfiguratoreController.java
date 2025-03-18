@@ -11,6 +11,7 @@ import java.util.Set;
 import ConfigurationFiles.CostantiDB;
 import ConfigurationFiles.PercorsiFiles;
 import ConfigurationFiles.Queries;
+import ConfigurationFiles.VisualizzatoreSQL;
 import Presentation.CliInput;
 import Presentation.CliNotifiche;
 import Presentation.CliVisualizzazione;
@@ -19,7 +20,6 @@ import Services.Configuratore;
 import Services.DateRange;
 import Services.RegistroDate;
 import Services.StatiVisite;
-import Services.Visualizzatore;
 
 public class ConfiguratoreController implements UtenteController {
 
@@ -94,7 +94,7 @@ public class ConfiguratoreController implements UtenteController {
         //Chiede la lista di nomi dei luoghi possibile su cui inserire la visita
         ArrayList<String> luoghiDisponibili = new ArrayList<>();
         String luogoSelezionato = null;
-        Visualizzatore aux = model.getVisualizzatore();
+        VisualizzatoreSQL aux = model.getVisualizzatore();
         try {
             luoghiDisponibili = aux.estraiColonna(
                 aux.visualizzaTabella(Queries.SELEZIONA_LUOGHI.getQuery()), "Nome");
@@ -212,7 +212,7 @@ public class ConfiguratoreController implements UtenteController {
         while (altroVolontario) {
             //pagina per i volontari, prima mostra quelli gia registrati e chiede di sceglierne uno
             ArrayList <String> volontariRegistrati = new ArrayList<>();
-            Visualizzatore aux = model.getVisualizzatore();
+            VisualizzatoreSQL aux = model.getVisualizzatore();
             
             try {
                 volontariRegistrati = aux.estraiColonna(

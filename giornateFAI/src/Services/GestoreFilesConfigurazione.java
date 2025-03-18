@@ -8,7 +8,7 @@ import java.util.Date;
  * Questa inerfaccia dovrebbe essere implementata da un gestore di lettura e scrittura di dati per poter permettere
  * l'accesso persistente alle impostazioni di configurazione del programma. 
  */
-public interface IGestoreFilesConfigurazione {
+public interface GestoreFilesConfigurazione {
 
     /**
      * Controlla se un file esiste

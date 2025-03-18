@@ -2,17 +2,18 @@ package Services;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import ConfigurationFiles.PercorsiFiles;
+import ConfigurationFiles.RegistratoreSQL;
 
 
 public class Configuratore extends Utente {
     
-    private Registratore registratore;
+    private RegistratoreSQL registratore;
     private RegistroDate registroDate;
 
     public Configuratore(boolean PrimoAccesso, String nickname) {
         super(PrimoAccesso, nickname);
         this.setRuolo("Configuratore");
-        this.registratore = new Registratore(PercorsiFiles.pathRegistratore);
+        this.registratore = new RegistratoreSQL(PercorsiFiles.pathRegistratore);
         this.registroDate = new RegistroDate(PercorsiFiles.pathDatePrecluse, this.calendario);
     }
 
@@ -25,7 +26,7 @@ public class Configuratore extends Utente {
         return registrato; 
     }
 
-    public Registratore getRegistratore() {
+    public RegistratoreSQL getRegistratore() {
         return this.registratore;
     }
 

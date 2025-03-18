@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.text.DateFormatter;
 
-import Services.IGestoreFilesConfigurazione;
+import Services.GestoreFilesConfigurazione;
 
 /**
  * Classe implementativa di XmlManager specifica per questo programma. Esso cerca i file di configuraizone richiesti e li mostra all'applicazione.
@@ -13,9 +13,9 @@ import Services.IGestoreFilesConfigurazione;
  * oggetti di lettura e scrittura xml forniti da XMLManagare
  * 
  * @see XMLManager
- * @see IGestoreFilesConfigurazione
+ * @see GestoreFilesConfigurazione
  */
-public class XMLConfigurator extends XMLManager implements IGestoreFilesConfigurazione {
+public class XMLConfigurator extends XMLManager implements GestoreFilesConfigurazione {
 
     private static final DateFormat formatoData=new SimpleDateFormat("yyyy-MM-dd");
 

@@ -4,14 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import Controller.IDTObject;
-
 /**
  * Classe che implementa il DAO per poter raggruppare e passare in maniera veloce tutti gli attributi di una particolare tupla estratta.
  * 
- * @see IDTObject
+ * @see DTObject
  */
-public class Tupla implements IDTObject {
+public class Tupla implements DTObject {
 
     //alcuni formati di campi gia fatti per questa applicazione, comunque si possono inserire anche formati personalizzati
     public static final String[] FORMATO_UTENTE = {"Nickname", "Password"};

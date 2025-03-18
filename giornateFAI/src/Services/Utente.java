@@ -1,11 +1,13 @@
 package Services;
 
+import ConfigurationFiles.VisualizzatoreSQL;
+
 public abstract class Utente {
 
     private String ruolo; //Configuratore, Fruitore o Volontario
     private String nickname;
     private Boolean PrimoAccesso;
-    protected Visualizzatore visualizzatore;
+    protected VisualizzatoreSQL visualizzatore;
     protected Calendario calendario;
     
 
@@ -14,7 +16,7 @@ public abstract class Utente {
         this.calendario = new Calendario(); 
         this.PrimoAccesso = PrimoAccesso;
         this.nickname = nickname;
-        this.visualizzatore = new Visualizzatore();
+        this.visualizzatore = new VisualizzatoreSQL();
     }
     
     protected void setRuolo(String ruolo){
@@ -41,7 +43,7 @@ public abstract class Utente {
         this.nickname = nickname;
     }
 
-    public Visualizzatore getVisualizzatore() {
+    public VisualizzatoreSQL getVisualizzatore() {
         return this.visualizzatore;
     }
 

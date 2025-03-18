@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * la gestione dei file XML e utilizza la classe Calendario per poter ottenere info sulle date.
  * Si basa anch'essa sull'interfaccia dei file di configruazione per accedere ai dati dei files.
  * 
- * @see IGestoreFilesConfigurazione
+ * @see GestoreFilesConfigurazione
  * @see XMLManager 
  * @see Calendario
  */
@@ -23,13 +23,13 @@ public class RegistroDate{
 	private static final DateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd");
 	private Calendario cal;
 	private Date[] datePrecluse;
-	private IGestoreFilesConfigurazione fileManager;
+	private GestoreFilesConfigurazione fileManager;
 
 	public RegistroDate (String path,Calendario calendario) {
 
 		this.fileManager = new XMLConfigurator(path);
 		this.cal=calendario;
-		if(IGestoreFilesConfigurazione.fileExists(path)){
+		if(GestoreFilesConfigurazione.fileExists(path)){
 			this.datePrecluse=fileManager.leggiDatePrecluse();
 		}else{
 			fileManager.cleanDates(cal.getTime());
@@ -62,7 +62,7 @@ public class RegistroDate{
 	 * @return false se il mese corrente è superiore al mese registrato o se non trova il file XML, true altrimenti
 	 */
 	public boolean meseGiaConfigurato(String path)  throws ParseException {
-		if(IGestoreFilesConfigurazione.fileExists(path)){
+		if(GestoreFilesConfigurazione.fileExists(path)){
 			String  ultimaDataStr = fileManager.leggiVariabile("meseCorrente");
 			Date ultimaDataSalvata = formatoData.parse(ultimaDataStr);
 			int ultimoMese = new Calendario(ultimaDataSalvata).getMonth();
