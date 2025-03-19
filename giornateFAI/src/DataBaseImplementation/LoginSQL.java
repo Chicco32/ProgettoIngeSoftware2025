@@ -5,7 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import ServicesAPI.Configuratore;
 import ServicesAPI.Login;
-import ServicesAPI.RegistroDate;
+import ServicesAPI.RegistroDatePrecluse;
 import ServicesAPI.Utente;
 
 /**
@@ -41,13 +41,13 @@ public class LoginSQL implements Login {
             //preparo le istanze concrete degli strumenti che l'API offre all'applicazione 
             VisualizzatoreSQL visualizzatore = new VisualizzatoreSQL();
             RegistratoreSQL registratore = new RegistratoreSQL(PercorsiFiles.pathRegistratore);
-            RegistroDate registroDate = new RegistroDate(new XMLConfigurator(PercorsiFiles.pathDatePrecluse));
+            RegistroDatePrecluse registroDatePrecluse = new RegistroDatePrecluse(new XMLDatePrecluse(PercorsiFiles.pathDatePrecluse));
             
             //se entra con le credenziali di default
             if (nickname.equals(defaultNickname) && password.equals(defaultPassword)) {
 
                 //Segna che è il primo accesso e istanzia il configuratore
-                return new Configuratore(true, defaultNickname, visualizzatore, registratore, registroDate);
+                return new Configuratore(true, defaultNickname, visualizzatore, registratore, registroDatePrecluse);
             }
 
             //se entra con le credenziali di un utente già registrato
@@ -67,7 +67,7 @@ public class LoginSQL implements Login {
 
             if (rs.next()) {
                 //immette l'utente nel backEnd
-                Utente utente = new Configuratore(false, nickname, visualizzatore, registratore, registroDate);
+                Utente utente = new Configuratore(false, nickname, visualizzatore, registratore, registroDatePrecluse);
                 rs.close();
                 return utente;
             }

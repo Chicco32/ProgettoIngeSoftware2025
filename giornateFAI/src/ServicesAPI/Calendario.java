@@ -55,7 +55,7 @@ public class Calendario extends GregorianCalendar{
 	 * Questo perchè le attività decritte anche nel diagramma richiedono l'esecuzione dal primo giorno utile dopo il 16 del mese i.
 	 * @return true se è passato il giorno di configurazione e la giornata odierna è lavorativa
 	 */
-	public boolean giornoDiConfigurazione(){
+	public boolean aperturaGiornoDiConfigurazione(){
 		return getDay()>=16&&eLavorativo();
 	}
 

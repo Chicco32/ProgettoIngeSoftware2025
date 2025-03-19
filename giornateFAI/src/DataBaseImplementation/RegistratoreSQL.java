@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import ServicesAPI.DTObject;
+import ServicesAPI.GestoreConfigurazioneRegistratore;
 import ServicesAPI.GestoreFilesConfigurazione;
 import ServicesAPI.Registratore;
 
@@ -44,7 +45,7 @@ public class RegistratoreSQL implements Registratore{
     private int maxPartecipanti;
     private String areaCompetenza;
 
-    private GestoreFilesConfigurazione fileManager;
+    private GestoreConfigurazioneRegistratore fileManager;
 
     public RegistratoreSQL(String path){
         this.connection = ConnessioneSQL.getConnection();

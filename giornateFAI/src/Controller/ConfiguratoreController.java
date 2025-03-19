@@ -1,7 +1,7 @@
 package Controller;
 
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.text.ParseException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
@@ -9,18 +9,15 @@ import java.util.List;
 import java.util.Set;
 
 import DataBaseImplementation.CostantiDB;
-import DataBaseImplementation.PercorsiFiles;
 import DataBaseImplementation.Queries;
 import DataBaseImplementation.Tupla;
 import Presentation.CliInput;
 import Presentation.CliNotifiche;
 import Presentation.CliVisualizzazione;
-import ServicesAPI.Calendario;
 import ServicesAPI.CoerenzaException;
 import ServicesAPI.Configuratore;
 import ServicesAPI.DTObject;
 import ServicesAPI.DateRange;
-import ServicesAPI.RegistroDate;
 import ServicesAPI.StatiVisite;
 import ServicesAPI.Visualizzatore;
 
@@ -255,15 +252,13 @@ public class ConfiguratoreController implements UtenteController {
     public void aggiungiDatePrecluse() {
         CliNotifiche.avvisa(CliNotifiche.GIORNO_CONFIGURAZIONE);
         Date[] input = CliInput.chiediDatePrecluse(model.getCalendario());
-        model.getRegistroDate().registraDatePrecluse(input);
+        model.getRegistroDatePrecluse().registraDatePrecluse(input);
     } 
 
     public boolean giornoDiConfigurazione () {
-        Calendario aux = model.getCalendario();
-        RegistroDate auy = model.getRegistroDate();
         try {
-            return aux.giornoDiConfigurazione() && !auy.meseGiaConfigurato(PercorsiFiles.pathDatePrecluse);
-        } catch (ParseException e) {
+            return model.getRegistroDatePrecluse().giornoDiConfigurazione();
+        } catch (Exception e) {
             CliNotifiche.avvisa(CliNotifiche.ERROE_CREAZIONE_FILE);
         }
         return true;

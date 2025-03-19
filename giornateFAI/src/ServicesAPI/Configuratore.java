@@ -3,7 +3,7 @@ package ServicesAPI;
 public class Configuratore extends Utente {
     
     private Registratore registratore;
-    private RegistroDate registroDate;
+    private RegistroDatePrecluse datePrecluse;
 
     /**
      * Crea un nuovo utente di tipo configuratore. Il configuratore ha piu permessi rispoetto all'utente normale in quanto
@@ -15,11 +15,11 @@ public class Configuratore extends Utente {
      * @param pathRegistratore il percorso in cui trovare i file di configurazione 
      * @param pathDatePrecluse il percorso in cui trovare il file con le date precluse
      */
-    public Configuratore(boolean PrimoAccesso, String nickname, Visualizzatore visualizzatore, Registratore registratore,RegistroDate registroDate) {
+    public Configuratore(boolean PrimoAccesso, String nickname, Visualizzatore visualizzatore, Registratore registratore, RegistroDatePrecluse datePrecluse) {
         super(PrimoAccesso, nickname, visualizzatore);
         this.setRuolo("Configuratore");
         this.registratore = registratore;
-        this.registroDate = registroDate;
+        this.datePrecluse = datePrecluse;
     }
 
     public boolean registrati(DTObject dati) throws Exception {
@@ -36,8 +36,8 @@ public class Configuratore extends Utente {
         return this.registratore;
     }
 
-    public RegistroDate getRegistroDate() {
-        return this.registroDate;
+    public RegistroDatePrecluse getRegistroDatePrecluse() {
+        return this.datePrecluse;
     }
 
 }

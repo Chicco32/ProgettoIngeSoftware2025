@@ -1,14 +1,13 @@
 package ServicesAPI;
 
 import java.io.File;
-import java.util.Date;
 
 /**
  * Interfaccia per la gestione delle impostazioni di Configurazione.
  * Questa inerfaccia dovrebbe essere implementata da un gestore di lettura e scrittura di dati per poter permettere
  * l'accesso persistente alle impostazioni di configurazione del programma. 
  */
-public interface GestoreFilesConfigurazione {
+public abstract interface GestoreFilesConfigurazione {
 
     /**
      * Controlla se un file esiste
@@ -44,31 +43,5 @@ public interface GestoreFilesConfigurazione {
      * @return Il valore della variabile letta nel file
      */
     public String leggiVariabile (String tag);
-
-    /**
-     * Scrive il file di default del registratore con i valori inseriti.
-     * @param maxPartecipanti il numero massimo di partecipanti che lo stesso Fruitore può inserire
-     * @param areaCompetenza l'area geografica di competenza della società
-     */
-    public void scriviRegistratoreDefault(String areaCompetenza, int maxPartecipanti);
-
-    /**
-	 * Scrive il file delle date precluse del mese corrente e del successivo.
-	 * @param today la data odierna
-	 * @param current l'array di date precluse
-	 */
-    public void scriviDatePrecluse(Date today, Date[] current);
-
-    /**
-	 * Funzione che legge le date precluse per il mese corrente
-	 * @return l'array di date precluse
-	 */
-    public Date[] leggiDatePrecluse();
-
-    /**
-     * Funzione che resetta le date precluse salvate sul file
-     * @param data la data odierna
-     */
-	public void cleanDates(Date data);
 
 }
