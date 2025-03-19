@@ -23,7 +23,7 @@ public class App {
            utente.registrati();
         }
 
-	    Calendario calendario = new Calendario(2025, 2, 20);
+	    Calendario calendario = new Calendario();
         RegistroDate registro = new RegistroDate(XMLManager.pathDatePrecluse, calendario);
 
         switch (utente.getRuolo()) {
