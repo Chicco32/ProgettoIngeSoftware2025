@@ -1,13 +1,14 @@
 package Controller;
 
 import java.sql.Connection;
-import ConfigurationFiles.ConnessioneSQL;
-import ConfigurationFiles.LoginSQL;
+
+import DataBaseImplementation.ConnessioneSQL;
+import DataBaseImplementation.LoginSQL;
 import Presentation.CliInput;
 import Presentation.CliNotifiche;
 import Presentation.CliVisualizzazione;
-import Services.Utente;
-import Services.Login;
+import ServicesAPI.Login;
+import ServicesAPI.Utente;
 
 public class Avvio {
 

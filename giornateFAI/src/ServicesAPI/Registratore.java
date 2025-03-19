@@ -1,6 +1,4 @@
-package Services;
-
-import ConfigurationFiles.CostantiDB;
+package ServicesAPI;
 
 public interface Registratore {
 
@@ -45,7 +43,7 @@ public interface Registratore {
      * @return un {@code int} che rappresenta il valore della chiave da inserire. In caso di tabella di tabella vuota restitutisce valore {@code 1} e in caso di errori nella generezione restituisce {@code -1}
      */
     //inserire il throws
-    public int generaNuovaChiave(CostantiDB tabella);
+    public int generaNuovaChiave(String tabella);
 
     /**
      * Funzione che registra un nuovo tipo di visita nel DB.

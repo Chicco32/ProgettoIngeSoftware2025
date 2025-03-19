@@ -1,10 +1,10 @@
-package ConfigurationFiles;
+package DataBaseImplementation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import Services.DTObject;
+import ServicesAPI.DTObject;
 
 /**
  * Classe che implementa il DAO per poter raggruppare e passare in maniera veloce tutti gli attributi di una particolare tupla estratta.

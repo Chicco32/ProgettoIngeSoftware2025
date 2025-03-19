@@ -1,4 +1,4 @@
-package ConfigurationFiles;
+package DataBaseImplementation;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -16,7 +16,7 @@ import javax.xml.stream.XMLStreamWriter;
  */
 public class XMLManager{
 
-    private String path;
+    protected String path;
     protected XMLStreamReader xmlr;
     protected XMLStreamWriter xmlw;
 

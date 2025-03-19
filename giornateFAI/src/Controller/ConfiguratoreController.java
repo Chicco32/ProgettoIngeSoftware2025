@@ -7,21 +7,22 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import ConfigurationFiles.CostantiDB;
-import ConfigurationFiles.PercorsiFiles;
-import ConfigurationFiles.Queries;
-import ConfigurationFiles.Tupla;
+
+import DataBaseImplementation.CostantiDB;
+import DataBaseImplementation.PercorsiFiles;
+import DataBaseImplementation.Queries;
+import DataBaseImplementation.Tupla;
 import Presentation.CliInput;
 import Presentation.CliNotifiche;
 import Presentation.CliVisualizzazione;
-import Services.Calendario;
-import Services.CoerenzaException;
-import Services.Configuratore;
-import Services.DTObject;
-import Services.DateRange;
-import Services.RegistroDate;
-import Services.StatiVisite;
-import Services.Visualizzatore;
+import ServicesAPI.Calendario;
+import ServicesAPI.CoerenzaException;
+import ServicesAPI.Configuratore;
+import ServicesAPI.DTObject;
+import ServicesAPI.DateRange;
+import ServicesAPI.RegistroDate;
+import ServicesAPI.StatiVisite;
+import ServicesAPI.Visualizzatore;
 
 public class ConfiguratoreController implements UtenteController {
 
@@ -185,7 +186,7 @@ public class ConfiguratoreController implements UtenteController {
             
             
             DTObject data = new Tupla("Tipo visita", Tupla.FORMATO_TIPO_VISITA);
-            int nuovoCodice = model.getRegistratore().generaNuovaChiave(CostantiDB.TIPO_VISITA);
+            int nuovoCodice = model.getRegistratore().generaNuovaChiave(CostantiDB.TIPO_VISITA.getNome());
             data.impostaValore(nuovoCodice, "Codice Tipo di Visita");
             data.impostaValore(nomeLuogo, "Punto di Incontro");
             data.impostaValore( CliInput.chiediConConferma(CliVisualizzazione.VARIABILE_TITOLO), "Titolo");

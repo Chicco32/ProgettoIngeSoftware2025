@@ -1,4 +1,4 @@
-package Services;
+package ServicesAPI;
 
 import java.io.File;
 import java.util.Date;
@@ -32,6 +32,8 @@ public interface GestoreFilesConfigurazione {
             System.out.println(e.getMessage());
         }
     }
+
+    public String getPath();
 
     /**
      * Legge una variabile da un file sapendone il tag associato.

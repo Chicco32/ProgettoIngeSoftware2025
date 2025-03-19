@@ -1,4 +1,4 @@
-package Services;
+package ServicesAPI;
 
 public class CoerenzaException extends Exception {
     public CoerenzaException(String message, Throwable cause) {

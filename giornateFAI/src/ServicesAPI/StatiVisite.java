@@ -1,4 +1,4 @@
-package Services;
+package ServicesAPI;
 
 public enum StatiVisite {
     PROPONIBILE,

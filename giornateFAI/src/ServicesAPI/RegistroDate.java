@@ -1,8 +1,6 @@
-package Services;
+package ServicesAPI;
 
 import java.util.Date;
-import ConfigurationFiles.XMLConfigurator;
-
 import java.util.Arrays;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -25,10 +23,11 @@ public class RegistroDate{
 	private Date[] datePrecluse;
 	private GestoreFilesConfigurazione fileManager;
 
-	public RegistroDate (String path,Calendario calendario) {
+	public RegistroDate (GestoreFilesConfigurazione fileManager) {
 
-		this.fileManager = new XMLConfigurator(path);
-		this.cal=calendario;
+		String path = fileManager.getPath();
+		this.fileManager = fileManager;
+		this.cal=new Calendario();
 		if(GestoreFilesConfigurazione.fileExists(path)){
 			this.datePrecluse=fileManager.leggiDatePrecluse();
 		}else{

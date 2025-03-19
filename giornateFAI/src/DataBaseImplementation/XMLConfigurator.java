@@ -1,11 +1,11 @@
-package ConfigurationFiles;
+package DataBaseImplementation;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.text.DateFormatter;
 
-import Services.GestoreFilesConfigurazione;
+import ServicesAPI.GestoreFilesConfigurazione;
 
 /**
  * Classe implementativa di XmlManager specifica per questo programma. Esso cerca i file di configuraizone richiesti e li mostra all'applicazione.
@@ -95,6 +95,11 @@ public class XMLConfigurator extends XMLManager implements GestoreFilesConfigura
 
 	public void cleanDates(Date data){
 		scriviDatePrecluse(data,new Date[0]);
+	}
+
+	@Override
+	public String getPath() {
+		return this.path;
 	}
 
 }

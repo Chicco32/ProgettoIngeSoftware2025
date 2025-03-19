@@ -2,11 +2,12 @@ package Controller;
 
 import java.util.HashMap;
 import java.util.Map;
-import ConfigurationFiles.Queries;
+
+import DataBaseImplementation.Queries;
 import Presentation.CliInput;
 import Presentation.CliVisualizzazione;
-import Services.Configuratore;
-import Services.Utente;
+import ServicesAPI.Configuratore;
+import ServicesAPI.Utente;
 
 /**
  * Questa classe rappresenta il back-end del sistema, ovvero la parte che si occupa di gestire i dati e le operazioni

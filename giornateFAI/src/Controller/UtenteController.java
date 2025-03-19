@@ -1,6 +1,6 @@
 package Controller;
 
-import Services.Utente;
+import ServicesAPI.Utente;
 
 public interface UtenteController {
 

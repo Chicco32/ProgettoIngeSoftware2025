@@ -1,12 +1,12 @@
-package ConfigurationFiles;
+package DataBaseImplementation;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import Services.Configuratore;
-import Services.Login;
-import Services.Utente;
+import ServicesAPI.Configuratore;
+import ServicesAPI.Login;
+import ServicesAPI.RegistroDate;
+import ServicesAPI.Utente;
 
 /**
  * Classe per il login, si occupa di verificare le credenziali inserite dall'utente
@@ -35,17 +35,22 @@ public class LoginSQL implements Login {
 
 
     public Utente loginUtente(String nickname, String password) throws SQLException {
-        
-        //se entra con le credenziali di default
-        if (nickname.equals(defaultNickname) && password.equals(defaultPassword)) {
+    
+        if (connection != null) {
 
-            //Segna che è il primo accesso
-            return new Configuratore(true, defaultNickname);
-        }
-
-        //se entra con le credenziali di un utente già registrato
-        else if (connection != null) {
+            //preparo le istanze concrete degli strumenti che l'API offre all'applicazione 
+            VisualizzatoreSQL visualizzatore = new VisualizzatoreSQL();
+            RegistratoreSQL registratore = new RegistratoreSQL(PercorsiFiles.pathRegistratore);
+            RegistroDate registroDate = new RegistroDate(new XMLConfigurator(PercorsiFiles.pathDatePrecluse));
             
+            //se entra con le credenziali di default
+            if (nickname.equals(defaultNickname) && password.equals(defaultPassword)) {
+
+                //Segna che è il primo accesso e istanzia il configuratore
+                return new Configuratore(true, defaultNickname, visualizzatore, registratore, registroDate);
+            }
+
+            //se entra con le credenziali di un utente già registrato
             ResultSet rs;
 
             //Non funziona, trovare motivo
@@ -62,7 +67,7 @@ public class LoginSQL implements Login {
 
             if (rs.next()) {
                 //immette l'utente nel backEnd
-                Utente utente = new Configuratore(false, nickname);
+                Utente utente = new Configuratore(false, nickname, visualizzatore, registratore, registroDate);
                 rs.close();
                 return utente;
             }

@@ -1,18 +1,19 @@
-package ConfigurationFiles;
+package DataBaseImplementation;
 
 import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import ServicesAPI.DTObject;
+import ServicesAPI.GestoreFilesConfigurazione;
+import ServicesAPI.Registratore;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
-
-import Services.DTObject;
-import Services.GestoreFilesConfigurazione;
-import Services.Registratore;
 
 /**
  * Classe per la gestione della registrazione di un nuovi uelementi nel DB.
@@ -132,16 +133,16 @@ public class RegistratoreSQL implements Registratore{
     }
 
     //migliorare la gestione eccezzioni, inserire il throws
-    public int generaNuovaChiave(CostantiDB tabella) {
+    public int generaNuovaChiave(String tabella) {
 
         //il nome della colonna codici non è consistente fra le varie tabelle
         CostantiDB nomeColonna;
         int nuovaChiave = -1;
         switch (tabella) {
-            case TIPO_VISITA:
+            case CostantiDB.TIPO_VISITA.toString() :
                 nomeColonna = CostantiDB.CHIAVE_TIPO_VISITA;
                 break;
-            case CHIAVE_ARCHIVIO_VISITE:
+            case CostantiDB.CHIAVE_ARCHIVIO_VISITE.getNome():
                 nomeColonna = CostantiDB.CHIAVE_ARCHIVIO_VISITE;
                 break;
             default:
@@ -150,7 +151,7 @@ public class RegistratoreSQL implements Registratore{
 
         ResultSet resultSet;
         if (this.connection != null) {
-            String query = "SELECT MAX(" + nomeColonna.getNome() + ") AS maxCodice FROM `dbingesw`." + tabella.getNome() + "";
+            String query = "SELECT MAX(" + nomeColonna.getNome() + ") AS maxCodice FROM `dbingesw`." + tabella + "";
             try {
                 resultSet = connection.createStatement().executeQuery(query);
                 if (resultSet.next()) {

@@ -1,4 +1,4 @@
-package ConfigurationFiles;
+package DataBaseImplementation;
 
 public enum Queries {
 

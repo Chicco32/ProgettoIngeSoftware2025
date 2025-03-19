@@ -1,6 +1,5 @@
-package Services;
+package ServicesAPI;
 
-import ConfigurationFiles.VisualizzatoreSQL;
 
 public abstract class Utente {
 
@@ -11,12 +10,12 @@ public abstract class Utente {
     protected Calendario calendario;
     
 
-    public Utente(boolean PrimoAccesso, String nickname) {
+    public Utente(boolean PrimoAccesso, String nickname, Visualizzatore visualizzatore) {
         this.nickname = null;
         this.calendario = new Calendario(); 
         this.PrimoAccesso = PrimoAccesso;
         this.nickname = nickname;
-        this.visualizzatore = new VisualizzatoreSQL();
+        this.visualizzatore = visualizzatore;
     }
     
     protected void setRuolo(String ruolo){

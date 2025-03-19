@@ -1,4 +1,4 @@
-package ConfigurationFiles;
+package DataBaseImplementation;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import Services.CoerenzaException;
-import Services.DTObject;
-import Services.StatiVisite;
-import Services.Visualizzatore;
+import ServicesAPI.CoerenzaException;
+import ServicesAPI.DTObject;
+import ServicesAPI.StatiVisite;
+import ServicesAPI.Visualizzatore;
 
 
 /**
