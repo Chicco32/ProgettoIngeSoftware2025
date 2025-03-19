@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import ServicesAPI.Configuratore;
+import ServicesAPI.GestoreDatePrecluse;
 import ServicesAPI.Login;
 import ServicesAPI.RegistroDatePrecluse;
 import ServicesAPI.Utente;

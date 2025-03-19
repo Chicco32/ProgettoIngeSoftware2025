@@ -1,7 +1,5 @@
 package DataBaseImplementation;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import ServicesAPI.GestoreDateDisponibili;
@@ -12,7 +10,7 @@ public class XMLDateDisponibili extends XMLManager  implements GestoreDateDispon
         super(path);
     }
     
-    private static final DateFormat formatoData =new SimpleDateFormat("yyyy-MM-dd");
+    //private static final DateFormat formatoData =new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
     public void dichiaraDateDisponibili(Date[] dateDisponibli, String nomeVolontario) {

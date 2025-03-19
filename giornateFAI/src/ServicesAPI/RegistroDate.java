@@ -22,6 +22,7 @@ public abstract class RegistroDate{
 
 	public RegistroDate (GestoreFilesConfigurazione fileManager) {
 		this.calendario = new Calendario();
+		this.fileManager = fileManager;
 	}
 
 	/**

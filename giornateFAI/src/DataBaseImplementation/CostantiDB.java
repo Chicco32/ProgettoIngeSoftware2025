@@ -39,6 +39,15 @@ public enum CostantiDB {
         this.nome = string;
     }
 
+    public static CostantiDB fromString(String valore) throws IllegalArgumentException {
+        for (CostantiDB costante : CostantiDB.values()) {
+            if (costante.nome.equals(valore)) {
+            return costante;
+            }
+        }
+        throw new IllegalArgumentException("Valore non valido: " + valore);
+    }
+
     public String getNome() {
         return nome;
     }

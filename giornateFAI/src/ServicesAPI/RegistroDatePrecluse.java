@@ -11,8 +11,9 @@ public class RegistroDatePrecluse extends RegistroDate {
 
     public RegistroDatePrecluse(GestoreDatePrecluse fileManager) {
         super(fileManager); 
-        
+		this.fileManager = fileManager;
         String path = fileManager.getPath();
+		
         if(GestoreFilesConfigurazione.fileExists(path)){
 			this.datePrecluse=fileManager.leggiDatePrecluse();
 		}else{
@@ -38,7 +39,7 @@ public class RegistroDatePrecluse extends RegistroDate {
 		datePrecluse=aux.toArray(new Date[aux.size()]);
 
 		//mando in scrittura la lista di date aggiornata
-		fileManager.scriviDatePrecluse(calendario.getTime(), datePrecluse);
+		this.fileManager.scriviDatePrecluse(calendario.getTime(), datePrecluse);
 	}
 
 	public Date[] getDatePrecluse(){

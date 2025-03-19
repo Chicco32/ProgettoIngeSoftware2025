@@ -133,23 +133,23 @@ public class RegistratoreSQL implements Registratore{
         return sdf.format(time);
     }
 
+    Map<CostantiDB, CostantiDB> chiaviPrimarie = Map.of(
+        CostantiDB.TIPO_VISITA, CostantiDB.CHIAVE_TIPO_VISITA,
+        CostantiDB.ARCHIVIO_VISITE, CostantiDB.CHIAVE_ARCHIVIO_VISITE
+    );
     //migliorare la gestione eccezzioni, inserire il throws
     public int generaNuovaChiave(String tabella) {
 
         //il nome della colonna codici non è consistente fra le varie tabelle
         CostantiDB nomeColonna;
         int nuovaChiave = -1;
-        switch (tabella) {
-            case CostantiDB.TIPO_VISITA.toString() :
-                nomeColonna = CostantiDB.CHIAVE_TIPO_VISITA;
-                break;
-            case CostantiDB.CHIAVE_ARCHIVIO_VISITE.getNome():
-                nomeColonna = CostantiDB.CHIAVE_ARCHIVIO_VISITE;
-                break;
-            default:
-                return nuovaChiave;
+        try {
+            nomeColonna = chiaviPrimarie.get(CostantiDB.fromString(tabella));
         }
-
+        catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return nuovaChiave;
+        }
         ResultSet resultSet;
         if (this.connection != null) {
             String query = "SELECT MAX(" + nomeColonna.getNome() + ") AS maxCodice FROM `dbingesw`." + tabella + "";
