@@ -186,8 +186,8 @@ public class ConfiguratoreController implements UtenteController {
             int nuovoCodice = model.getRegistratore().generaNuovaChiave(CostantiDB.TIPO_VISITA.getNome());
             data.impostaValore(nuovoCodice, "Codice Tipo di Visita");
             data.impostaValore(nomeLuogo, "Punto di Incontro");
-            data.impostaValore( CliInput.chiediConConferma(CliVisualizzazione.VARIABILE_TITOLO), "Titolo");
-            data.impostaValore(CliInput.chiediConConferma(CliVisualizzazione.VARIABILE_DESCRIZIONE), "Descrizione");
+            data.impostaValore( CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_TITOLO, CliInput.MAX_CARATTERI_TITOLO), "Titolo");
+            data.impostaValore(CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_DESCRIZIONE, CliInput.MAX_CARATTERI_DESCRIZIONE), "Descrizione");
             DateRange perido = CliInput.inserimentoPeriodoAnno();
             data.impostaValore(perido.getStartDate(), "Giorno inzio");
             data.impostaValore(perido.getEndDate(), "Giorno fine");

@@ -101,19 +101,20 @@ public class CliInput {
         System.out.println("Inserisci il periodo dell'anno:");
         do {
             try {
+                
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 String dataInizioStr = InputDati.leggiStringa("Data di inizio (yyyy-MM-dd): ");
                 dataInizio = format.parse(dataInizioStr);
                 String dataFineStr = InputDati.leggiStringa("Data di fine (yyyy-MM-dd): ");
                 dataFine = format.parse(dataFineStr);
                 //non posso invertire le date
-                if (!dataFine.after(dataInizio)) {
-                    System.out.println("La data di fine non può precedere quella di inizio");
-                    throw new IllegalArgumentException();
-                }
+                if (!dataFine.after(dataInizio)) throw new IllegalArgumentException();
                 conferma = InputDati.yesOrNo("Confermi il periodo inserito? ");
+
             } catch (ParseException e) {
                 System.out.println("Formato data non valido. Riprova.");
+            } catch (IllegalArgumentException e) {
+                System.out.println("La data di fine non può precedere quella di inizio");
             }
         } while (!conferma);
         return new DateRange(dataInizio, dataFine);

@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
+
 import ServicesAPI.DTObject;
 import ServicesAPI.GestoreConfigurazioneRegistratore;
 import ServicesAPI.GestoreFilesConfigurazione;
@@ -81,7 +83,6 @@ public class RegistratoreSQL implements Registratore{
         if (query == null) {
             throw new IllegalArgumentException("Comando SQL non trovato per: " + comando);
         }
-
         List<String> campi = object.getCampi();
         if (this.connection != null) {
             try (PreparedStatement stmt = connection.prepareStatement(inserimenti.get(comando).getQuery())) {
@@ -90,14 +91,16 @@ public class RegistratoreSQL implements Registratore{
                     Object valore = object.getValoreCampo(campo);
                     if (valore instanceof Integer)stmt.setInt(placeHolder, ((Integer)valore).intValue());
                     else if (valore instanceof String) stmt.setString(placeHolder, (String)valore.toString());
-                    else if (valore instanceof Date) stmt.setString(placeHolder, formatoDataPerSQL((Date) valore));
                     else if (valore instanceof Time) stmt.setString(placeHolder, formatoOrarioPerSQL((Time)valore));
+                    else if (valore instanceof Date) stmt.setString(placeHolder, formatoDataPerSQL((Date) valore));
                     else if (valore instanceof Boolean) stmt.setInt(placeHolder, (Boolean) valore ? 1:0);
                     else throw new IllegalArgumentException("Tipo dato non supportato");
                     placeHolder++;
                 }
                 stmt.executeUpdate();
                 return true;
+            } catch (MysqlDataTruncation e) {
+                throw new IllegalArgumentException(e);
             }
         }
         return false;
@@ -130,7 +133,7 @@ public class RegistratoreSQL implements Registratore{
 
     private static String formatoOrarioPerSQL(Time time) {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        return sdf.format(time);
+        return sdf.format(time) + ":00";
     }
 
     Map<CostantiDB, CostantiDB> chiaviPrimarie = Map.of(
