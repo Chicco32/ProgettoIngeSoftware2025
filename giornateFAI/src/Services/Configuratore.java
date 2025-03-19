@@ -1,13 +1,12 @@
 package Services;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import ConfigurationFiles.PercorsiFiles;
 import ConfigurationFiles.RegistratoreSQL;
 
 
 public class Configuratore extends Utente {
     
-    private RegistratoreSQL registratore;
+    private Registratore registratore;
     private RegistroDate registroDate;
 
     public Configuratore(boolean PrimoAccesso, String nickname) {
@@ -17,16 +16,17 @@ public class Configuratore extends Utente {
         this.registroDate = new RegistroDate(PercorsiFiles.pathDatePrecluse, this.calendario);
     }
 
-    public boolean registrati(String nickname, String password) throws SQLIntegrityConstraintViolationException, Exception {
+    public boolean registrati(DTObject dati) throws Exception {
         boolean registrato = false;
         // Chiede il nickname e la password finche' non vengono inseriti correttamente
-        this.setNickname(nickname);
-        registrato = registratore.registraNuovoConfiguratore(nickname, password); 
+        this.setNickname((String)dati.getValoreCampo("Nickname"));
+
+        registrato = registratore.registraNuovoConfiguratore(dati); 
         if (registrato) this.setPrimoAccesso(false);
         return registrato; 
     }
 
-    public RegistratoreSQL getRegistratore() {
+    public Registratore getRegistratore() {
         return this.registratore;
     }
 

@@ -1,8 +1,10 @@
-package Services;
+package ConfigurationFiles;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import Services.DTObject;
 
 /**
  * Classe che implementa il DAO per poter raggruppare e passare in maniera veloce tutti gli attributi di una particolare tupla estratta.
@@ -15,8 +17,8 @@ public class Tupla implements DTObject {
     public static final String[] FORMATO_UTENTE = {"Nickname", "Password"};
     public static final String[] FORMATO_LUOGO = {"Nome", "Descrizione", "Indirizzo"};
     public static final String[] FORMATO_TIPO_VISITA = {
-        "Codice Tipo di Visita", "Punto di Incontro","Titolo", "Descrizione", "Periodo anno", "Ora di inizio", "Durata", "Necessita Biglietto",
-        "Min Partecipanti", "Max Partecipanti", "Configuratore referente"};
+        "Codice Tipo di Visita", "Punto di Incontro","Titolo", "Descrizione","Giorno inzio", 
+            "Giorno fine", "Ora di inizio", "Durata", "Necessita Biglietto", "Min Partecipanti", "Max Partecipanti", "Configuratore referente"};
 
     private String tabellaOrigine;
     private int numCampi;
@@ -38,7 +40,7 @@ public class Tupla implements DTObject {
         for (int i = 0; i<numCampi; i++) valori.put(i, null);
     }
 
-    public List<Object> getAttributi() {
+    public List<Object> getValori() {
         List<Object> aux = new ArrayList<Object>();
         for (int i = 0; i<numCampi; i++) aux.add(valori.get(i));
         return aux;
@@ -64,8 +66,11 @@ public class Tupla implements DTObject {
         throw new IllegalArgumentException(); // Se la stringa non è trovata
     }
 
-    
-    public Object getAttributeValue(String campo) throws IllegalArgumentException {
+    /**
+     * Funzione che restituisce un oggetto equivalente all valore che assume quell'attributo nella tupla nel campo selezionato
+     * @throws IllegalArgumentException se l'argomento passato non è un campo della tupla
+     */
+    public Object getValoreCampo(String campo) throws IllegalArgumentException {
         int indice = trovaIndice(campo);
         return valori.get(indice);
     }

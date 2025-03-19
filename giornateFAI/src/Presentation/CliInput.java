@@ -168,7 +168,7 @@ public class CliInput {
      * la funzione mostra all'utente i volontari gia registrati e chiede di scegliere fra uno di essi,
      * se non sceglie nessuno della lista per inserire uno nuovo o la lista è vuota ritorna null 
      */
-    public static String selezionaVolontario (ArrayList<String> volontariRegistrati) {
+    public static String selezionaVolontario (List<String> volontariRegistrati) {
         if (volontariRegistrati.isEmpty()) {
             System.out.println("Nessun volontario registrato.");
             return null;
@@ -196,7 +196,7 @@ public class CliInput {
         return null;
     }
 
-    public static String selezionaLuogo (ArrayList<String> luoghiRegistrati) {
+    public static String selezionaLuogo (List<String> luoghiRegistrati) {
 
         System.out.println("Luoghi registrati:");
         for (int i = 0; i < luoghiRegistrati.size(); i++) {

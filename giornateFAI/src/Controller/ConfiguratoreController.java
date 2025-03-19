@@ -1,25 +1,27 @@
 package Controller;
 
-import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.Time;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import ConfigurationFiles.CostantiDB;
 import ConfigurationFiles.PercorsiFiles;
 import ConfigurationFiles.Queries;
-import ConfigurationFiles.VisualizzatoreSQL;
+import ConfigurationFiles.Tupla;
 import Presentation.CliInput;
 import Presentation.CliNotifiche;
 import Presentation.CliVisualizzazione;
 import Services.Calendario;
+import Services.CoerenzaException;
 import Services.Configuratore;
+import Services.DTObject;
 import Services.DateRange;
 import Services.RegistroDate;
 import Services.StatiVisite;
+import Services.Visualizzatore;
 
 public class ConfiguratoreController implements UtenteController {
 
@@ -46,11 +48,12 @@ public class ConfiguratoreController implements UtenteController {
         boolean registrato = false;
         while (!registrato) {
             try {
-                registrato = model.registrati(
-                    CliInput.chiediConLunghezzaMax(
-                    CliVisualizzazione.VARIABILE_NICKNAME, CliInput.MAX_CARATTERI_NICKNAME),
-                    CliInput.chiediConLunghezzaMax(
-                    CliVisualizzazione.VARIABILE_PASSWORD, CliInput.MAX_CARATTERI_PASSWORD));
+                DTObject dati = new Tupla("Configuratore", Tupla.FORMATO_UTENTE);
+                dati.impostaValore(CliInput.chiediConLunghezzaMax(
+                    CliVisualizzazione.VARIABILE_NICKNAME, CliInput.MAX_CARATTERI_NICKNAME), "Nickname");
+                dati.impostaValore(CliInput.chiediConLunghezzaMax(
+                    CliVisualizzazione.VARIABILE_PASSWORD, CliInput.MAX_CARATTERI_PASSWORD), "Password");
+                registrato = model.registrati(dati);
             } catch (SQLIntegrityConstraintViolationException e) {
                 CliNotifiche.avvisa(CliNotifiche.NICKNAME_GIA_USATO);
             } catch (Exception e) {
@@ -76,10 +79,11 @@ public class ConfiguratoreController implements UtenteController {
         CliVisualizzazione.intestazionePaginaInserimento(CliVisualizzazione.VARIABILE_VOLONTARI);
         try {
             nickname = CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_NICKNAME, CliInput.MAX_CARATTERI_NICKNAME);
-            model.getRegistratore().registraNuovoVolontario(nickname,
-                CliInput.chiediConLunghezzaMax(
-                CliVisualizzazione.VARIABILE_PASSWORD, CliInput.MAX_CARATTERI_PASSWORD)
-            );
+            DTObject dati = new Tupla("Volontario", Tupla.FORMATO_UTENTE);
+            dati.impostaValore(nickname, "Nickname");
+            dati.impostaValore(CliInput.chiediConLunghezzaMax(
+                CliVisualizzazione.VARIABILE_PASSWORD, CliInput.MAX_CARATTERI_PASSWORD), "Password");
+            model.getRegistratore().registraNuovoVolontario(dati);
             CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_CORRETTAMENTE_REGISTRATO);
             return nickname;
         } catch (SQLIntegrityConstraintViolationException e) {
@@ -92,14 +96,14 @@ public class ConfiguratoreController implements UtenteController {
 
     public void inserisciNuovoTipoDiVisita () {
         //Chiede la lista di nomi dei luoghi possibile su cui inserire la visita
-        ArrayList<String> luoghiDisponibili = new ArrayList<>();
+        List<String> luoghiDisponibili = new ArrayList<>();
         String luogoSelezionato = null;
-        VisualizzatoreSQL aux = model.getVisualizzatore();
+        Visualizzatore aux = model.getVisualizzatore();
         try {
             luoghiDisponibili = aux.estraiColonna(
                 aux.visualizzaTabella(Queries.SELEZIONA_LUOGHI.getQuery()), "Nome");
             luogoSelezionato = CliInput.selezionaLuogo(luoghiDisponibili);
-        } catch (IllegalArgumentException | SQLException e) {
+        } catch (IllegalArgumentException | CoerenzaException e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_QUERY);
         }
         //se seleziona un luogo fra quelli disponibili inoltra alla procedura di inserimento delle visite
@@ -115,7 +119,7 @@ public class ConfiguratoreController implements UtenteController {
     public boolean controllaDBVuoti(String tabella) {
         try {
             model.getVisualizzatore().tabellaDBVuota(tabella);
-        } catch (SQLException e) {
+        } catch (CoerenzaException e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_QUERY);
         }
         return false;
@@ -125,7 +129,7 @@ public class ConfiguratoreController implements UtenteController {
         try {
             CliVisualizzazione.visualizzaRisultati(
                 model.getVisualizzatore().visualizzaTabella(query.getQuery()), nomeDaMostrare);
-        } catch (SQLException e) {
+        } catch (CoerenzaException e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_QUERY);
         }
     }
@@ -136,7 +140,7 @@ public class ConfiguratoreController implements UtenteController {
         try {
             CliVisualizzazione.visualizzaRisultati(
                 model.getVisualizzatore().visualizzaVisite(stato), "Archivio di: " + stato.toString());
-        } catch (SQLException e) {
+        } catch (CoerenzaException e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_QUERY);
         }
     }
@@ -157,10 +161,11 @@ public class ConfiguratoreController implements UtenteController {
         CliVisualizzazione.intestazionePaginaInserimento("Luogo");
         String nomeLuogo = CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_NICKNAME, CliInput.MAX_CARATTERI_NICKNAME);
         try {
-            model.getRegistratore().registraNuovoLuogo(nomeLuogo,
-                CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_DESCRIZIONE, CliInput.MAX_CARATTERI_DESCRIZIONE),
-                CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_INDIRIZZO, CliInput.MAX_CARATTERI_INDIRIZZO)
-            );
+            DTObject dati = new Tupla("Luogo", Tupla.FORMATO_LUOGO);
+            dati.impostaValore(nomeLuogo, "Nome");
+            dati.impostaValore(CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_DESCRIZIONE, CliInput.MAX_CARATTERI_DESCRIZIONE), "Descrizione");
+            dati.impostaValore(CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_INDIRIZZO, CliInput.MAX_CARATTERI_INDIRIZZO), "Indirizzo");
+            model.getRegistratore().registraNuovoLuogo(dati);
             CliNotifiche.avvisa(CliNotifiche.LUOGO_CORRETTAMENTE_REGISTRATO);
         } catch (SQLIntegrityConstraintViolationException e) {
            CliNotifiche.avvisa(CliNotifiche.NOME_LUOGO_GIA_USATO);
@@ -171,24 +176,33 @@ public class ConfiguratoreController implements UtenteController {
         popolaDBTipiVisite(nomeLuogo);
     }
 
-    //USARE I DTO PER MIGLIOR COMPRENSIBILITà
+    
     private void popolaDBTipiVisite(String nomeLuogo) {
         //pagina per i tipi di visite
         CliVisualizzazione.intestazionePaginaInserimento("Tipo di visita");
         boolean altraVisita = true;
         while (altraVisita) {
+            
+            
+            DTObject data = new Tupla("Tipo visita", Tupla.FORMATO_TIPO_VISITA);
             int nuovoCodice = model.getRegistratore().generaNuovaChiave(CostantiDB.TIPO_VISITA);
-            String titolo = CliInput.chiediConConferma(CliVisualizzazione.VARIABILE_TITOLO);
-            String descrizione = CliInput.chiediConConferma(CliVisualizzazione.VARIABILE_DESCRIZIONE);
+            data.impostaValore(nuovoCodice, "Codice Tipo di Visita");
+            data.impostaValore(nomeLuogo, "Punto di Incontro");
+            data.impostaValore( CliInput.chiediConConferma(CliVisualizzazione.VARIABILE_TITOLO), "Titolo");
+            data.impostaValore(CliInput.chiediConConferma(CliVisualizzazione.VARIABILE_DESCRIZIONE), "Descrizione");
             DateRange perido = CliInput.inserimentoPeriodoAnno();
-            Time ora = CliInput.inserimentoOraInizio();
-            int durata = CliInput.inserimentoDurataVisita();
-            boolean biglietto = CliInput.chiediNecessitaBiglietto();
-            int minPartecipanti =  CliInput.inserimentoPartecipantiVisita(1, "minimo");
-            int maxPartecipanti =  CliInput.inserimentoPartecipantiVisita(minPartecipanti, "massimo");
+            data.impostaValore(perido.getStartDate(), "Giorno inzio");
+            data.impostaValore(perido.getEndDate(), "Giorno fine");
+            data.impostaValore(CliInput.inserimentoOraInizio(), "Ora di inizio");
+            data.impostaValore(CliInput.inserimentoDurataVisita(), "Durata");
+            data.impostaValore(CliInput.chiediNecessitaBiglietto(), "Necessita Biglietto");
+            int minPartecipanti = CliInput.inserimentoPartecipantiVisita(1, "minimo");
+            data.impostaValore(minPartecipanti, "Min Partecipanti");
+            data.impostaValore(CliInput.inserimentoPartecipantiVisita(minPartecipanti, "massimo"), "Max Partecipanti");
+            data.impostaValore(model.getNickname(), "Configuratore referente");
+
             try {
-                model.getRegistratore().registraNuovoTipoVisita(nuovoCodice, nomeLuogo, titolo, descrizione, perido.getStartDate(), perido.getEndDate(),
-                  ora, durata, biglietto, minPartecipanti, maxPartecipanti, model.getNickname());
+                model.getRegistratore().registraNuovoTipoVisita(data);
                 CliNotifiche.avvisa(CliNotifiche.VISITA_CORRETTAMENTE_REGISTRATA);
             } catch (Exception e) {
                 CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
@@ -199,7 +213,7 @@ public class ConfiguratoreController implements UtenteController {
         }
     }
 
-    private static ArrayList<String> sanificaLista(ArrayList<String> listaVolontari) {
+    private static List<String> sanificaLista(List<String> listaVolontari) {
         // Usare un HashSet per rimuovere i duplicati
         Set<String> setVolontari = new LinkedHashSet<>(listaVolontari);
         
@@ -207,12 +221,12 @@ public class ConfiguratoreController implements UtenteController {
         return new ArrayList<>(setVolontari);
     }
 
-    private void popolaDBVolontari(int CodiceVisita) {
+    private void popolaDBVolontari(int codiceVisita) {
         boolean altroVolontario = true;
         while (altroVolontario) {
             //pagina per i volontari, prima mostra quelli gia registrati e chiede di sceglierne uno
-            ArrayList <String> volontariRegistrati = new ArrayList<>();
-            VisualizzatoreSQL aux = model.getVisualizzatore();
+            List <String> volontariRegistrati = new ArrayList<>();
+            Visualizzatore aux = model.getVisualizzatore();
             
             try {
                 volontariRegistrati = aux.estraiColonna(
@@ -223,7 +237,10 @@ public class ConfiguratoreController implements UtenteController {
                 while (volontarioSelezionato == null) volontarioSelezionato = insersciVolontario();
             
                 //parte di inserimento nel db della nuova coppia visita e volontario associato
-                model.getRegistratore().associaVolontarioVisita(CodiceVisita, volontarioSelezionato);
+                DTObject associazione = new Tupla("Volontari disponibili", new String[]{"CodiceVisita", "Volontario"});
+                associazione.impostaValore(codiceVisita, "CodiceVisita");
+                associazione.impostaValore(volontarioSelezionato, "Volontario");
+                model.getRegistratore().associaVolontarioVisita(associazione);
                 CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_CORRETTAMENTE_ASSOCIATO);
             } catch (SQLIntegrityConstraintViolationException e) {
                 CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_GIA_ABBINATO_VISITA);

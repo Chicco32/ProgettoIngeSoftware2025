@@ -7,7 +7,7 @@ public interface DTObject {
      * Permette di ottenere una lista con tutti gli attributi
      * @return la lista con i valori degli attributi
      */
-    public List<Object> getAttributi();
+    public List<Object> getValori();
 
     /**
      * Permette di ottenere una lista con tutti i campi
@@ -20,7 +20,7 @@ public interface DTObject {
      * @param campo il nome dell'attributo da restituire 
      * @return
      */
-    public Object getAttributeValue(String campo);
+    public Object getValoreCampo(String campo);
 
     /**
      * Permette di impostare il valore di un attributo dato il nome del campo

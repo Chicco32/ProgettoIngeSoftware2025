@@ -7,7 +7,7 @@ public abstract class Utente {
     private String ruolo; //Configuratore, Fruitore o Volontario
     private String nickname;
     private Boolean PrimoAccesso;
-    protected VisualizzatoreSQL visualizzatore;
+    protected Visualizzatore visualizzatore;
     protected Calendario calendario;
     
 
@@ -43,7 +43,7 @@ public abstract class Utente {
         this.nickname = nickname;
     }
 
-    public VisualizzatoreSQL getVisualizzatore() {
+    public Visualizzatore getVisualizzatore() {
         return this.visualizzatore;
     }
 

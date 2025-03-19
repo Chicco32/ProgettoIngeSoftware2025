@@ -1,11 +1,13 @@
 package Presentation;
 
-import java.sql.ResultSet;
+//import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+//import java.util.ArrayList;
 import java.util.List;
+
+import Services.DTObject;
 
 public class CliVisualizzazione {
 
@@ -44,6 +46,7 @@ public class CliVisualizzazione {
         CliInput.invioPerContinuare();
     }
 
+    /*
     public static void visualizzaRisultati(ResultSet results, String tabella) {
         System.out.println("\n<========= " + tabella.toUpperCase() + " =========>");
         try {
@@ -66,6 +69,37 @@ public class CliVisualizzazione {
                     System.out.print(results.getString(i) + "\t");
                 }
                 System.out.println("\n");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("Fine tabella");
+        CliInput.invioPerContinuare();
+    } */
+
+    public static void visualizzaRisultati(DTObject[] results, String tabella) {
+        System.out.println("\n<========= " + tabella.toUpperCase() + " =========>");
+        try {
+            //se non ha oggetti da stampare salta direttamente
+            if(results.length > 0) {
+                //ottengo il numero di colonne
+                int numColonne = results[0].getNumeroCampi();
+                
+                //stampo i nomi delle colonne
+                List<String> colonne = results[0].getCampi();
+
+                // Stampare la riga di intestazione
+                System.out.println(String.join(" | ", colonne));
+
+                //stampo i risultati
+                if (results != null) {
+                    for (int i = 0; i<results.length; i++) { //cicla per ogni riga della tabella
+                        for (int j = 0; j < numColonne; j++) { //stampa ogni elemento
+                            System.out.print(results[i].getValoreCampo(colonne.get(j)) + "\t");
+                        }
+                        System.out.println("\n");
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
