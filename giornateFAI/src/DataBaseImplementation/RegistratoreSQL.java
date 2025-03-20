@@ -136,35 +136,28 @@ public class RegistratoreSQL implements Registratore{
         return sdf.format(time) + ":00";
     }
 
-    Map<CostantiDB, CostantiDB> chiaviPrimarie = Map.of(
-        CostantiDB.TIPO_VISITA, CostantiDB.CHIAVE_TIPO_VISITA,
-        CostantiDB.ARCHIVIO_VISITE, CostantiDB.CHIAVE_ARCHIVIO_VISITE
+    //estraggo l'interrogazione corretta in base alla tabella
+    Map<CostantiDB, Queries> chiaviNuove = Map.of(
+        CostantiDB.TIPO_VISITA, Queries.GENERA_CHIAVE_TIPO_VISITA,
+        CostantiDB.ARCHIVIO_VISITE, Queries.GENERA_CHIAVE_ARCHIVIO
     );
-    //migliorare la gestione eccezzioni, inserire il throws
     public int generaNuovaChiave(String tabella) {
 
-        //il nome della colonna codici non è consistente fra le varie tabelle
-        CostantiDB nomeColonna;
         int nuovaChiave = -1;
-        try {
-            nomeColonna = chiaviPrimarie.get(CostantiDB.fromString(tabella));
+        try{
+            //delega al server la generazione della chiave
+            String query = chiaviNuove.get(CostantiDB.fromString(tabella)).getQuery();
+            ResultSet result = connection.createStatement().executeQuery(query);
+            if (result.next()) {
+                //la chiave deve essere in un campo chimato maxCodice per essere letta
+                nuovaChiave = result.getInt("maxCodice");
+            }
         }
-        catch (IllegalArgumentException e) {
+
+        //tutte le eccezioni dovrebbero essere causate da errori di codice non dall'utente
+        catch (IllegalArgumentException | SQLException e) {
             e.printStackTrace();
             return nuovaChiave;
-        }
-        ResultSet resultSet;
-        if (this.connection != null) {
-            String query = "SELECT MAX(" + nomeColonna.getNome() + ") AS maxCodice FROM `dbingesw`." + tabella + "";
-            try {
-                resultSet = connection.createStatement().executeQuery(query);
-                if (resultSet.next()) {
-                    nuovaChiave = resultSet.getInt("maxCodice") + 1;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return nuovaChiave;
-            }
         }
         return nuovaChiave;
     }

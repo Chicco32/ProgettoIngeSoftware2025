@@ -17,7 +17,7 @@ public class Tupla implements DTObject {
     public static final String[] FORMATO_UTENTE = {"Nickname", "Password"};
     public static final String[] FORMATO_LUOGO = {"Nome", "Descrizione", "Indirizzo"};
     public static final String[] FORMATO_TIPO_VISITA = {
-        "Codice Tipo di Visita", "Punto di Incontro","Titolo", "Descrizione","Giorno inzio", 
+        "Codice Tipo di Visita","Punto di Incontro","Titolo", "Descrizione","Giorno inzio", 
             "Giorno fine", "Ora di inizio", "Durata", "Necessita Biglietto", "Min Partecipanti", "Max Partecipanti", "Configuratore referente"};
 
     private String tabellaOrigine;

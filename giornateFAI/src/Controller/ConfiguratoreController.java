@@ -165,13 +165,13 @@ public class ConfiguratoreController implements UtenteController {
             dati.impostaValore(CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_INDIRIZZO, CliInput.MAX_CARATTERI_INDIRIZZO), "Indirizzo");
             model.getRegistratore().registraNuovoLuogo(dati);
             CliNotifiche.avvisa(CliNotifiche.LUOGO_CORRETTAMENTE_REGISTRATO);
+            CliVisualizzazione.avvisaReindirizzamentoNuovoCampo("Tipi di visita", "Luogo");
+            popolaDBTipiVisite(nomeLuogo);
         } catch (SQLIntegrityConstraintViolationException e) {
            CliNotifiche.avvisa(CliNotifiche.NOME_LUOGO_GIA_USATO);
         } catch (Exception e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
         }
-        CliVisualizzazione.avvisaReindirizzamentoNuovoCampo("Tipi di visita", "Luogo");
-        popolaDBTipiVisite(nomeLuogo);
     }
 
     
@@ -202,11 +202,11 @@ public class ConfiguratoreController implements UtenteController {
             try {
                 model.getRegistratore().registraNuovoTipoVisita(data);
                 CliNotifiche.avvisa(CliNotifiche.VISITA_CORRETTAMENTE_REGISTRATA);
+                CliVisualizzazione.avvisaReindirizzamentoNuovoCampo("Volontario", "Tipo di visita");
+                popolaDBVolontari(nuovoCodice);
             } catch (Exception e) {
                 CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
             }
-            CliVisualizzazione.avvisaReindirizzamentoNuovoCampo("Volontario", "Tipo di visita");
-            popolaDBVolontari(nuovoCodice);
             altraVisita = CliInput.aggiungiAltroCampo("Tipo di visita", "Luogo");
         }
     }
