@@ -37,10 +37,6 @@ public class ConfiguratoreController implements UtenteController {
         return this.model;
     }
 
-    public String getRuolo() {
-        return model.getRuolo();
-    }
-
     public void accediSistema() {
         menuConfiguratore();
     }

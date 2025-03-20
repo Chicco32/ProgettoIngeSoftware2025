@@ -22,10 +22,6 @@ public class VolontarioController implements UtenteController {
         return this.model;
     }
 
-    public String getRuolo() {
-        return this.getModel().getRuolo();
-    }
-
     public void accediSistema() {
         menuVolontario();
     }

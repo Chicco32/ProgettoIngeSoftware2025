@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+
+import org.mindrot.jbcrypt.BCrypt;
+
 import ServicesAPI.Configuratore;
 import ServicesAPI.Login;
 import ServicesAPI.RegistroDateDisponibili;
@@ -86,9 +89,9 @@ public class LoginSQL implements Login {
             try (ResultSet rs = stmt.executeQuery()) {
                 //Se il nickname risulta effettivamente presente nel DB recupera la password
                 if (rs.next()) {
-                    //TODO: mettere l'hash delle password
                     String passwordSalvata = rs.getString("Password");
-                    if (passwordSalvata.equals(passwordInserita))
+                    if (BCrypt.checkpw(passwordInserita, passwordSalvata))
+                    //if (passwordSalvata.equals(passwordInserita))
                         return true;
                 }
             }

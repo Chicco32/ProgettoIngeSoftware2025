@@ -4,8 +4,8 @@ public enum Queries {
 
     //Login utenti e controllo password
     NICKNAME_UNIVOCO("SELECT Nickname FROM(SELECT * FROM dbingesw.configuratore UNION ALL SELECT * FROM dbingesw.volontario UNION ALL SELECT * FROM dbingesw.fruitori) AS utenti WHERE utenti.Nickname = ?"),
-    PASSWORD_CONFIGURATORE("SELECT Password FROM `dbingesw`.`configuratore` WHERE `Nickname` = ?"),
-    PASSWORD_VOLONTARIO("SELECT Password FROM `dbingesw`.`volontario` WHERE `Nickname` = ?"),
+    PASSWORD_CONFIGURATORE("SELECT Password, Salt FROM `dbingesw`.`configuratore` WHERE `Nickname` = ?"),
+    PASSWORD_VOLONTARIO("SELECT Password, Salt FROM `dbingesw`.`volontario` WHERE `Nickname` = ?"),
 
     //VisualizzatoreSQL e configuratore
     SELEZIONA_VOLONTARI("SELECT `Tipo di Visita`,`Volontario Nickname`,`Titolo` FROM dbingesw.`volontari disponibili` join dbingesw.`Tipo di Visita` on `volontari disponibili`.`Tipo di Visita` = `Tipo di Visita`.`Codice Tipo di Visita`;"),
@@ -14,8 +14,8 @@ public enum Queries {
     SELEZIONA_VISITE_ARCHIVIO("{call GetVisite(?)}"),
     
     //RegistratoreSQL
-    REGISTRA_CONFIGURATORE("INSERT into `dbingesw`.`configuratore` (`Nickname`,`Password`) VALUES (?,?)"),
-    REGISTRA_VOLONTARIO("INSERT into `dbingesw`.`volontario` (`Nickname`,`Password`) VALUES (?,?)"),
+    REGISTRA_CONFIGURATORE("INSERT into `dbingesw`.`configuratore` (`Nickname`,`Password`, `Salt`) VALUES (?,?,?)"),
+    REGISTRA_VOLONTARIO("INSERT into `dbingesw`.`volontario` (`Nickname`,`Password`, `Salt`) VALUES (?,?,?)"),
     REGISTRA_LUOGO("INSERT into `dbingesw`.`luogo` (`Nome`,`Descrizione`, `Indirizzo`) VALUES (?,?,?)"),
     REGISTRA_VISITA_ARCHIVIO("INSERT INTO `dbingesw`.`archivio visite attive` (`Codice Archivio`, `Stato Visita`, `Tipo di Visita`,`Volontario Selezionato`, `Data programmata`) VALUES (generaChiaveArchivio(), 'proponibile', ?, ?, ?);"),
     REGISTRA_TIPO_VISITA ("INSERT INTO `dbingesw`.`tipo di visita` (`Codice Tipo di Visita`,`Punto di Incontro`,`Titolo`,`Descrizione`,`Giorno di Inizio (periodo anno)`,`Giorno di Fine (periodo anno)`,`Ora di inizio`,`Durata`,`Necessita Biglietto`,`Min Partecipanti`,`Max Partecipanti`,`Configuratore referente`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)"),
