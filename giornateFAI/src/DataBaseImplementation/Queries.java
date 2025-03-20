@@ -2,6 +2,10 @@ package DataBaseImplementation;
 
 public enum Queries {
 
+    //Login utenti e controllo password
+    PASSWORD_CONFIGURATORE("SELECT Password FROM `dbingesw`.`configuratore` WHERE `Nickname` = ?"),
+    PASSWORD_VOLONTARIO("SELECT Password FROM `dbingesw`.`volontario` WHERE `Nickname` = ?"),
+
     //VisualizzatoreSQL e configuratore
     SELEZIONA_VOLONTARI("SELECT `Tipo di Visita`,`Volontario Nickname`,`Titolo` FROM dbingesw.`volontari disponibili` join dbingesw.`Tipo di Visita` on `volontari disponibili`.`Tipo di Visita` = `Tipo di Visita`.`Codice Tipo di Visita`;"),
     SELEZIONA_LUOGHI("SELECT * FROM `dbingesw`.`luogo`"),

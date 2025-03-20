@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 
 import DataBaseImplementation.CostantiDB;
+import DataBaseImplementation.LoginSQL;
 import DataBaseImplementation.Queries;
 import DataBaseImplementation.Tupla;
 import Presentation.CliInput;
@@ -79,13 +80,12 @@ public class ConfiguratoreController implements UtenteController {
             nickname = CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_NICKNAME, CliInput.MAX_CARATTERI_NICKNAME);
             DTObject dati = new Tupla("Volontario", Tupla.FORMATO_UTENTE);
             dati.impostaValore(nickname, "Nickname");
-            dati.impostaValore(CliInput.chiediConLunghezzaMax(
-                CliVisualizzazione.VARIABILE_PASSWORD, CliInput.MAX_CARATTERI_PASSWORD), "Password");
+            dati.impostaValore(LoginSQL.getDefaultPasswordVolontario(), "Password");
             model.getRegistratore().registraNuovoVolontario(dati);
             CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_CORRETTAMENTE_REGISTRATO);
             return nickname;
         } catch (SQLIntegrityConstraintViolationException e) {
-            CliNotifiche.avvisa(CliNotifiche.NICKNAME_GIA_USATO);;
+            CliNotifiche.avvisa(CliNotifiche.NICKNAME_GIA_USATO);
         } catch (Exception e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
         }

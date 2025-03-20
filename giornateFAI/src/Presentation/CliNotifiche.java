@@ -4,7 +4,7 @@ public enum CliNotifiche {
 
     CONNESSIONE_RIUSCITA("Connessione al database riuscita, database operativo e raggiungibile"),
     BENVENUTO("Benvenuto nel servizio di gestione delle visite guidate di GiornateFAI, per prima cosa esegui l'accesso:"),
-    BENVENUTO_NUOVO_CONFIGURATORE("Benvenuto! Per creare un nuovo Configuratore inserisci le seguenti informazioni:"),
+    BENVENUTO_NUOVO_CONFIGURATORE("Per creare un nuovo Configuratore inserisci le seguenti informazioni:"),
     CONFIGURATORE_CORRETTAMENTE_REGISTRATO ("Configuratore correttamente reigstrato!"),
     VOLONTARIO_CORRETTAMENTE_REGISTRATO ("Volontario correttamente registrato"),
     LUOGO_CORRETTAMENTE_REGISTRATO ("Luogo correttamente registrato"),
