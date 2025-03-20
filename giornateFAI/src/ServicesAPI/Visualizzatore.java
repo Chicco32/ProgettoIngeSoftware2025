@@ -31,7 +31,7 @@ public interface Visualizzatore {
      * @param resul un oggetto che rappresenta tutti i risultati della query su cui filtrare
      * @param campo la colonna selezionata su cui filtrare
      * @return un arraylist contenente tuttti i valori assunti dalla colonna selezionata
-     * @throws IllegalArgumentException se l'oggetto resultset è null o se il campo è null
+     * @throws IllegalArgumentException se l'oggetto {@code results} è {@code null} o se il campo è {@code null}
      */
     public List<String> estraiColonna(DTObject[] results, String campo) throws IllegalArgumentException, CoerenzaException;
 

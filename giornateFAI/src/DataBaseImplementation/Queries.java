@@ -3,6 +3,7 @@ package DataBaseImplementation;
 public enum Queries {
 
     //Login utenti e controllo password
+    NICKNAME_UNIVOCO("SELECT Nickname FROM(SELECT * FROM dbingesw.configuratore UNION ALL SELECT * FROM dbingesw.volontario UNION ALL SELECT * FROM dbingesw.fruitori) AS utenti WHERE utenti.Nickname = ?"),
     PASSWORD_CONFIGURATORE("SELECT Password FROM `dbingesw`.`configuratore` WHERE `Nickname` = ?"),
     PASSWORD_VOLONTARIO("SELECT Password FROM `dbingesw`.`volontario` WHERE `Nickname` = ?"),
 

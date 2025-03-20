@@ -27,6 +27,7 @@ public class CliInput {
     public static final int MAX_CARATTERI_INDIRIZZO = 45;
     public static final int MAX_CARATTERI_TITOLO = 45;
 
+    
     public static void invioPerContinuare() {
         InputDati.leggiStringa("Premi invio per continuare");
     }
@@ -55,25 +56,16 @@ public class CliInput {
     }
 
     // Menu di interazione con il configuratore
-    public static int menuConfiguratore(String utente) {
+    public static int menuAzioni(String utente, String[] opzioni) {
         boolean conferma = false;
         int scelta = 0;
         do {
             CliVisualizzazione.pulisciSchermo();
             CliVisualizzazione.barraIntestazione(utente);
-            String[] opzioni = {
-                "Modifica max numero partecipanti",
-                "Introduzione nuovo tipo di visita",
-                "Introduzione nuovo volontario",
-                "Visualizza elenco volontari",
-                "Visualizza luoghi visitabili",
-                "Visualizza tipi di visite",
-                "Visualizza visite in archivio a seconda dello stato",
-                "Esci" };
             for (int i = 0; i < opzioni.length; i++) {
                 System.out.println((i + 1) + ") " + opzioni[i]);
             }
-            scelta = InputDati.leggiIntero("Inserisci il numero della tua scelta: ", 1, 8);
+            scelta = InputDati.leggiIntero("Inserisci il numero della tua scelta: ", 1, opzioni.length);
             conferma = InputDati.yesOrNo("Confermi la scelta inserita? ");
             CliVisualizzazione.pulisciSchermo();
         } while (!conferma);

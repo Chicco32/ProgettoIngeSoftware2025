@@ -4,8 +4,10 @@ import java.sql.SQLIntegrityConstraintViolationException;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import DataBaseImplementation.CostantiDB;
@@ -19,13 +21,14 @@ import ServicesAPI.CoerenzaException;
 import ServicesAPI.Configuratore;
 import ServicesAPI.DTObject;
 import ServicesAPI.DateRange;
+import ServicesAPI.Registratore;
 import ServicesAPI.StatiVisite;
 import ServicesAPI.Visualizzatore;
 
 public class ConfiguratoreController implements UtenteController {
 
     private Configuratore model;
-
+    
     public ConfiguratoreController (Configuratore model) {
         this.model = model;
     }
@@ -39,28 +42,88 @@ public class ConfiguratoreController implements UtenteController {
     }
 
     public void accediSistema() {
-        new BackEndController().menuConfiguratore(this); 
+        menuConfiguratore();
     }
 
     public void registrati() {
         CliNotifiche.avvisa(CliNotifiche.BENVENUTO_NUOVO_CONFIGURATORE);
         boolean registrato = false;
-        while (!registrato) {
-            try {
-                DTObject dati = new Tupla("Configuratore", Tupla.FORMATO_UTENTE);
-                dati.impostaValore(CliInput.chiediConLunghezzaMax(
-                    CliVisualizzazione.VARIABILE_NICKNAME, CliInput.MAX_CARATTERI_NICKNAME), "Nickname");
-                dati.impostaValore(CliInput.chiediConLunghezzaMax(
-                    CliVisualizzazione.VARIABILE_PASSWORD, CliInput.MAX_CARATTERI_PASSWORD), "Password");
-                registrato = model.registrati(dati);
-            } catch (SQLIntegrityConstraintViolationException e) {
-                CliNotifiche.avvisa(CliNotifiche.NICKNAME_GIA_USATO);
-            } catch (Exception e) {
-                CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
-            }   
-        }
-        CliNotifiche.avvisa(CliNotifiche.CONFIGURATORE_CORRETTAMENTE_REGISTRATO);
+        try {
+
+            do {
+                String nickname = CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_NICKNAME, CliInput.MAX_CARATTERI_NICKNAME);
+                if (model.getRegistratore().nomeUtenteUnivoco(nickname)) {
+
+                    DTObject dati = new Tupla("Configuratore", Tupla.FORMATO_UTENTE);
+                    dati.impostaValore(nickname, "Nickname");
+                    dati.impostaValore(CliInput.chiediConLunghezzaMax(
+                        CliVisualizzazione.VARIABILE_PASSWORD, CliInput.MAX_CARATTERI_PASSWORD), "Password");
+                    registrato = model.registrati(dati);
+                    if (registrato) CliNotifiche.avvisa(CliNotifiche.CONFIGURATORE_CORRETTAMENTE_REGISTRATO);
+                }
+                else CliNotifiche.avvisa(CliNotifiche.NICKNAME_GIA_USATO);
+
+            } while (!registrato);
+        } catch (Exception e) {
+            //se c'è un errore salata la registraizone e va direttamente all'interno per non bloccare il flusso di esecuzione
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
+        }   
     }
+
+    /**
+    * Questa funzione servirà da menu in cui il configuratore potra decidere a che opzione accedere
+    */
+    private void menuConfiguratore() {
+
+        CliVisualizzazione.ingressoBackendConfiguratore();
+
+        /*Se è la prima volta che il configuratore accede al db dei luoghi e non ci sono dati
+        *nel database, deve iniziare la procedura di popolamento generale del corpo dei dati
+        */
+        if(controllaDBVuoti("luogo")) {
+
+            CliVisualizzazione.avvisoDBVuoto();
+            //prima chiede all'utente di inserire l'area di competenza e il max numero partecipanti
+            inserisciAreaCompetenza();
+            inserisciMaxPartecipanti();
+
+            //poi gli chiede di popolare il corpo dei dati
+            popolaDBLuoghiVisteVolontari();
+        }
+
+        //manda alla pagina di configuazione se rileva che è il giorno di configurazione
+        if (giornoDiConfigurazione()) {
+            aggiungiDatePrecluse();
+        }
+
+        //per nuove funzioni agigungere nuove righe
+        Map<Integer, Runnable> actions = new HashMap<>();
+        actions.put(1, this::inserisciMaxPartecipanti);
+        actions.put(2, this::inserisciNuovoTipoDiVisita);
+        actions.put(3, this::insersciVolontario);
+        actions.put(4, () -> visualizzaTabellaDatabase(Queries.SELEZIONA_VOLONTARI, "Volontari"));
+        actions.put(5, () -> visualizzaTabellaDatabase(Queries.SELEZIONA_LUOGHI, "Luoghi"));
+        actions.put(6, () -> visualizzaTabellaDatabase(Queries.SELEZIONA_TIPI_VISITE, "Tipi di visite"));
+        actions.put(7, this::chiediStatoDaVisualizzare);
+
+        while (true) {
+            int scelta = CliInput.menuAzioni(getModel().getNickname(), opzioniConfiguratore);
+            if (scelta > actions.size()) break;
+            actions.get(scelta).run();
+        }      
+    }
+
+    //le opzioni stampate a video, in modo da da sapere in che ordine le vede l'utente
+    private static final String[] opzioniConfiguratore = {
+        "Modifica max numero partecipanti",
+        "Introduzione nuovo tipo di visita",
+        "Introduzione nuovo volontario",
+        "Visualizza elenco volontari",
+        "Visualizza luoghi visitabili",
+        "Visualizza tipi di visite",
+        "Visualizza visite in archivio a seconda dello stato",
+        "Esci" 
+    };
 
     public void inserisciAreaCompetenza() {
         String areaCompetenza = CliInput.chiediConConferma(CliVisualizzazione.AREA_COMPETENZA);
@@ -74,22 +137,30 @@ public class ConfiguratoreController implements UtenteController {
 
     //ritorna il nickname del volontario se l'inserimento è riuscito, null altrimenti
     public String insersciVolontario() {
-        String nickname;
+        String nickname = null;
+        Registratore aux = model.getRegistratore();
         CliVisualizzazione.intestazionePaginaInserimento(CliVisualizzazione.VARIABILE_VOLONTARI);
+        
         try {
-            nickname = CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_NICKNAME, CliInput.MAX_CARATTERI_NICKNAME);
-            DTObject dati = new Tupla("Volontario", Tupla.FORMATO_UTENTE);
-            dati.impostaValore(nickname, "Nickname");
-            dati.impostaValore(LoginSQL.getDefaultPasswordVolontario(), "Password");
-            model.getRegistratore().registraNuovoVolontario(dati);
-            CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_CORRETTAMENTE_REGISTRATO);
-            return nickname;
-        } catch (SQLIntegrityConstraintViolationException e) {
-            CliNotifiche.avvisa(CliNotifiche.NICKNAME_GIA_USATO);
+            Boolean registrato = false;
+            do {
+
+                nickname = CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_NICKNAME, CliInput.MAX_CARATTERI_NICKNAME);
+                //controlla se non è gia stato inserito
+                if (aux.nomeUtenteUnivoco(nickname)) {
+                    DTObject dati = new Tupla("Volontario", Tupla.FORMATO_UTENTE);
+                    dati.impostaValore(nickname, "Nickname");
+                    dati.impostaValore(LoginSQL.getDefaultPasswordVolontario(), "Password");
+                    registrato = aux.registraNuovoVolontario(dati);
+                    if (registrato) CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_CORRETTAMENTE_REGISTRATO);
+                }
+                else CliNotifiche.avvisa(CliNotifiche.NICKNAME_GIA_USATO);
+            } while (!registrato);
         } catch (Exception e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
         }
-        return null;
+        CliInput.invioPerContinuare();
+        return nickname;
     }
 
     public void inserisciNuovoTipoDiVisita () {

@@ -100,4 +100,9 @@ public class LoginSQL implements Login {
         return defaultPasswordVolontario;
     }
 
+    public static boolean cambioPassword(String nickname, String password) throws Exception {
+        // TODO Auto-generated method stub per gestire un futuro hashing delle password
+        throw new UnsupportedOperationException("Unimplemented method 'cambioPassword'");
+    }
+
 }

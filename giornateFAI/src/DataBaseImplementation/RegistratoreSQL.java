@@ -106,6 +106,19 @@ public class RegistratoreSQL implements Registratore{
         return false;
     }
 
+    
+    public boolean nomeUtenteUnivoco(String nomeUtente) throws Exception {
+        
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.NICKNAME_UNIVOCO.getQuery())) {
+            stmt.setString(1, nomeUtente);
+            //prova a cercare il nome nel DB
+            ResultSet rs = stmt.executeQuery();
+            //se non è presente nel DB è un nome valido
+            if (!rs.next()) return true;
+        }
+        return false;
+    }
+
     public boolean registraNuovoConfiguratore (DTObject configuratore) throws Exception {
         return inserisciElementoDB(configuratore, "Nuovo configuratore");
     }
@@ -171,5 +184,6 @@ public class RegistratoreSQL implements Registratore{
         this.maxPartecipanti = maxPartecipanti;
         fileManager.scriviRegistratoreDefault(areaCompetenza, maxPartecipanti);
     }
+
 
 }   

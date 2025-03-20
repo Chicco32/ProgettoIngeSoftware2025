@@ -22,12 +22,10 @@ public class Configuratore extends Utente {
     }
 
     public boolean registrati(DTObject dati) throws Exception {
-        boolean registrato = false;
-        // Chiede il nickname e la password finche' non vengono inseriti correttamente
-        this.setNickname((String)dati.getValoreCampo("Nickname"));
-
-        registrato = registratore.registraNuovoConfiguratore(dati); 
-        if (registrato) this.setPrimoAccesso(false);
+        String nickname = (String)dati.getValoreCampo("Nickname");
+        this.setNickname(nickname);
+        boolean registrato = registratore.registraNuovoConfiguratore(dati); 
+        this.setPrimoAccesso(false);
         return registrato; 
     }
 
