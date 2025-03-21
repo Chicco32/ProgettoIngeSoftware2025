@@ -91,7 +91,7 @@ public class VolontarioController implements UtenteController {
     private void visualizzaVisiteAssociate() {
         String aux = model.getNickname();
         CliVisualizzazione.barraIntestazione(aux);
-        CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().visualizzaElenecoTipiDiVisiteAssociate(aux), "Tipi di Visite");
+        CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().visualizzaElenecoTipiDiVisiteAssociate(aux), "Visite Associate");
     }
 
 }

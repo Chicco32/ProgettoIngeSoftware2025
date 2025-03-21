@@ -2,6 +2,7 @@ package DataBaseImplementation;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -182,10 +183,14 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
         return luoghiDisponibili;
     }
 
-    @Override
     public DTObject[] visualizzaElenecoTipiDiVisiteAssociate(String volontarioAssociato) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'visualizzaElenecoTipiDiVisiteAssociate'");
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.VISITE_ASSOCIATE_VOLONTARIO.getQuery())) {
+            stmt.setString(1, volontarioAssociato);
+            return traduciTabella(stmt.executeQuery());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     
 }

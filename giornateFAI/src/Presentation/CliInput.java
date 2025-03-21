@@ -287,8 +287,43 @@ public class CliInput {
     }
 
 	public static Date[] chiediDateDisponibilà(Date[] datePossibili) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'chiediDateDisponibilà'");
+        List<Date> dateDisponibili = new ArrayList<>();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+        System.out.println("Date possibili:");
+        for (int i = 0; i < datePossibili.length; i++) {
+            System.out.println((i + 1) + ". " + format.format(datePossibili[i]));
+        }
+
+        boolean continua = true;
+        do {
+            try {
+                String dataStr = InputDati.leggiStringa("Inserisci una data disponibile (yyyy-MM-dd) o 'fine' per terminare: ");
+                if (dataStr.equalsIgnoreCase("fine")) {
+                    continua = false;
+                    break;
+                }
+                Date dataInserita = format.parse(dataStr);
+                boolean valida = false;
+                for (Date data : datePossibili) {
+                    if (data.equals(dataInserita)) {
+                        valida = true;
+                        break;
+                    }
+                }
+                if (!valida) {
+                    System.out.println("La data inserita non è tra quelle possibili. Riprova.");
+                } else if (dateDisponibili.contains(dataInserita)) {
+                    System.out.println("Hai già selezionato questa data. Riprova.");
+                } else {
+                    dateDisponibili.add(dataInserita);
+                }
+            } catch (ParseException e) {
+                System.out.println("Formato data non valido. Riprova.");
+            }
+        } while (continua);
+
+        return dateDisponibili.toArray(new Date[0]);
 	}
 
 }

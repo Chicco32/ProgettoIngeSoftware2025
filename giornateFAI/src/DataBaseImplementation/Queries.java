@@ -14,6 +14,7 @@ public enum Queries {
     SELEZIONA_LUOGHI("SELECT * FROM `dbingesw`.`luogo`"),
     SELEZIONA_TIPI_VISITE("SELECT * FROM dbingesw.`tipo di visita`"),
     SELEZIONA_VISITE_ARCHIVIO("{call GetVisite(?)}"),
+    VISITE_ASSOCIATE_VOLONTARIO(""), //TODO da scrivere
     
     //RegistratoreSQL
     REGISTRA_CONFIGURATORE("INSERT into `dbingesw`.`configuratore` (`Nickname`,`Password`, `Salt`) VALUES (?,?,?)"),
