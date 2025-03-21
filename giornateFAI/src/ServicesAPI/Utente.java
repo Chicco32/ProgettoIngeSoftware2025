@@ -6,16 +6,14 @@ public abstract class Utente {
     private String ruolo; //Configuratore, Fruitore o Volontario
     private String nickname;
     private Boolean PrimoAccesso;
-    protected Visualizzatore visualizzatore;
     protected Calendario calendario;
     
 
-    public Utente(boolean PrimoAccesso, String nickname, Visualizzatore visualizzatore) {
+    public Utente(boolean PrimoAccesso, String nickname) {
         this.nickname = null;
         this.calendario = new Calendario(); 
         this.PrimoAccesso = PrimoAccesso;
         this.nickname = nickname;
-        this.visualizzatore = visualizzatore;
     }
     
     protected void setRuolo(String ruolo){
@@ -40,10 +38,6 @@ public abstract class Utente {
 
     protected void setNickname(String nickname) {
         this.nickname = nickname;
-    }
-
-    public Visualizzatore getVisualizzatore() {
-        return this.visualizzatore;
     }
 
     public Calendario getCalendario() {

@@ -9,26 +9,27 @@ public class XMLDateDisponibili extends XMLManager  implements GestoreDateDispon
     public XMLDateDisponibili(String path) {
         super(path);
     }
-    
-    //private static final DateFormat formatoData =new SimpleDateFormat("yyyy-MM-dd");
 
     @Override
-    public void dichiaraDateDisponibili(Date[] dateDisponibli, String nomeVolontario) {
+    public void registraDateDisponibili(Date today, Date[] dateDisponibli, String nomeVolontario) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'dichiaraDateDisponibili'");
+        throw new UnsupportedOperationException("Unimplemented method 'registraDateDisponibili'");
     }
 
     @Override
-    public Date[] leggiDateDisponibli(String nomeVolontario) {
+    public Date[] leggiDateDisponibili(String nomeVolontario) {
         // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'leggiDateDisponibli'");
+        throw new UnsupportedOperationException("Unimplemented method 'leggiDateDisponibili'");
     }
 
     @Override
-    public void cleanDates(Date data) {
+    public void cleanDates(Date data, String nomeVolontario) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'cleanDates'");
     }
+
+    //private static final DateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd");
+
 
 
 }

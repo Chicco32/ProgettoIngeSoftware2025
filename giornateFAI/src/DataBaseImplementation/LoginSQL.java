@@ -5,9 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
-
-import org.mindrot.jbcrypt.BCrypt;
-
 import ServicesAPI.Configuratore;
 import ServicesAPI.Login;
 import ServicesAPI.RegistroDateDisponibili;
@@ -32,10 +29,8 @@ import ServicesAPI.Volontario;
  */
 public class LoginSQL implements Login {
 
-
     private static final String defaultNicknameAdmin = "admin";
     private static final String defaultPasswordAdmin = "admin";
-    private static final String defaultPasswordVolontario = "volontario";
     private Connection connection;
 
     public LoginSQL() {
@@ -55,13 +50,13 @@ public class LoginSQL implements Login {
         VisualizzatoreSQL visualizzatore = new VisualizzatoreSQL();
         RegistratoreSQL registratore = new RegistratoreSQL(PercorsiFiles.pathRegistratore);
         RegistroDatePrecluse registroDatePrecluse = new RegistroDatePrecluse(new XMLDatePrecluse(PercorsiFiles.pathDatePrecluse));
-        RegistroDateDisponibili registroDateDisponibili = new RegistroDateDisponibili(new XMLDateDisponibili(PercorsiFiles.pathDateDisponibili));
         
         //prima una catena di controllo sulle credenziali di default
         if (nickname.equals(defaultNicknameAdmin) && passwordInserita.equals(defaultPasswordAdmin)) {
             return new Configuratore(true, defaultNicknameAdmin, visualizzatore, registratore, registroDatePrecluse);
         }
         else if(presenteNelDB(nickname, defaultPasswordVolontario, accessi.get(Volontario.class))) {
+            RegistroDateDisponibili registroDateDisponibili = new RegistroDateDisponibili(new XMLDateDisponibili(PercorsiFiles.pathDateDisponibili), nickname);
             return new Volontario(true, nickname, visualizzatore, registroDateDisponibili);
         }
 
@@ -70,6 +65,8 @@ public class LoginSQL implements Login {
             return new Configuratore(false, nickname, visualizzatore, registratore, registroDatePrecluse);
         }
         else if (presenteNelDB(nickname, passwordInserita, accessi.get(Volontario.class))) {
+            new RegistroDateDisponibili(new XMLDateDisponibili(PercorsiFiles.pathDateDisponibili), nickname);
+            RegistroDateDisponibili registroDateDisponibili = new RegistroDateDisponibili(new XMLDateDisponibili(PercorsiFiles.pathDateDisponibili), nickname);
             return new Volontario(false, nickname, visualizzatore, registroDateDisponibili);
         }
 
@@ -90,17 +87,12 @@ public class LoginSQL implements Login {
                 //Se il nickname risulta effettivamente presente nel DB recupera la password
                 if (rs.next()) {
                     String passwordSalvata = rs.getString("Password");
-                    if (BCrypt.checkpw(passwordInserita, passwordSalvata))
-                    //if (passwordSalvata.equals(passwordInserita))
+                    if (ServizioHash.passwordValida(passwordInserita, passwordSalvata)  )
                         return true;
                 }
             }
         }
         return false;
-    }
-
-    public static String getDefaultPasswordVolontario() {
-        return defaultPasswordVolontario;
     }
 
     public static boolean cambioPassword(String nickname, String password) throws Exception {

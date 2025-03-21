@@ -6,6 +6,8 @@ package ServicesAPI;
  */
 public interface Login {
 
+    public static final String defaultPasswordVolontario = "volontario";
+
     /**
      * Metodo di login per l'utente generico. Il metodo deve occuparsi sia di riconoscere
      * che tipo di utente sta tentando di accedere sia di verificarne l'autenticità.

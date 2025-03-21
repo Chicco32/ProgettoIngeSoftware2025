@@ -7,11 +7,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import ServicesAPI.CoerenzaException;
 import ServicesAPI.DTObject;
 import ServicesAPI.StatiVisite;
-import ServicesAPI.Visualizzatore;
+import ServicesAPI.VisualizzatoreConfiguratore;
+import ServicesAPI.VisualizzatoreVolontario;
 
 
 /**
@@ -24,7 +23,7 @@ import ServicesAPI.Visualizzatore;
  * @see ConnesioneSQL
  * @see Visualizzatore
  */
-public class VisualizzatoreSQL implements Visualizzatore {
+public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, VisualizzatoreVolontario {
 
     private Connection connection;
 
@@ -32,6 +31,11 @@ public class VisualizzatoreSQL implements Visualizzatore {
         this.connection = ConnessioneSQL.getConnection();
     }
 
+    /**
+     * Traduce l'oggetto {@code Resulset} derivato dal database SQL in una serie di Tuple di tipo DTObject
+     * @param tabellaSQL la tabella originaria della query
+     * @return la tabella con gli stessi valori in formato {@code DTObject}, altrimenti <pre> new DTObject[0] </pre> in caso di tabella vuota
+     */
     private DTObject[] traduciTabella(ResultSet tabellaSQL) {
         ArrayList<DTObject> listaOggetti = new ArrayList<>();
         try {
@@ -60,18 +64,71 @@ public class VisualizzatoreSQL implements Visualizzatore {
         return listaOggetti.toArray(new DTObject[0]);
     }
 
-    public DTObject[] visualizzaTabella(String query) throws CoerenzaException {
+    /**
+     * Ritorna i risultati dell'esecuzone di una certa query sul database
+     * @param query la query da far eseguire, il metodo è specifico per le query solo di visualizzazione non di modifica, per quelle usare il registratore
+     * @return Un oggetto {@code ResultSet} con le tuple risultate dalla interrogazione
+     */
+    private ResultSet eseguiQuery(Queries query) {
     if (connection != null) {
         try {
-            return traduciTabella(connection.createStatement().executeQuery(query));
+            return connection.createStatement().executeQuery(query.getQuery());
         } catch (SQLException e) {
-            throw new CoerenzaException("Errore nella coerenza dei dati", e);
+            e.printStackTrace(); //problemi interni di serverSQL
         }
     }
     return null;
     }
 
-    public DTObject[] visualizzaVisite(StatiVisite stato) throws CoerenzaException {
+    /**
+     * Estrae solo tutti i valori assunti da uno specifico atributo. Siccome esso sposta avanti il puntatore va evocato su un oggetto non ancora letto altrimenti causerà eccezioni
+     * @param resul un oggetto che rappresenta tutti i risultati della query su cui filtrare
+     * @param campo la colonna selezionata su cui filtrare
+     * @return un arraylist contenente tuttti i valori assunti dalla colonna selezionata
+     * @throws IllegalArgumentException se l'oggetto results o se campo sono {@code null}
+     */
+    public List<String> estraiColonna(ResultSet results, String campo) throws IllegalArgumentException{
+        if (results == null || campo == null) {
+            throw new IllegalArgumentException("Il parametro results o campo non può essere null.");
+        }
+
+        List<String> valoriColonna = new ArrayList<>();
+        try {
+            while (results.next()) {
+            valoriColonna.add(results.getString(campo));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return valoriColonna;
+    }
+
+    /**
+     * Funzione che avvisa se una tabella del DB è vuota, in particolare controlla se non vi e nemmeno una tupla in esso
+     * @param tabella il nome della tabella da ispezionare (per ora supporta solo "luogo" e "tipo di visita")
+     * @return true se la tabella è vuota, false altrimenti
+     */
+    private boolean tabellaDBVuota(String tabella) {
+        Map<String, String> selezioneTabella = Map.ofEntries(
+            Map.entry("luogo", Queries.SELEZIONA_LUOGHI.getQuery()),
+            Map.entry("tipo di visita", Queries.SELEZIONA_TIPI_VISITE.getQuery())
+        );
+        if (connection != null) {
+            //next da true se trova una riga e sposta il cursore su tale riga
+            try {
+                return !connection.createStatement().executeQuery(selezioneTabella.get(tabella)).next();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
+
+    public boolean nonCisonoLuoghiRegistrati() {
+        return tabellaDBVuota("luogo");
+    }
+
+    public DTObject[] visualizzaVisite(StatiVisite stato) {
     if (connection != null) {
         String query = Queries.SELEZIONA_VISITE_ARCHIVIO.getQuery();  // Usa le parentesi graffe per chiamare la stored procedure
         CallableStatement stmt = null;
@@ -80,7 +137,7 @@ public class VisualizzatoreSQL implements Visualizzatore {
             stmt.setString(1, stato.toString());
         return traduciTabella(stmt.executeQuery());
         } catch (SQLException e) {
-            throw new CoerenzaException("Errore nella coerenza dei dati", e);
+            e.printStackTrace(); //problemi del server
         }    
     }
     return null;
@@ -95,7 +152,7 @@ public class VisualizzatoreSQL implements Visualizzatore {
         String queryVolontari = "SELECT * FROM dbingesw.volontario;";
         try {
             ResultSet results = connection.createStatement().executeQuery(queryVolontari);
-            return estraiColonna(traduciTabella(results), "Nickname");
+            return estraiColonna(results, "Nickname");
         }
         catch (SQLException e) {
             //Non può non esserci il campo dato che è inserito forzatamente dentro, da migliorare con la seprazione delle query
@@ -103,27 +160,32 @@ public class VisualizzatoreSQL implements Visualizzatore {
         return null;
     }
 
-    public List<String> estraiColonna(DTObject[] results, String campo) throws IllegalArgumentException{
-        if (results == null || campo == null ) throw new IllegalArgumentException();
-        ArrayList<String> valori = new ArrayList<>();
-        for (DTObject tupla : results) valori.add(tupla.getValoreCampo(campo).toString());
-        return valori;
+    public DTObject[] visualizzaElencoVolontari() {
+        return traduciTabella(eseguiQuery(Queries.SELEZIONA_VOLONTARI));
     }
 
-    public boolean tabellaDBVuota(String tabella) throws CoerenzaException {
-        Map<String, String> selezioneTabella = Map.ofEntries(
-            Map.entry("luogo", Queries.SELEZIONA_LUOGHI.getQuery()),
-            Map.entry("tipo di visita", Queries.SELEZIONA_TIPI_VISITE.getQuery())
-        );
-        if (connection != null) {
-            //next da true se trova una riga e sposta il cursore su tale riga
-            try {
-                return !connection.createStatement().executeQuery(selezioneTabella.get(tabella)).next();
-            } catch (SQLException e) {
-                throw new CoerenzaException("Errore nella coerenza dei dati", e);
-            }
+    public DTObject[] visualizzaElencoLuoghi() {
+        return traduciTabella(eseguiQuery(Queries.SELEZIONA_LUOGHI));
+    }
+
+    public DTObject[] visualizzaElencoTipiDiVisite() {
+        return traduciTabella(eseguiQuery(Queries.SELEZIONA_TIPI_VISITE));
+    }
+
+    public List<String> listaLuoghiRegistrati() {
+        List<String> luoghiDisponibili = new ArrayList<>();
+        try {
+            luoghiDisponibili = estraiColonna(eseguiQuery(Queries.SELEZIONA_LUOGHI), "Nome");
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
         }
-        return false;
+        return luoghiDisponibili;
+    }
+
+    @Override
+    public DTObject[] visualizzaElenecoTipiDiVisiteAssociate(String volontarioAssociato) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'visualizzaElenecoTipiDiVisiteAssociate'");
     }
     
 }

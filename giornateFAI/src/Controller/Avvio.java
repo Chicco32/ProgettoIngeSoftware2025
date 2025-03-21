@@ -1,9 +1,5 @@
 package Controller;
 
-import java.sql.Connection;
-
-import DataBaseImplementation.ConnessioneSQL;
-import DataBaseImplementation.LoginSQL;
 import Presentation.CliInput;
 import Presentation.CliNotifiche;
 import Presentation.CliVisualizzazione;
@@ -12,26 +8,13 @@ import ServicesAPI.Utente;
 
 public class Avvio {
 
-    public Avvio() {
-        //crea la prima e unica istanza di sqlconnection
-        ConnessioneSQL.getConnection();
-        notificaConnesione(ConnessioneSQL.getConnection());
-    }
+    private Login login;
 
-    public Avvio(String url, String user, String psw) {
-        //crea la prima e unica istanza di sqlconnection
-        ConnessioneSQL.getConnection(url,user,psw);
-        notificaConnesione(ConnessioneSQL.getConnection());
-    }
-
-    private void notificaConnesione(Connection connection) {
-        if (connection != null) CliNotifiche.avvisa(CliNotifiche.CONNESSIONE_RIUSCITA);
-        else CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
+    public Avvio(Login login) {
+        this.login = login;
     }
 
     public void avviaApp() {
-
-        Login login = new LoginSQL();
 
         //chiede il login finche non è valido
         CliNotifiche.avvisa(CliNotifiche.BENVENUTO);

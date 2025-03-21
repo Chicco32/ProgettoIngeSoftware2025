@@ -51,7 +51,6 @@ public interface Registratore {
      * @param tabella la tabella da selezionare in cui generare la chiave
      * @return un {@code int} che rappresenta il valore della chiave da inserire. In caso di tabella di tabella vuota restitutisce valore {@code 1} e in caso di errori nella generezione restituisce {@code -1}
      */
-    //inserire il throws
     public int generaNuovaChiave(String tabella);
 
     /**

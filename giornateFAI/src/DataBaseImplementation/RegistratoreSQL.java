@@ -4,16 +4,11 @@ import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.mindrot.jbcrypt.BCrypt;
-
 import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
-
 import ServicesAPI.DTObject;
 import ServicesAPI.GestoreConfigurazioneRegistratore;
 import ServicesAPI.GestoreFilesConfigurazione;
 import ServicesAPI.Registratore;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -121,22 +116,15 @@ public class RegistratoreSQL implements Registratore{
         return false;
     }
 
-    //Usa BCrypt per aggiungere almeno un livello di hashing con sale
-    private void cifraPassword(DTObject utente) {
-        String salt = BCrypt.gensalt(15);
-        utente.impostaValore(salt, "Salt");
-        String hashpsw = BCrypt.hashpw((String)utente.getValoreCampo("Password"), salt);
-        utente.impostaValore(hashpsw, "Password");
-    }
 
     //in nmaniera trasparente all'utente aggiunge i layer di sicurezza
     public boolean registraNuovoConfiguratore (DTObject configuratore) throws Exception {
-        cifraPassword(configuratore);
+        ServizioHash.cifraPassword(configuratore);
         return inserisciElementoDB(configuratore, "Nuovo configuratore");
     }
 
     public boolean registraNuovoVolontario (DTObject volontario) throws Exception{
-        cifraPassword(volontario);
+        ServizioHash.cifraPassword(volontario);
         return inserisciElementoDB(volontario, "Nuovo volontario");
     }
 
@@ -149,6 +137,8 @@ public class RegistratoreSQL implements Registratore{
     }
 
     public boolean registraNuovoTipoVisita(DTObject tipoVisita) throws Exception {
+        int nuovoCodice = generaNuovaChiave(CostantiDB.TIPO_VISITA.getNome());
+        tipoVisita.impostaValore(nuovoCodice, "Codice Tipo di Visita");
         return inserisciElementoDB(tipoVisita, "Nuovo tipo visita");
     }
 

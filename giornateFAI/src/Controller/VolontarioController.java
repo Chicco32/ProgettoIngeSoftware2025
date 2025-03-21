@@ -2,11 +2,10 @@ package Controller;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import DataBaseImplementation.LoginSQL;
 import Presentation.CliInput;
 import Presentation.CliNotifiche;
 import Presentation.CliVisualizzazione;
+import ServicesAPI.Login;
 import ServicesAPI.Utente;
 import ServicesAPI.Volontario;
 
@@ -30,7 +29,7 @@ public class VolontarioController implements UtenteController {
         boolean passwordCambiata = false;
         try {
             do {
-                passwordCambiata = LoginSQL.cambioPassword(model.getNickname(), 
+                passwordCambiata = Login.cambioPassword(model.getNickname(), 
                     CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_PASSWORD, CliInput.MAX_CARATTERI_PASSWORD));
             } while (!passwordCambiata);
         } catch (Exception e) {
