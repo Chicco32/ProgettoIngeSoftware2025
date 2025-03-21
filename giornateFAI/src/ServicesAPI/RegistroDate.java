@@ -66,7 +66,7 @@ public class RegistroDate{
 			Date ultimaDataSalvata = formatoData.parse(ultimaDataStr);
 			int ultimoMese = new Calendario(ultimaDataSalvata).getMonth();
 			int meseOdierno = new Calendario().getMonth();
-			if (meseOdierno > ultimoMese) return false;
+			if (meseOdierno != ultimoMese) return false;
 			else return true;
 		}
 		return false;
