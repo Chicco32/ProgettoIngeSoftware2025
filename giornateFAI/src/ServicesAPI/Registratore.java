@@ -25,6 +25,15 @@ public interface Registratore {
     public boolean registraNuovoVolontario (DTObject volontario) throws Exception;
 
     /**
+     * Questo metodo verifica se un dato nome utente è univoco, cioè se non è già stato registrato da 
+     * nessun altro utente, indipendentemente dal loro ruolo. 
+     * Viene invocato ogni volta che un utente tenta di registrare un nuovo nickname.
+     * @param nomeUtente Il nome utente che si vuole registrare.
+     * @return true se il nome utente non è già registrato, false altrimenti.
+     */
+    public boolean nomeUtenteUnivoco (String nomeUtente) throws Exception;
+
+    /**
      * Funzione per la registrazione di un nuovo luogo nel DB.
      * In particolare la funzione richiede al DB l'inserimento dei dati forniti e riporta la risposta del DB in caso di avvenuto inserimento o meno
      * La funzione ritorna true se la registrazione è andata a buon fine, false altrimenti.

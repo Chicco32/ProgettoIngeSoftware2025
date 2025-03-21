@@ -157,5 +157,8 @@ public class XMLManager{
         return variabile;
     }
 
+    public String getPath() {
+		return this.path;
+	}
 
 }

@@ -14,10 +14,10 @@ import ServicesAPI.DTObject;
 public class Tupla implements DTObject {
 
     //alcuni formati di campi gia fatti per questa applicazione, comunque si possono inserire anche formati personalizzati
-    public static final String[] FORMATO_UTENTE = {"Nickname", "Password"};
+    public static final String[] FORMATO_UTENTE = {"Nickname", "Password", "Salt"};
     public static final String[] FORMATO_LUOGO = {"Nome", "Descrizione", "Indirizzo"};
     public static final String[] FORMATO_TIPO_VISITA = {
-        "Codice Tipo di Visita", "Punto di Incontro","Titolo", "Descrizione","Giorno inzio", 
+        "Codice Tipo di Visita","Punto di Incontro","Titolo", "Descrizione","Giorno inzio", 
             "Giorno fine", "Ora di inizio", "Durata", "Necessita Biglietto", "Min Partecipanti", "Max Partecipanti", "Configuratore referente"};
 
     private String tabellaOrigine;

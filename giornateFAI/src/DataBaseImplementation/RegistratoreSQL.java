@@ -5,7 +5,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.mindrot.jbcrypt.BCrypt;
+
+import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
+
 import ServicesAPI.DTObject;
+import ServicesAPI.GestoreConfigurazioneRegistratore;
 import ServicesAPI.GestoreFilesConfigurazione;
 import ServicesAPI.Registratore;
 
@@ -44,7 +49,7 @@ public class RegistratoreSQL implements Registratore{
     private int maxPartecipanti;
     private String areaCompetenza;
 
-    private GestoreFilesConfigurazione fileManager;
+    private GestoreConfigurazioneRegistratore fileManager;
 
     public RegistratoreSQL(String path){
         this.connection = ConnessioneSQL.getConnection();
@@ -80,7 +85,6 @@ public class RegistratoreSQL implements Registratore{
         if (query == null) {
             throw new IllegalArgumentException("Comando SQL non trovato per: " + comando);
         }
-
         List<String> campi = object.getCampi();
         if (this.connection != null) {
             try (PreparedStatement stmt = connection.prepareStatement(inserimenti.get(comando).getQuery())) {
@@ -89,24 +93,50 @@ public class RegistratoreSQL implements Registratore{
                     Object valore = object.getValoreCampo(campo);
                     if (valore instanceof Integer)stmt.setInt(placeHolder, ((Integer)valore).intValue());
                     else if (valore instanceof String) stmt.setString(placeHolder, (String)valore.toString());
-                    else if (valore instanceof Date) stmt.setString(placeHolder, formatoDataPerSQL((Date) valore));
                     else if (valore instanceof Time) stmt.setString(placeHolder, formatoOrarioPerSQL((Time)valore));
+                    else if (valore instanceof Date) stmt.setString(placeHolder, formatoDataPerSQL((Date) valore));
                     else if (valore instanceof Boolean) stmt.setInt(placeHolder, (Boolean) valore ? 1:0);
                     else throw new IllegalArgumentException("Tipo dato non supportato");
                     placeHolder++;
                 }
                 stmt.executeUpdate();
                 return true;
+            } catch (MysqlDataTruncation e) {
+                throw new IllegalArgumentException(e);
             }
         }
         return false;
     }
 
+    
+    public boolean nomeUtenteUnivoco(String nomeUtente) throws Exception {
+        
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.NICKNAME_UNIVOCO.getQuery())) {
+            stmt.setString(1, nomeUtente);
+            //prova a cercare il nome nel DB
+            ResultSet rs = stmt.executeQuery();
+            //se non è presente nel DB è un nome valido
+            if (!rs.next()) return true;
+        }
+        return false;
+    }
+
+    //Usa BCrypt per aggiungere almeno un livello di hashing con sale
+    private void cifraPassword(DTObject utente) {
+        String salt = BCrypt.gensalt(15);
+        utente.impostaValore(salt, "Salt");
+        String hashpsw = BCrypt.hashpw((String)utente.getValoreCampo("Password"), salt);
+        utente.impostaValore(hashpsw, "Password");
+    }
+
+    //in nmaniera trasparente all'utente aggiunge i layer di sicurezza
     public boolean registraNuovoConfiguratore (DTObject configuratore) throws Exception {
+        cifraPassword(configuratore);
         return inserisciElementoDB(configuratore, "Nuovo configuratore");
     }
 
     public boolean registraNuovoVolontario (DTObject volontario) throws Exception{
+        cifraPassword(volontario);
         return inserisciElementoDB(volontario, "Nuovo volontario");
     }
 
@@ -129,38 +159,31 @@ public class RegistratoreSQL implements Registratore{
 
     private static String formatoOrarioPerSQL(Time time) {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        return sdf.format(time);
+        return sdf.format(time) + ":00";
     }
 
-    //migliorare la gestione eccezzioni, inserire il throws
+    //estraggo l'interrogazione corretta in base alla tabella
+    Map<CostantiDB, Queries> chiaviNuove = Map.of(
+        CostantiDB.TIPO_VISITA, Queries.GENERA_CHIAVE_TIPO_VISITA,
+        CostantiDB.ARCHIVIO_VISITE, Queries.GENERA_CHIAVE_ARCHIVIO
+    );
     public int generaNuovaChiave(String tabella) {
 
-        //il nome della colonna codici non è consistente fra le varie tabelle
-        CostantiDB nomeColonna;
         int nuovaChiave = -1;
-        switch (tabella) {
-            case CostantiDB.TIPO_VISITA.toString() :
-                nomeColonna = CostantiDB.CHIAVE_TIPO_VISITA;
-                break;
-            case CostantiDB.CHIAVE_ARCHIVIO_VISITE.getNome():
-                nomeColonna = CostantiDB.CHIAVE_ARCHIVIO_VISITE;
-                break;
-            default:
-                return nuovaChiave;
+        try{
+            //delega al server la generazione della chiave
+            String query = chiaviNuove.get(CostantiDB.fromString(tabella)).getQuery();
+            ResultSet result = connection.createStatement().executeQuery(query);
+            if (result.next()) {
+                //la chiave deve essere in un campo chimato maxCodice per essere letta
+                nuovaChiave = result.getInt("maxCodice");
+            }
         }
 
-        ResultSet resultSet;
-        if (this.connection != null) {
-            String query = "SELECT MAX(" + nomeColonna.getNome() + ") AS maxCodice FROM `dbingesw`." + tabella + "";
-            try {
-                resultSet = connection.createStatement().executeQuery(query);
-                if (resultSet.next()) {
-                    nuovaChiave = resultSet.getInt("maxCodice") + 1;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return nuovaChiave;
-            }
+        //tutte le eccezioni dovrebbero essere causate da errori di codice non dall'utente
+        catch (IllegalArgumentException | SQLException e) {
+            e.printStackTrace();
+            return nuovaChiave;
         }
         return nuovaChiave;
     }
@@ -174,5 +197,6 @@ public class RegistratoreSQL implements Registratore{
         this.maxPartecipanti = maxPartecipanti;
         fileManager.scriviRegistratoreDefault(areaCompetenza, maxPartecipanti);
     }
+
 
 }   

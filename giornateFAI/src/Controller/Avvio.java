@@ -43,6 +43,7 @@ public class Avvio {
             } catch (Exception e) {
                 CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
             }
+            if (utente == null) CliNotifiche.avvisa(CliNotifiche.CREDENZIALI_ERRATE);
         } while (utente == null);
 
         UtenteController controller = FactoryController.associaController(utente);

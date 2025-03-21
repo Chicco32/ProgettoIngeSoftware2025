@@ -40,42 +40,15 @@ public class CliVisualizzazione {
         System.out.flush();
     }
 
-    //Interazione di bentoranto al Configuratore
-    public static void benvenutoBackendConfiguratore() {
+    public static void ingressoBackendConfiguratore() {
         System.out.println("Benvenuto Configuratore! Stai per accedere al backEnd di sistema");
         CliInput.invioPerContinuare();
     }
 
-    /*
-    public static void visualizzaRisultati(ResultSet results, String tabella) {
-        System.out.println("\n<========= " + tabella.toUpperCase() + " =========>");
-        try {
-
-            //ottengo il numero di colonne
-            int numColonne = results.getMetaData().getColumnCount();
-            
-            //stampo i nomi delle colonne
-            List<String> colonne = new ArrayList<>();
-            for (int i = 1; i <= numColonne; i++) {
-                colonne.add(results.getMetaData().getColumnName(i));
-            }
-    
-            // Stampare la riga di intestazione
-            System.out.println(String.join(" | ", colonne));
-
-            //stampo i risultati
-            while (results.next()) {
-                for (int i = 1; i <= numColonne; i++) {
-                    System.out.print(results.getString(i) + "\t");
-                }
-                System.out.println("\n");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println("Fine tabella");
+    public static void ingressoBackendVolontario() {
+        System.out.println("Benvenuto Volontario! Stai per accedere al backEnd di sistema");
         CliInput.invioPerContinuare();
-    } */
+    }
 
     public static void visualizzaRisultati(DTObject[] results, String tabella) {
         System.out.println("\n<========= " + tabella.toUpperCase() + " =========>");

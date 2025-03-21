@@ -27,6 +27,7 @@ public class CliInput {
     public static final int MAX_CARATTERI_INDIRIZZO = 45;
     public static final int MAX_CARATTERI_TITOLO = 45;
 
+    
     public static void invioPerContinuare() {
         InputDati.leggiStringa("Premi invio per continuare");
     }
@@ -55,25 +56,16 @@ public class CliInput {
     }
 
     // Menu di interazione con il configuratore
-    public static int menuConfiguratore(String utente) {
+    public static int menuAzioni(String utente, String[] opzioni) {
         boolean conferma = false;
         int scelta = 0;
         do {
             CliVisualizzazione.pulisciSchermo();
             CliVisualizzazione.barraIntestazione(utente);
-            String[] opzioni = {
-                "Modifica max numero partecipanti",
-                "Introduzione nuovo tipo di visita",
-                "Introduzione nuovo volontario",
-                "Visualizza elenco volontari",
-                "Visualizza luoghi visitabili",
-                "Visualizza tipi di visite",
-                "Visualizza visite in archivio a seconda dello stato",
-                "Esci" };
             for (int i = 0; i < opzioni.length; i++) {
                 System.out.println((i + 1) + ") " + opzioni[i]);
             }
-            scelta = InputDati.leggiIntero("Inserisci il numero della tua scelta: ", 1, 8);
+            scelta = InputDati.leggiIntero("Inserisci il numero della tua scelta: ", 1, opzioni.length);
             conferma = InputDati.yesOrNo("Confermi la scelta inserita? ");
             CliVisualizzazione.pulisciSchermo();
         } while (!conferma);
@@ -101,19 +93,20 @@ public class CliInput {
         System.out.println("Inserisci il periodo dell'anno:");
         do {
             try {
+                
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                 String dataInizioStr = InputDati.leggiStringa("Data di inizio (yyyy-MM-dd): ");
                 dataInizio = format.parse(dataInizioStr);
                 String dataFineStr = InputDati.leggiStringa("Data di fine (yyyy-MM-dd): ");
                 dataFine = format.parse(dataFineStr);
                 //non posso invertire le date
-                if (!dataFine.after(dataInizio)) {
-                    System.out.println("La data di fine non può precedere quella di inizio");
-                    throw new IllegalArgumentException();
-                }
+                if (!dataFine.after(dataInizio)) throw new IllegalArgumentException();
                 conferma = InputDati.yesOrNo("Confermi il periodo inserito? ");
+
             } catch (ParseException e) {
                 System.out.println("Formato data non valido. Riprova.");
+            } catch (IllegalArgumentException e) {
+                System.out.println("La data di fine non può precedere quella di inizio");
             }
         } while (!conferma);
         return new DateRange(dataInizio, dataFine);
