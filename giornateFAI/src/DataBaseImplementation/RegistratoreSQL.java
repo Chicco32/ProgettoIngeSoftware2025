@@ -32,7 +32,6 @@ import java.text.SimpleDateFormat;
 public class RegistratoreSQL implements Registratore{
 
     private static final Map<String, Queries> inserimenti = Map.of(
-        "Nuovo configuratore", Queries.REGISTRA_CONFIGURATORE,
         "Nuovo volontario", Queries.REGISTRA_VOLONTARIO,
         "Nuovo luogo", Queries.REGISTRA_LUOGO,
         "Nuovo tipo visita", Queries.REGISTRA_TIPO_VISITA,
@@ -114,13 +113,6 @@ public class RegistratoreSQL implements Registratore{
             if (!rs.next()) return true;
         }
         return false;
-    }
-
-
-    //in nmaniera trasparente all'utente aggiunge i layer di sicurezza
-    public boolean registraNuovoConfiguratore (DTObject configuratore) throws Exception {
-        ServizioHash.cifraPassword(configuratore);
-        return inserisciElementoDB(configuratore, "Nuovo configuratore");
     }
 
     public boolean registraNuovoVolontario (DTObject volontario) throws Exception{

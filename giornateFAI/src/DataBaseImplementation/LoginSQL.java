@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 import ServicesAPI.Configuratore;
+import ServicesAPI.DTObject;
 import ServicesAPI.Login;
 import ServicesAPI.RegistroDateDisponibili;
 import ServicesAPI.RegistroDatePrecluse;
@@ -38,8 +39,8 @@ public class LoginSQL implements Login {
     }
 
     private static final Map<Class<? extends Utente>, Queries> accessi = Map.of(
-        Configuratore.class, Queries.PASSWORD_CONFIGURATORE,
-        Volontario.class, Queries.PASSWORD_VOLONTARIO
+        Configuratore.class, Queries.PASSWORD_ACCESSO_CONFIGURATORE,
+        Volontario.class, Queries.PASSWORD_ACCESSO_VOLONTARIO
     );
 
     public Utente loginUtente(String nickname, String passwordInserita) throws Exception {
@@ -51,23 +52,22 @@ public class LoginSQL implements Login {
         RegistratoreSQL registratore = new RegistratoreSQL(PercorsiFiles.pathRegistratore);
         RegistroDatePrecluse registroDatePrecluse = new RegistroDatePrecluse(new XMLDatePrecluse(PercorsiFiles.pathDatePrecluse));
         
-        //prima una catena di controllo sulle credenziali di default
+        //prima un controllo sulle credenziali di default
         if (nickname.equals(defaultNicknameAdmin) && passwordInserita.equals(defaultPasswordAdmin)) {
             return new Configuratore(true, defaultNicknameAdmin, visualizzatore, registratore, registroDatePrecluse);
         }
-        else if(presenteNelDB(nickname, defaultPasswordVolontario, accessi.get(Volontario.class))) {
-            RegistroDateDisponibili registroDateDisponibili = new RegistroDateDisponibili(new XMLDateDisponibili(PercorsiFiles.pathDateDisponibili), nickname);
-            return new Volontario(true, nickname, visualizzatore, registroDateDisponibili);
-        }
+
 
         //se entra con le credenziali di un utente già registrato si crea una catena di richieste per capire il tipo di utente
         if (presenteNelDB(nickname, passwordInserita, accessi.get(Configuratore.class))) {
             return new Configuratore(false, nickname, visualizzatore, registratore, registroDatePrecluse);
         }
         else if (presenteNelDB(nickname, passwordInserita, accessi.get(Volontario.class))) {
-            new RegistroDateDisponibili(new XMLDateDisponibili(PercorsiFiles.pathDateDisponibili), nickname);
             RegistroDateDisponibili registroDateDisponibili = new RegistroDateDisponibili(new XMLDateDisponibili(PercorsiFiles.pathDateDisponibili), nickname);
-            return new Volontario(false, nickname, visualizzatore, registroDateDisponibili);
+            Boolean primoAccesso = false;
+            if (passwordInserita.equals(defaultPasswordVolontario)) primoAccesso = true; 
+            new RegistroDateDisponibili(new XMLDateDisponibili(PercorsiFiles.pathDateDisponibili), nickname);
+            return new Volontario(primoAccesso, nickname, visualizzatore, registroDateDisponibili);
         }
 
         return null;
@@ -95,9 +95,53 @@ public class LoginSQL implements Login {
         return false;
     }
 
-    public static boolean cambioPassword(String nickname, String password) throws Exception {
-        // TODO Auto-generated method stub per gestire un futuro hashing delle password
-        throw new UnsupportedOperationException("Unimplemented method 'cambioPassword'");
+    public boolean nomeUtenteUnivoco(String nomeUtente) throws Exception {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.NICKNAME_UNIVOCO.getQuery())) {
+            stmt.setString(1, nomeUtente);
+            //prova a cercare il nome nel DB
+            ResultSet rs = stmt.executeQuery();
+            //se non è presente nel DB è un nome valido
+            if (!rs.next()) return true;
+        }
+        return false;
+    }
+
+    private static final Map<String, Queries> cambioPassword = Map.of(
+        "configuratore", Queries.CAMBIO_PASSWORD_CONFIGURATORE,
+        "volontario", Queries.CAMBIO_PASSWORD_VOLONTARIO
+    );
+
+    public boolean cambioPassword(DTObject dati, String ruolo) throws Exception {
+        //in nmaniera trasparente all'utente aggiunge i layer di sicurezza
+        ServizioHash.cifraPassword(dati);
+        String nickname = (String)dati.getValoreCampo("Nickname");
+        String password = (String)dati.getValoreCampo("Password");
+        String sale = (String)dati.getValoreCampo("Salt");
+
+        Queries query = cambioPassword.get(ruolo);
+        try (PreparedStatement stmt = connection.prepareStatement(query.getQuery())) {
+            stmt.setString(1, password);
+            stmt.setString(2, sale);
+            stmt.setString(3,nickname);
+            stmt.executeUpdate();
+            return true;
+        }
+    }
+
+    public boolean registraNuovoConfiguratore(DTObject configuratore) throws Exception {
+        //in nmaniera trasparente all'utente aggiunge i layer di sicurezza
+        ServizioHash.cifraPassword(configuratore);
+        String nickname = (String)configuratore.getValoreCampo("Nickname");
+        String password = (String)configuratore.getValoreCampo("Password");
+        String sale = (String)configuratore.getValoreCampo("Salt");
+
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.REGISTRA_CONFIGURATORE.getQuery())) {
+            stmt.setString(1,nickname);
+            stmt.setString(2, password);
+            stmt.setString(3, sale);
+            stmt.executeUpdate();
+            return true;
+        }
     }
 
 }

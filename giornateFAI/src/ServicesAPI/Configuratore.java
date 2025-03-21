@@ -23,14 +23,6 @@ public class Configuratore extends Utente {
         this.datePrecluse = datePrecluse;
     }
 
-    public boolean registrati(DTObject dati) throws Exception {
-        String nickname = (String)dati.getValoreCampo("Nickname");
-        this.setNickname(nickname);
-        boolean registrato = registratore.registraNuovoConfiguratore(dati); 
-        this.setPrimoAccesso(false);
-        return registrato; 
-    }
-
     public Registratore getRegistratore() {
         return this.registratore;
     }

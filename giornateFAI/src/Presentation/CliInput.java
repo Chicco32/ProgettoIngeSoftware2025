@@ -286,4 +286,9 @@ public class CliInput {
         return arrayDatePrecluse;
     }
 
+	public static Date[] chiediDateDisponibilà(Date[] datePossibili) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'chiediDateDisponibilà'");
+	}
+
 }

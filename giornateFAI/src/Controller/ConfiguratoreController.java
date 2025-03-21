@@ -9,6 +9,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+
 import DataBaseImplementation.Tupla;
 import Presentation.CliInput;
 import Presentation.CliNotifiche;
@@ -37,7 +39,7 @@ public class ConfiguratoreController implements UtenteController {
         menuConfiguratore();
     }
 
-    public void registrati() {
+    public void registrati(Login login) {
         CliNotifiche.avvisa(CliNotifiche.BENVENUTO_NUOVO_CONFIGURATORE);
         boolean registrato = false;
         try {
@@ -50,7 +52,7 @@ public class ConfiguratoreController implements UtenteController {
                     dati.impostaValore(nickname, "Nickname");
                     dati.impostaValore(CliInput.chiediConLunghezzaMax(
                         CliVisualizzazione.VARIABILE_PASSWORD, CliInput.MAX_CARATTERI_PASSWORD), "Password");
-                    registrato = model.registrati(dati);
+                    registrato = login.registraNuovoConfiguratore(dati);
                     if (registrato) CliNotifiche.avvisa(CliNotifiche.CONFIGURATORE_CORRETTAMENTE_REGISTRATO);
                 }
                 else CliNotifiche.avvisa(CliNotifiche.NICKNAME_GIA_USATO);

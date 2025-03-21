@@ -1,10 +1,9 @@
 package Presentation;
 
-//import java.sql.ResultSet;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-//import java.util.ArrayList;
 import java.util.List;
 
 import ServicesAPI.DTObject;
@@ -104,6 +103,11 @@ public class CliVisualizzazione {
         System.out.println("Configuratore, per ogni nuovo " + paginaCorrente + " bisogna associare almeno un " + campo + ", verrai rindirizzato alla pagina per la registrazione"); 
         CliInput.invioPerContinuare();
         pulisciSchermo(); 
+    }
+
+    public static void inserimentoVolontarioBloccato () {
+        CliNotifiche.avvisa(CliNotifiche.GIORNO_CONFIGURAZIONE);
+        System.out.println("Perciò questa azione è bloccata fino a che la configurazione non sarà completata");
     }
 
 }

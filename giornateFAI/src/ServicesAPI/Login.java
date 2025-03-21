@@ -24,14 +24,31 @@ public interface Login {
 
     /**
      * Metodo per consentire il cambio della password di un utente.
-     * 
-     * @param nickname Il nickname dell'utente che richiede il cambio password.
-     * @param password La nuova password da impostare.
+     * @param datiUtente un oggetto {@DTObject} con i nuovi dati dell'utente
+     * @param ruolo il ruolo che ricopre l'utente
      * @return {@code true} se il cambio password è avvenuto con successo, altrimenti {@code false}.
      * @throws Exception In caso di errore di connessione al database o di altri problemi.
      */
-    public static boolean cambioPassword(String nickname, String password) throws Exception {
-        throw new IllegalAccessException();
-    };
+    public boolean cambioPassword(DTObject datiUtente, String ruolo) throws Exception;
+
+    /**
+     * Questo metodo verifica se un dato nome utente è univoco, cioè se non è già stato registrato da 
+     * nessun altro utente, indipendentemente dal loro ruolo. 
+     * Viene invocato ogni volta che un utente tenta di registrare un nuovo nickname.
+     * @param nomeUtente Il nome utente che si vuole registrare.
+     * @return true se il nome utente non è già registrato, false altrimenti.
+     */
+    public boolean nomeUtenteUnivoco(String nomeUtente) throws Exception;
+
+    /**
+     * Funzione per la registrazione di un nuovo configuratore nel DB.
+     * In particolare la funzione richiede al DB l'inserimento dei dati forniti e riporta la risposta del DB in caso di avvenuto inserimento o meno
+     * La funzione ritorna true se la registrazione è andata a buon fine, false altrimenti.
+     * 
+     * @param nickname il possibile nickname da registrare
+     * @param password la password inserita dall'utente
+     * @return lo stato della registrazione, true se è andata a buon fine, false altrimenti
+     */
+    public boolean registraNuovoConfiguratore(DTObject configuratore) throws Exception;
 
 }

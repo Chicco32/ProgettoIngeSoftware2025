@@ -15,6 +15,16 @@ public abstract class Utente {
         this.PrimoAccesso = PrimoAccesso;
         this.nickname = nickname;
     }
+
+    /**
+     * Modifica i parametri utente una volta effettuata la registrazione
+     * @param dati i nuovi dati dell'utente
+     */
+    public void registrati(DTObject dati) {
+        String nickname = (String)dati.getValoreCampo("Nickname");
+        this.setNickname(nickname);
+        this.setPrimoAccesso(false);
+    }
     
     protected void setRuolo(String ruolo){
         this.ruolo = ruolo;

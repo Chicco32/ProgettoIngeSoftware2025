@@ -3,17 +3,6 @@ package ServicesAPI;
 public interface Registratore {
 
     /**
-     * Funzione per la registrazione di un nuovo configuratore nel DB.
-     * In particolare la funzione richiede al DB l'inserimento dei dati forniti e riporta la risposta del DB in caso di avvenuto inserimento o meno
-     * La funzione ritorna true se la registrazione è andata a buon fine, false altrimenti.
-     * 
-     * @param nickname il possibile nickname da registrare
-     * @param password la password inserita dall'utente
-     * @return lo stato della registrazione, true se è andata a buon fine, false altrimenti
-     */
-    public boolean registraNuovoConfiguratore (DTObject configuratore) throws Exception;
-
-    /**
      * Funzione per la registrazione di un nuovo volontario nel DB.
      * In particolare la funzione richiede al DB l'inserimento dei dati forniti e riporta la risposta del DB in caso di avvenuto inserimento o meno
      * La funzione ritorna true se la registrazione è andata a buon fine, false altrimenti.

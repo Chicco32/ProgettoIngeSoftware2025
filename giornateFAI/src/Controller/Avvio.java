@@ -32,7 +32,7 @@ public class Avvio {
         UtenteController controller = FactoryController.associaController(utente);
 
         if (utente.isPrimoAccesso()) {
-           controller.registrati();
+           controller.registrati(login);
         }
         
         controller.accediSistema();
