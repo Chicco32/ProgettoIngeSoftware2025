@@ -238,6 +238,8 @@ public class ConfiguratoreController implements UtenteController {
             data.impostaValore(minPartecipanti, "Min Partecipanti");
             data.impostaValore(CliInput.inserimentoPartecipantiVisita(minPartecipanti, "massimo"), "Max Partecipanti");
             data.impostaValore(model.getNickname(), "Configuratore referente");
+            String[] giorniSettimana = CliInput.chiediGiorniSettimanaVisita();
+            data.impostaValore(giorniSettimana, "Giorni settimana");
 
             try {
                 model.getRegistratore().registraNuovoTipoVisita(data);

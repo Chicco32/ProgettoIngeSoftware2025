@@ -35,7 +35,8 @@ public class RegistratoreSQL implements Registratore{
         "Nuovo volontario", Queries.REGISTRA_VOLONTARIO,
         "Nuovo luogo", Queries.REGISTRA_LUOGO,
         "Nuovo tipo visita", Queries.REGISTRA_TIPO_VISITA,
-        "Associa volontario", Queries.ASSOCIA_VOLONTARIO_VISITA
+        "Associa volontario", Queries.ASSOCIA_VOLONTARIO_VISITA,
+        "Associa giorno settimana", Queries.ASSOCIA_GIORNI_SETTIMANA_VISITA
 
     );
 
@@ -96,6 +97,7 @@ public class RegistratoreSQL implements Registratore{
                 stmt.executeUpdate();
                 return true;
             } catch (MysqlDataTruncation e) {
+                e.printStackTrace();
                 throw new IllegalArgumentException(e);
             }
         }
@@ -129,9 +131,27 @@ public class RegistratoreSQL implements Registratore{
     }
 
     public boolean registraNuovoTipoVisita(DTObject tipoVisita) throws Exception {
+        //genero la chiave per la nuova visita
         int nuovoCodice = generaNuovaChiave(CostantiDB.TIPO_VISITA.getNome());
         tipoVisita.impostaValore(nuovoCodice, "Codice Tipo di Visita");
-        return inserisciElementoDB(tipoVisita, "Nuovo tipo visita");
+
+
+        //Prima registro nel DB la visita filtrata senza i giorni della settimana
+         String [] filtro = {"Codice Tipo di Visita","Punto di Incontro","Titolo", "Descrizione","Giorno inzio", 
+         "Giorno fine", "Ora di inizio", "Durata", "Necessita Biglietto", "Min Partecipanti", "Max Partecipanti", "Configuratore referente"};
+        DTObject visitaFiltrata = ((Tupla) tipoVisita).filtraCampi(filtro);
+        Boolean visitaInserita = inserisciElementoDB(visitaFiltrata, "Nuovo tipo visita");
+        
+        //poi estraggo i giorni della settimana e lavoro su di essi
+        String[] giorniSettimana = (String[]) tipoVisita.getValoreCampo("Giorni settimana");
+        for (String giorno : giorniSettimana) {
+            //inserisco i giorni uno alla volta nel DataBase
+            Tupla tupla = new Tupla("Giorni settimana", new String[]{"Codice Tipo di Visita","Giorno della settimana"});
+            tupla.impostaValore(nuovoCodice,"Codice Tipo di Visita");
+            tupla.impostaValore(giorno, "Giorno della settimana");
+            inserisciElementoDB(tupla, "Associa giorno settimana");
+        }
+        return visitaInserita;
     }
 
     private static String formatoDataPerSQL(Date date) {

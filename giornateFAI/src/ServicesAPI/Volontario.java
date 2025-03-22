@@ -9,6 +9,7 @@ public class Volontario extends Utente{
         super(PrimoAccesso, nickname);
         this.registroDateDisponibili = dateDisponibili;
         this.visualizzatore = visualizzatore;
+        this.setRuolo("Volontario");
     }
 
     public RegistroDateDisponibili getRegistroDateDisponibili() {

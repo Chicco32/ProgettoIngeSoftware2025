@@ -18,7 +18,7 @@ public class Tupla implements DTObject {
     public static final String[] FORMATO_LUOGO = {"Nome", "Descrizione", "Indirizzo"};
     public static final String[] FORMATO_TIPO_VISITA = {
         "Codice Tipo di Visita","Punto di Incontro","Titolo", "Descrizione","Giorno inzio", 
-            "Giorno fine", "Ora di inizio", "Durata", "Necessita Biglietto", "Min Partecipanti", "Max Partecipanti", "Configuratore referente"};
+            "Giorno fine", "Ora di inizio", "Durata", "Necessita Biglietto", "Min Partecipanti", "Max Partecipanti", "Configuratore referente", "Giorni settimana"};
 
     private String tabellaOrigine;
     private int numCampi;
@@ -81,7 +81,7 @@ public class Tupla implements DTObject {
         valori.put(indice, valore);
     }
 
-    public String getNomeDAO() {
+    public String getNomeDTO() {
         return this.tabellaOrigine;
     }
 
@@ -98,6 +98,22 @@ public class Tupla implements DTObject {
             }
         } 
         return vuoto;
+    }
+
+    /**
+     * Il metodo restituisce un nuovo DTOBject contentenente meno dati di quello originale filtrati.
+     * In particolare il metodo ritorna l'ogetto filtrato sui campi inseriti
+     * @param campi la lista ordinata di campi su cui filtrare l'oggetto. Deve essere un sottoinsieme dei campi che hanno originato l'oggeto
+     * @return Un nuova {@code Tupla} filtrata.
+     * @throws IllegalArgumentException se si filtra su campi non contenuti nella tupla originaria
+     */
+    public Tupla filtraCampi (String[] campi) throws IllegalArgumentException {
+        Tupla tuplaFiltrata = new Tupla(this.tabellaOrigine, campi);
+        for (String campo : campi) {
+            int indice = trovaIndice(campo);
+            tuplaFiltrata.impostaValore(this.valori.get(indice), campo);
+        }
+        return tuplaFiltrata;
     }
 
 }

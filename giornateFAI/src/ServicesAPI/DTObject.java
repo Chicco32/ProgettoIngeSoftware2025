@@ -33,7 +33,7 @@ public interface DTObject {
      * ritorna il nome dell'oggetto, ovvero il nome della tabella di cui è una tupla.
      * @return
      */
-    public String getNomeDAO();
+    public String getNomeDTO();
 
     /**
      * Ritorna il numero di campi che quell'oggetto possiede

@@ -67,6 +67,7 @@ public class Calendario extends GregorianCalendar{
 		return this.get(DAY_OF_MONTH);
 	}
 
+
 	/**
 	 * Funzione che restituisce il numero del giorno della settimana. Da notare come i numeri sono progressivi e partono dalla Domenica con valore 1 fino
 	 * a Sabato con valore 7
