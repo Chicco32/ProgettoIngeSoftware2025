@@ -107,8 +107,8 @@ public class LoginSQL implements Login {
     }
 
     private static final Map<String, Queries> cambioPassword = Map.of(
-        "configuratore", Queries.CAMBIO_PASSWORD_CONFIGURATORE,
-        "volontario", Queries.CAMBIO_PASSWORD_VOLONTARIO
+        "Configuratore", Queries.CAMBIO_PASSWORD_CONFIGURATORE,
+        "Volontario", Queries.CAMBIO_PASSWORD_VOLONTARIO
     );
 
     public boolean cambioPassword(DTObject dati, String ruolo) throws Exception {

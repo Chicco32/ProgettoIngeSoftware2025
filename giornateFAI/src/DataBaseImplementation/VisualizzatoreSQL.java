@@ -192,5 +192,16 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
         }
         return null;
     }
+
+    public List<String> estraiDOWPossibiliVolontario(String volontarioAssociato) {
+        List<String> giorniSettimana = new ArrayList<>();
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.GIORNI_POSSIBILI_VOLONTARIO.getQuery())) {
+            stmt.setString(1, volontarioAssociato);
+            giorniSettimana = estraiColonna(stmt.executeQuery(), "Giorno della Settimana");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return giorniSettimana;
+    }
     
 }
