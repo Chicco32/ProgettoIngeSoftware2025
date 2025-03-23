@@ -14,7 +14,7 @@ public class XMLDatePrecluse extends XMLManager implements GestoreDatePrecluse{
         super(path);
     }
     
-    private static final DateFormat formatoData=new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd");
 
     public void scriviDatePrecluse(Date today, Date[] current) {
 		inizializzaWriter();

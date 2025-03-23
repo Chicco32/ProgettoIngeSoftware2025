@@ -1,5 +1,6 @@
 package Controller;
 
+import ServicesAPI.Login;
 import ServicesAPI.Utente;
 
 public interface UtenteController {
@@ -13,7 +14,7 @@ public interface UtenteController {
     /**
      * Istanza specifica per l'utente che avvia la procedura di registraizone dell'utente nel database
      */
-    public void registrati();
+    public void registrati(Login login);
 
     /**
      * Metodo che permette l'accesso al controller di sistema e alle funzionalità specifiche per l'utente a cui fa riferimento.

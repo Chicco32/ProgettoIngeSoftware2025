@@ -10,20 +10,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import DataBaseImplementation.CostantiDB;
-import DataBaseImplementation.LoginSQL;
-import DataBaseImplementation.Queries;
+
 import DataBaseImplementation.Tupla;
 import Presentation.CliInput;
 import Presentation.CliNotifiche;
 import Presentation.CliVisualizzazione;
-import ServicesAPI.CoerenzaException;
 import ServicesAPI.Configuratore;
 import ServicesAPI.DTObject;
 import ServicesAPI.DateRange;
+import ServicesAPI.Login;
 import ServicesAPI.Registratore;
 import ServicesAPI.StatiVisite;
-import ServicesAPI.Visualizzatore;
+import ServicesAPI.VisualizzatoreConfiguratore;
 
 public class ConfiguratoreController implements UtenteController {
 
@@ -41,7 +39,7 @@ public class ConfiguratoreController implements UtenteController {
         menuConfiguratore();
     }
 
-    public void registrati() {
+    public void registrati(Login login) {
         CliNotifiche.avvisa(CliNotifiche.BENVENUTO_NUOVO_CONFIGURATORE);
         boolean registrato = false;
         try {
@@ -54,7 +52,7 @@ public class ConfiguratoreController implements UtenteController {
                     dati.impostaValore(nickname, "Nickname");
                     dati.impostaValore(CliInput.chiediConLunghezzaMax(
                         CliVisualizzazione.VARIABILE_PASSWORD, CliInput.MAX_CARATTERI_PASSWORD), "Password");
-                    registrato = model.registrati(dati);
+                    registrato = login.registraNuovoConfiguratore(dati);
                     if (registrato) CliNotifiche.avvisa(CliNotifiche.CONFIGURATORE_CORRETTAMENTE_REGISTRATO);
                 }
                 else CliNotifiche.avvisa(CliNotifiche.NICKNAME_GIA_USATO);
@@ -72,11 +70,12 @@ public class ConfiguratoreController implements UtenteController {
     private void menuConfiguratore() {
 
         CliVisualizzazione.ingressoBackendConfiguratore();
+        VisualizzatoreConfiguratore aux = model.getVisualizzatore();
 
         /*Se è la prima volta che il configuratore accede al db dei luoghi e non ci sono dati
         *nel database, deve iniziare la procedura di popolamento generale del corpo dei dati
         */
-        if(controllaDBVuoti("luogo")) {
+        if(aux.nonCisonoLuoghiRegistrati()) {
 
             CliVisualizzazione.avvisoDBVuoto();
             //prima chiede all'utente di inserire l'area di competenza e il max numero partecipanti
@@ -97,9 +96,9 @@ public class ConfiguratoreController implements UtenteController {
         actions.put(1, this::inserisciMaxPartecipanti);
         actions.put(2, this::inserisciNuovoTipoDiVisita);
         actions.put(3, this::insersciVolontario);
-        actions.put(4, () -> visualizzaTabellaDatabase(Queries.SELEZIONA_VOLONTARI, "Volontari"));
-        actions.put(5, () -> visualizzaTabellaDatabase(Queries.SELEZIONA_LUOGHI, "Luoghi"));
-        actions.put(6, () -> visualizzaTabellaDatabase(Queries.SELEZIONA_TIPI_VISITE, "Tipi di visite"));
+        actions.put(4, this::visualizzaElencoVolontari);     
+        actions.put(5, this::visualizzaElencoLuoghi);
+        actions.put(6, this::visualizzaElencoTipiDiVisite);
         actions.put(7, this::chiediStatoDaVisualizzare);
 
         while (true) {
@@ -120,6 +119,21 @@ public class ConfiguratoreController implements UtenteController {
         "Visualizza visite in archivio a seconda dello stato",
         "Esci" 
     };
+
+    private void visualizzaElencoVolontari() {
+        CliVisualizzazione.barraIntestazione(model.getNickname());
+        CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().visualizzaElencoVolontari(), "Volontari");
+    }
+
+    private void visualizzaElencoLuoghi() {
+        CliVisualizzazione.barraIntestazione(model.getNickname());
+        CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().visualizzaElencoLuoghi(), "Luoghi");
+    }
+
+    private void visualizzaElencoTipiDiVisite() {
+        CliVisualizzazione.barraIntestazione(model.getNickname());
+        CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().visualizzaElencoTipiDiVisite(), "Tipi Di Visite");
+    }
 
     public void inserisciAreaCompetenza() {
         String areaCompetenza = CliInput.chiediConConferma(CliVisualizzazione.AREA_COMPETENZA);
@@ -146,7 +160,7 @@ public class ConfiguratoreController implements UtenteController {
                 if (aux.nomeUtenteUnivoco(nickname)) {
                     DTObject dati = new Tupla("Volontario", Tupla.FORMATO_UTENTE);
                     dati.impostaValore(nickname, "Nickname");
-                    dati.impostaValore(LoginSQL.getDefaultPasswordVolontario(), "Password");
+                    dati.impostaValore(Login.defaultPasswordVolontario, "Password");
                     registrato = aux.registraNuovoVolontario(dati);
                     if (registrato) CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_CORRETTAMENTE_REGISTRATO);
                 }
@@ -161,64 +175,26 @@ public class ConfiguratoreController implements UtenteController {
 
     public void inserisciNuovoTipoDiVisita () {
         //Chiede la lista di nomi dei luoghi possibile su cui inserire la visita
-        List<String> luoghiDisponibili = new ArrayList<>();
-        String luogoSelezionato = null;
-        Visualizzatore aux = model.getVisualizzatore();
-        try {
-            luoghiDisponibili = aux.estraiColonna(
-                aux.visualizzaTabella(Queries.SELEZIONA_LUOGHI.getQuery()), "Nome");
-            luogoSelezionato = CliInput.selezionaLuogo(luoghiDisponibili);
-        } catch (IllegalArgumentException | CoerenzaException e) {
-            CliNotifiche.avvisa(CliNotifiche.ERRORE_QUERY);
-        }
+        List<String> luoghiDisponibili = model.getVisualizzatore().listaLuoghiRegistrati();
+        String luogoSelezionato = CliInput.selezionaLuogo(luoghiDisponibili);
         //se seleziona un luogo fra quelli disponibili inoltra alla procedura di inserimento delle visite
         if (luogoSelezionato != null) popolaDBTipiVisite(luogoSelezionato);
-    }
-
-    /**
-     * Questo metodo permette di controllare se una tabella del database è vuota. In particolare questa funzione permette l'interazione
-     * fra il Configuratore e il database per controllare se una tabella è vuota.
-     * @param tabella la tabella da controllare accetta come valore "luogo" o "tipo di Visita"
-     * @return true se la tabella è vuota, false altrimenti
-     */
-    public boolean controllaDBVuoti(String tabella) {
-        try {
-            model.getVisualizzatore().tabellaDBVuota(tabella);
-        } catch (CoerenzaException e) {
-            CliNotifiche.avvisa(CliNotifiche.ERRORE_QUERY);
-        }
-        return false;
-    }
-
-    public void visualizzaTabellaDatabase(Queries query, String nomeDaMostrare) {
-        try {
-            CliVisualizzazione.visualizzaRisultati(
-                model.getVisualizzatore().visualizzaTabella(query.getQuery()), nomeDaMostrare);
-        } catch (CoerenzaException e) {
-            CliNotifiche.avvisa(CliNotifiche.ERRORE_QUERY);
-        }
     }
     
     public void chiediStatoDaVisualizzare() {
         CliVisualizzazione.barraIntestazione(model.getNickname());
         StatiVisite stato = CliInput.chiediStatoVisita();
-        try {
-            CliVisualizzazione.visualizzaRisultati(
-                model.getVisualizzatore().visualizzaVisite(stato), "Archivio di: " + stato.toString());
-        } catch (CoerenzaException e) {
-            CliNotifiche.avvisa(CliNotifiche.ERRORE_QUERY);
-        }
+        CliVisualizzazione.visualizzaRisultati(
+            model.getVisualizzatore().visualizzaVisite(stato), "Archivio di: " + stato.toString());
     }
 
     public void popolaDBLuoghiVisteVolontari() {
-        //tutto il corpo da inserie vedi casi d'uso e consegna
         //struttra ricorsiva scomposta nelle 3 funzioni private di popolamento
         boolean altroLuogo = true;
         while (altroLuogo) {
             this.popolaDBLuoghi();
             altroLuogo = CliInput.aggiungiAltroCampo("Luogo", null);
         }
-        
     }
 
     private void popolaDBLuoghi () {
@@ -248,12 +224,9 @@ public class ConfiguratoreController implements UtenteController {
         boolean altraVisita = true;
         while (altraVisita) {
             
-            
             DTObject data = new Tupla("Tipo visita", Tupla.FORMATO_TIPO_VISITA);
-            int nuovoCodice = model.getRegistratore().generaNuovaChiave(CostantiDB.TIPO_VISITA.getNome());
-            data.impostaValore(nuovoCodice, "Codice Tipo di Visita");
             data.impostaValore(nomeLuogo, "Punto di Incontro");
-            data.impostaValore( CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_TITOLO, CliInput.MAX_CARATTERI_TITOLO), "Titolo");
+            data.impostaValore(CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_TITOLO, CliInput.MAX_CARATTERI_TITOLO), "Titolo");
             data.impostaValore(CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_DESCRIZIONE, CliInput.MAX_CARATTERI_DESCRIZIONE), "Descrizione");
             DateRange perido = CliInput.inserimentoPeriodoAnno();
             data.impostaValore(perido.getStartDate(), "Giorno inzio");
@@ -265,12 +238,14 @@ public class ConfiguratoreController implements UtenteController {
             data.impostaValore(minPartecipanti, "Min Partecipanti");
             data.impostaValore(CliInput.inserimentoPartecipantiVisita(minPartecipanti, "massimo"), "Max Partecipanti");
             data.impostaValore(model.getNickname(), "Configuratore referente");
+            String[] giorniSettimana = CliInput.chiediGiorniSettimanaVisita();
+            data.impostaValore(giorniSettimana, "Giorni settimana");
 
             try {
                 model.getRegistratore().registraNuovoTipoVisita(data);
                 CliNotifiche.avvisa(CliNotifiche.VISITA_CORRETTAMENTE_REGISTRATA);
                 CliVisualizzazione.avvisaReindirizzamentoNuovoCampo("Volontario", "Tipo di visita");
-                popolaDBVolontari(nuovoCodice);
+                popolaDBVolontari(data);
             } catch (Exception e) {
                 CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
             }
@@ -286,16 +261,22 @@ public class ConfiguratoreController implements UtenteController {
         return new ArrayList<>(setVolontari);
     }
 
-    private void popolaDBVolontari(int codiceVisita) {
+    private void popolaDBVolontari(DTObject data) {
         boolean altroVolontario = true;
+        
+        //In questa implementazione le visite sono identificate da un codice ma
+        //possono essere sostitutiti da atltri tipi di chiave a seconda dell'implmentazione
+        //in caso basta cambiare l'identificatore 
+        int codiceVisita = (int) data.getValoreCampo("Codice Tipo di Visita"); 
+        
         while (altroVolontario) {
             //pagina per i volontari, prima mostra quelli gia registrati e chiede di sceglierne uno
             List <String> volontariRegistrati = new ArrayList<>();
-            Visualizzatore aux = model.getVisualizzatore();
+            VisualizzatoreConfiguratore aux = model.getVisualizzatore();
             
             try {
-                volontariRegistrati = aux.estraiColonna(
-                aux.visualizzaTabella(Queries.SELEZIONA_VOLONTARI.getQuery()), "Volontario Nickname");
+                volontariRegistrati = aux.listaCompletaVolontari();
+                //filtra eventuali ripetizioni
                 volontariRegistrati = sanificaLista(volontariRegistrati);
                 String volontarioSelezionato = CliInput.selezionaVolontario(volontariRegistrati);
                 //altrimenti permette di inserire un nuovo volontario se prima ha inserito null

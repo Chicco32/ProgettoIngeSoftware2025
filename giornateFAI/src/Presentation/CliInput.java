@@ -156,7 +156,40 @@ public class CliInput {
         } while (!conferma);
         return partecipanti;
     }
-  
+
+    public static String[] chiediGiorniSettimanaVisita () {
+        CliVisualizzazione.pulisciSchermo();
+        System.out.println("Di seguito inserisci i giorni in cui è possibile attuare la visita:");
+        List<String> giorniSettimana = new ArrayList<>();
+        String[] settimana = {"Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"};
+
+        //all'inizio tutti i gionri della setitmana sono validi e poi la lista si riduce
+        List<String> giorniValidi = new ArrayList<>();
+        for (String giorno : settimana) giorniValidi.add(giorno);
+        boolean continua = true;
+
+        while (continua && giorniValidi.size() > 0) {
+            System.out.println("Giorni disponibili:");
+            for (int i = 0; i < giorniValidi.size(); i++) {
+            System.out.println((i + 1) + ") " + giorniValidi.get(i));
+            }
+
+            int scelta = InputDati.leggiIntero("Seleziona il numero del giorno della settimana: ", 1, giorniValidi.size());
+            String giornoSelezionato = giorniValidi.get(scelta - 1);
+            
+            //se conferma il giorno giusot lo sposta dai giorni validi a quelli selezionati
+            if (InputDati.yesOrNo("Confermi " + giornoSelezionato + "? ")) {
+                giorniSettimana.add(giornoSelezionato);
+                giorniValidi.remove(giornoSelezionato);
+            }
+            continua = InputDati.yesOrNo("Vuoi aggiungere un altro giorno?");
+            //se continua pulisci lo schermo e rinizia
+            CliVisualizzazione.pulisciSchermo();
+        }
+
+        return giorniSettimana.toArray(new String[0]);
+    }
+ 
     /*
      * la funzione mostra all'utente i volontari gia registrati e chiede di scegliere fra uno di essi,
      * se non sceglie nessuno della lista per inserire uno nuovo o la lista è vuota ritorna null 
@@ -285,5 +318,45 @@ public class CliInput {
         Date[] arrayDatePrecluse = datePrecluse.toArray(new Date[0]);
         return arrayDatePrecluse;
     }
+
+	public static Date[] chiediDateDisponibilà(Date[] datePossibili) {
+        List<Date> dateDisponibili = new ArrayList<>();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+        System.out.println("Date possibili:");
+        for (int i = 0; i < datePossibili.length; i++) {
+            System.out.println((i + 1) + ". " + format.format(datePossibili[i]));
+        }
+
+        boolean continua = true;
+        do {
+            try {
+                String dataStr = InputDati.leggiStringa("Inserisci una data disponibile (yyyy-MM-dd) o 'fine' per terminare: ");
+                if (dataStr.equalsIgnoreCase("fine")) {
+                    continua = false;
+                    break;
+                }
+                Date dataInserita = format.parse(dataStr);
+                boolean valida = false;
+                for (Date data : datePossibili) {
+                    if (data.equals(dataInserita)) {
+                        valida = true;
+                        break;
+                    }
+                }
+                if (!valida) {
+                    System.out.println("La data inserita non è tra quelle possibili. Riprova.");
+                } else if (dateDisponibili.contains(dataInserita)) {
+                    System.out.println("Hai già selezionato questa data. Riprova.");
+                } else {
+                    dateDisponibili.add(dataInserita);
+                }
+            } catch (ParseException e) {
+                System.out.println("Formato data non valido. Riprova.");
+            }
+        } while (continua);
+
+        return dateDisponibili.toArray(new Date[0]);
+	}
 
 }

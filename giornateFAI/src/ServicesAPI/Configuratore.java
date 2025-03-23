@@ -3,6 +3,7 @@ package ServicesAPI;
 public class Configuratore extends Utente {
     
     private Registratore registratore;
+    private VisualizzatoreConfiguratore visualizzatore;
     private RegistroDatePrecluse datePrecluse;
 
     /**
@@ -14,19 +15,12 @@ public class Configuratore extends Utente {
      * @param registratore l'implementazione dell'API {@code registratore}
      * @param datePrecluse l'implementazione dell'API {@code RegistroDatePrecluse}
      */
-    public Configuratore(boolean PrimoAccesso, String nickname, Visualizzatore visualizzatore, Registratore registratore, RegistroDatePrecluse datePrecluse) {
-        super(PrimoAccesso, nickname, visualizzatore);
+    public Configuratore(boolean PrimoAccesso, String nickname, VisualizzatoreConfiguratore visualizzatore, Registratore registratore, RegistroDatePrecluse datePrecluse) {
+        super(PrimoAccesso, nickname);
+        this.visualizzatore = visualizzatore;
         this.setRuolo("Configuratore");
         this.registratore = registratore;
         this.datePrecluse = datePrecluse;
-    }
-
-    public boolean registrati(DTObject dati) throws Exception {
-        String nickname = (String)dati.getValoreCampo("Nickname");
-        this.setNickname(nickname);
-        boolean registrato = registratore.registraNuovoConfiguratore(dati); 
-        this.setPrimoAccesso(false);
-        return registrato; 
     }
 
     public Registratore getRegistratore() {
@@ -35,6 +29,10 @@ public class Configuratore extends Utente {
 
     public RegistroDatePrecluse getRegistroDatePrecluse() {
         return this.datePrecluse;
+    }
+
+    public VisualizzatoreConfiguratore getVisualizzatore() {
+        return this.visualizzatore;
     }
 
 }

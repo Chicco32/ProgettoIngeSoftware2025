@@ -19,7 +19,6 @@ public class RegistroDateDisponibili extends RegistroDate {
         	super(fileManager);
 		this.fileManager=fileManager;
 		String path=fileManager.getPath();
-
 		if(GestoreFilesConfigurazione.fileExists(path)){
 			this.dateDisponibili=fileManager.leggiDateDisponibili(nome);
 		}else{
@@ -56,4 +55,10 @@ public class RegistroDateDisponibili extends RegistroDate {
 		aux.removeAll(toRem);
 	}
 	
+
+	public Date[] calcolaPossibiliDate() {
+		// TODO da fare@Diego
+        return null;
+	}
+    
 }

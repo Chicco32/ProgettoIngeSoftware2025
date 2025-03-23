@@ -1,19 +1,39 @@
 
 
+import java.sql.Connection;
+
 import Controller.Avvio;
+import DataBaseImplementation.ConnessioneSQL;
+import DataBaseImplementation.LoginSQL;
+import Presentation.CliNotifiche;
 
 public class App {
     public static void main(String[] args) throws Exception {
 	
-        Avvio avvio;
-        //Avvio diverso in base al tipo di server a cui accede
+        Connection connection;
+        //Crea connessioni diverse in base al tipo di server a cui accede, connection è un
 	    if(args.length==0){
-		    avvio = new Avvio();
+			connection = ConnessioneSQL.getConnection();
 	    }else if(args.length>=3){
-		    avvio=new Avvio(args[0],args[1],args[2]);
+			connection = ConnessioneSQL.getConnection(args[0],args[1],args[2]);
 	    }else{
-		    avvio = new Avvio();
+		    connection = ConnessioneSQL.getConnection();
 	    }
-        avvio.avviaApp();
+
+		//se ci sono problemi nella connesisone 
+		if (notificaConnesione(connection)) {
+			Avvio avvio = new Avvio(new LoginSQL());
+			avvio.avviaApp();
+		}
     }
+
+	private static boolean notificaConnesione(Connection connection) {
+	if (connection != null){
+		CliNotifiche.avvisa(CliNotifiche.CONNESSIONE_RIUSCITA);
+		return true;
+	}
+	else CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
+	return false;
+    }
+
 }

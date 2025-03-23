@@ -4,16 +4,11 @@ import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import org.mindrot.jbcrypt.BCrypt;
-
 import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
-
 import ServicesAPI.DTObject;
 import ServicesAPI.GestoreConfigurazioneRegistratore;
 import ServicesAPI.GestoreFilesConfigurazione;
 import ServicesAPI.Registratore;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -37,11 +32,11 @@ import java.text.SimpleDateFormat;
 public class RegistratoreSQL implements Registratore{
 
     private static final Map<String, Queries> inserimenti = Map.of(
-        "Nuovo configuratore", Queries.REGISTRA_CONFIGURATORE,
         "Nuovo volontario", Queries.REGISTRA_VOLONTARIO,
         "Nuovo luogo", Queries.REGISTRA_LUOGO,
         "Nuovo tipo visita", Queries.REGISTRA_TIPO_VISITA,
-        "Associa volontario", Queries.ASSOCIA_VOLONTARIO_VISITA
+        "Associa volontario", Queries.ASSOCIA_VOLONTARIO_VISITA,
+        "Associa giorno settimana", Queries.ASSOCIA_GIORNI_SETTIMANA_VISITA
 
     );
 
@@ -102,6 +97,7 @@ public class RegistratoreSQL implements Registratore{
                 stmt.executeUpdate();
                 return true;
             } catch (MysqlDataTruncation e) {
+                e.printStackTrace();
                 throw new IllegalArgumentException(e);
             }
         }
@@ -121,22 +117,8 @@ public class RegistratoreSQL implements Registratore{
         return false;
     }
 
-    //Usa BCrypt per aggiungere almeno un livello di hashing con sale
-    private void cifraPassword(DTObject utente) {
-        String salt = BCrypt.gensalt(15);
-        utente.impostaValore(salt, "Salt");
-        String hashpsw = BCrypt.hashpw((String)utente.getValoreCampo("Password"), salt);
-        utente.impostaValore(hashpsw, "Password");
-    }
-
-    //in nmaniera trasparente all'utente aggiunge i layer di sicurezza
-    public boolean registraNuovoConfiguratore (DTObject configuratore) throws Exception {
-        cifraPassword(configuratore);
-        return inserisciElementoDB(configuratore, "Nuovo configuratore");
-    }
-
     public boolean registraNuovoVolontario (DTObject volontario) throws Exception{
-        cifraPassword(volontario);
+        ServizioHash.cifraPassword(volontario);
         return inserisciElementoDB(volontario, "Nuovo volontario");
     }
 
@@ -149,7 +131,27 @@ public class RegistratoreSQL implements Registratore{
     }
 
     public boolean registraNuovoTipoVisita(DTObject tipoVisita) throws Exception {
-        return inserisciElementoDB(tipoVisita, "Nuovo tipo visita");
+        //genero la chiave per la nuova visita
+        int nuovoCodice = generaNuovaChiave(CostantiDB.TIPO_VISITA.getNome());
+        tipoVisita.impostaValore(nuovoCodice, "Codice Tipo di Visita");
+
+
+        //Prima registro nel DB la visita filtrata senza i giorni della settimana
+         String [] filtro = {"Codice Tipo di Visita","Punto di Incontro","Titolo", "Descrizione","Giorno inzio", 
+         "Giorno fine", "Ora di inizio", "Durata", "Necessita Biglietto", "Min Partecipanti", "Max Partecipanti", "Configuratore referente"};
+        DTObject visitaFiltrata = ((Tupla) tipoVisita).filtraCampi(filtro);
+        Boolean visitaInserita = inserisciElementoDB(visitaFiltrata, "Nuovo tipo visita");
+        
+        //poi estraggo i giorni della settimana e lavoro su di essi
+        String[] giorniSettimana = (String[]) tipoVisita.getValoreCampo("Giorni settimana");
+        for (String giorno : giorniSettimana) {
+            //inserisco i giorni uno alla volta nel DataBase
+            Tupla tupla = new Tupla("Giorni settimana", new String[]{"Codice Tipo di Visita","Giorno della settimana"});
+            tupla.impostaValore(nuovoCodice,"Codice Tipo di Visita");
+            tupla.impostaValore(giorno, "Giorno della settimana");
+            inserisciElementoDB(tupla, "Associa giorno settimana");
+        }
+        return visitaInserita;
     }
 
     private static String formatoDataPerSQL(Date date) {
