@@ -1,7 +1,5 @@
 package ServicesAPI;
 
-import Controller.FactoryServizi;
-
 public class Volontario extends Utente{
 
     private VisualizzatoreVolontario visualizzatore;

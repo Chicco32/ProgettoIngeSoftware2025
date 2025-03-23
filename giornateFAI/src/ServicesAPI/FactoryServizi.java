@@ -1,10 +1,4 @@
-package Controller;
-
-import ServicesAPI.GestoreDateDisponibili;
-import ServicesAPI.GestoreDatePrecluse;
-import ServicesAPI.Registratore;
-import ServicesAPI.VisualizzatoreConfiguratore;
-import ServicesAPI.VisualizzatoreVolontario;
+package ServicesAPI;
 
 /**
  * Interfaccia abstract factory per avviare i servizi alla creazione

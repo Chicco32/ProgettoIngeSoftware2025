@@ -1,7 +1,5 @@
 package ServicesAPI;
 
-import Controller.FactoryServizi;
-
 public class Configuratore extends Utente {
     
     private Registratore registratore;
