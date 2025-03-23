@@ -27,7 +27,7 @@ public enum Queries {
     ASSOCIA_GIORNI_SETTIMANA_VISITA("INSERT INTO `dbingesw`.`giorni programmabili delle visite` (`Tipo di Visita`, `Giorno della Settimana`) VALUES (?,?)"),
 
     //XMLDateDisponibili
-    GIORNI_POSSIBILI_VOLONTARIO("SELECT gpv.`Giorno della Settimana` FROM dbingesw.`giorni programmabili delle visite` AS gpv JOIN dbingesw.`volontari disponibili` AS vd ON vd.`Tipo di Visita` = gpv.`Tipo di Visita` WHERE vd.`Volontario Nickname` = ?"),
+    GIORNI_POSSIBILI_VOLONTARIO("SELECT `Codice Tipo di Visita`, `Giorno di Inizio (periodo anno)`, `Giorno di Fine (periodo anno)`, `Giorno della Settimana` FROM dbingesw.`tipo di visita` AS tpv JOIN dbingesw.`volontari disponibili` AS vd ON tpv.`Codice Tipo di Visita` = vd.`Tipo di Visita` JOIN dbingesw.`giorni programmabili delle visite` AS gpv ON tpv.`Codice Tipo di Visita` = gpv.`Tipo di Visita` WHERE vd.`Volontario Nickname` = ? ORDER BY `Codice Tipo di Visita`"),
 
     //gestione chiavi
     GENERA_CHIAVE_TIPO_VISITA("select dbingesw.generaChiaveTipoVisita() as maxCodice"),
