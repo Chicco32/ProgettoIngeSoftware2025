@@ -5,7 +5,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class RegistroDateDisponibili extends RegistroDate {
-
+	private class TipoDiVisita{
+		private int[] giorniDellaSettimana;
+		private DateRange periodoDiAttivita;
+		public TipoDiVisita throws IllegalArgumentException(DTObject tipoSource,DTObject giorniSource){
+			//TODO
+		}
+		public 
+	}
 	private Date[] dateDisponibili;
 	private GestoreDateDisponibili fileManager;
 	public RegistroDateDisponibili(GestoreDateDisponibili fileManager, String nome) {
