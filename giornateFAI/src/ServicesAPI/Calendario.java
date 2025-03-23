@@ -35,9 +35,9 @@ public class Calendario extends GregorianCalendar{
 	 * @param month
 	 * @param day
 	 */
-	//public Calendario(int year,int month,int day){
-	//	super(year,month,day);
-	//}
+	public Calendario(int year,int month,int day){
+		super(year,month,day);
+	}
 	
 	/**
 	 * Funzione per sapere se la data odierna ricade in un giorno lavorativo della settimana

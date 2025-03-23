@@ -1,5 +1,7 @@
 package ServicesAPI;
 
+import Controller.FactoryServizi;
+
 public class Configuratore extends Utente {
     
     private Registratore registratore;
@@ -15,12 +17,12 @@ public class Configuratore extends Utente {
      * @param registratore l'implementazione dell'API {@code registratore}
      * @param datePrecluse l'implementazione dell'API {@code RegistroDatePrecluse}
      */
-    public Configuratore(boolean PrimoAccesso, String nickname, VisualizzatoreConfiguratore visualizzatore, Registratore registratore, RegistroDatePrecluse datePrecluse) {
+    public Configuratore(boolean PrimoAccesso, String nickname, FactoryServizi servizi) {
         super(PrimoAccesso, nickname);
-        this.visualizzatore = visualizzatore;
+        this.visualizzatore = servizi.creaVisualizzatoreConfiguratore();
         this.setRuolo("Configuratore");
-        this.registratore = registratore;
-        this.datePrecluse = datePrecluse;
+        this.registratore = servizi.creaRegistratore();
+        this.datePrecluse = new RegistroDatePrecluse(servizi.inizializzaDatePrecluse());
     }
 
     public Registratore getRegistratore() {
