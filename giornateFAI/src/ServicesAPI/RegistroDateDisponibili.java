@@ -3,8 +3,59 @@ package ServicesAPI;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import DataBaseImplementation.VisualizzatoreSQL;
 
 public class RegistroDateDisponibili extends RegistroDate {
+	private class TipoDiVisita{
+		public DateRange periodoProposta;
+		private DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+		private static final HashMap<String,Integer> map=new HashMap<String,Integer>(7);
+		public int[] giorniSettimana;
+		public int codice;
+		public TipoDiVisita(DTObject[] input){
+			if(map==null){
+				map.put("Domenica",calendario.SUNDAY);
+				map.put("Lunedì",calendario.MONDAY);
+				map.put("Martedì",calendario.TUESDAY);
+				map.put("Mercoledì",calendario.WEDNESDAY);
+				map.put("Giovedì",calendario.THURSDAY);
+				map.put("Venerdì",calendario.FRIDAY);
+				map.put("Sabato",calendario.SATURDAY);
+			}
+			List<Object> dati=input[0].getValori();
+			this.codice=(int) dati.get(0);
+			this.periodoProposta=new DateRange(df.parse((String)(dati.get(1))),df.parse((String)(dati.get(2))));
+			ArrayList<Integer> aux=new ArrayList<Integer>();
+			for(DTObject entry: input){
+				aux.add((Integer)(entry.getValoreCampo("Giorno della Settimana")));
+			}
+			Integer[] temp=aux.toArray(new Integer[aux.size()]);
+			giorniSettimana=new int[temp.length];
+			for(int i=0;i<temp.length;i++){
+				giorniSettimana[i]=temp[i];
+			}
+		}
+		public Date[] getDatePossibili(Date mese){
+			ArrayList<Date> result=new ArrayList<Date>();
+			Calendario aux=new Calendario();
+			aux.setTime(mese);
+			aux.onlyDay();
+			aux.add(1-aux.getDay(),Calendario.DATE);
+			Calendario fineMese=(Calendario) (aux.clone());
+			fineMese.add(fineMese.getActualMaximum(Calendario.DATE)-1,Calendario.DATE);
+			while(aux.before(fineMese)){
+				if(periodoProposta.insideRange(aux.getTime())&&Arrays.stream(giorniSettimana).anyMatch(num->num==aux.getDOW())){
+					result.add(aux.getTime());
+				}
+				aux.add(1,Calendario.DATE);
+			}
+			return result.toArray(new Date[0]);
+		}
+	}
 	private Date[] dateDisponibili;
 	private GestoreDateDisponibili fileManager;
 	public RegistroDateDisponibili(GestoreDateDisponibili fileManager, String nome) {
@@ -48,8 +99,28 @@ public class RegistroDateDisponibili extends RegistroDate {
 	}
 	
 
-	public Date[] calcolaPossibiliDate() {
-		// TODO da fare@Diego
+	public Date[] calcolaPossibiliDate(String nome) {
+		Calendario meseBersaglio=(Calendario)(calendario.clone());
+		meseBersaglio.add(2, Calendario.MONTH);
+		ArrayList<Date[]> parziale=new ArrayList<>();
+		DTObject[] tabella=new VisualizzatoreSQL().estraiDOWPossibiliVolontario(nome);
+		HashMap<Integer,ArrayList<DTObject>> map=new HashMap<>();
+		for(DTObject entry:tabella){
+			int codice=(Integer)(entry.getValoreCampo("Codice Tipo di Visita"));
+			if(map.get(codice)==null){
+				ArrayList<DTObject> aux=new ArrayList<>();
+				aux.add(entry);
+				map.put(codice,aux);
+			}else{
+				ArrayList<DTObject> aux=map.get(codice);
+				aux.add(entry);
+			}
+		}
+		for(ArrayList<DTObject> temp : map.values()){
+			parziale.add(new TipoDiVisita(temp.toArray(new DTObject[0])).getDatePossibili(meseBersaglio.getTime()));
+		}
+		
+		
 	        return null;
 	}
     

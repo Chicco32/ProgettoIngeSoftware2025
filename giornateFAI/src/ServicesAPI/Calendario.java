@@ -73,7 +73,7 @@ public class Calendario extends GregorianCalendar{
 	 * a Sabato con valore 7
 	 * @return il numero del giorno da 1 a 7
 	 */
-	private int getDOW(){
+	public int getDOW(){
 		return this.get(DAY_OF_WEEK);
 	}
 
@@ -115,4 +115,14 @@ public class Calendario extends GregorianCalendar{
 	public Date getData(){
 		return this.getTime();
 	}
+	/**
+	 * Azzera i campi del calendario più fini rispetto al giorno
+	 */
+	public void onlyDay(){
+		this.set(HOUR,0);
+		this.set(MINUTE,0);
+		this.set(SECOND,0);
+		this.set(MILLISECOND,0);
+	}
+
 }
