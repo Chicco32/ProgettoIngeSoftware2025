@@ -10,7 +10,7 @@ public enum Queries {
     CAMBIO_PASSWORD_VOLONTARIO("UPDATE `dbingesw`.`volontario` SET `Password` = ?,`Salt` = ? WHERE `Nickname` = ?"),
 
     //VisualizzatoreSQL e configuratore
-    SELEZIONA_VOLONTARI("SELECT `Tipo di Visita`,`Volontario Nickname`,`Titolo` FROM dbingesw.`volontari disponibili` join dbingesw.`Tipo di Visita` on `volontari disponibili`.`Tipo di Visita` = `Tipo di Visita`.`Codice Tipo di Visita`;"),
+    SELEZIONA_VOLONTARI("SELECT `Volontario Nickname`,Titolo FROM dbingesw.`volontari disponibili` join dbingesw.`Tipo di Visita` on `volontari disponibili`.`Tipo di Visita` = `Tipo di Visita`.`Codice Tipo di Visita` ORDER BY `Volontario Nickname`"),
     SELEZIONA_LUOGHI("SELECT * FROM `dbingesw`.`luogo`"),
     SELEZIONA_TIPI_VISITE("SELECT * FROM dbingesw.`tipo di visita`"),
     SELEZIONA_VISITE_ARCHIVIO("{call GetVisite(?)}"),
