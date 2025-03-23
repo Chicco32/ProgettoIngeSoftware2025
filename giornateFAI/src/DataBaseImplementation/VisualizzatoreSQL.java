@@ -88,7 +88,7 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
      * @return un arraylist contenente tuttti i valori assunti dalla colonna selezionata
      * @throws IllegalArgumentException se l'oggetto results o se campo sono {@code null}
      */
-    public List<String> estraiColonna(ResultSet results, String campo) throws IllegalArgumentException{
+    private List<String> estraiColonna(ResultSet results, String campo) throws IllegalArgumentException{
         if (results == null || campo == null) {
             throw new IllegalArgumentException("Il parametro results o campo non può essere null.");
         }
