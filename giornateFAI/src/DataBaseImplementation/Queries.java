@@ -33,6 +33,8 @@ public enum Queries {
     GENERA_CHIAVE_TIPO_VISITA("select dbingesw.generaChiaveTipoVisita() as maxCodice"),
     GENERA_CHIAVE_ARCHIVIO("select dbingesw.generaChiaveArchivio() as maxCodice");
 
+    //CREAZIONE PIANO VISITE
+    // per poter tornare il tipo di visita dato il volontario e il giorno della settimana ("SELECT DISTINCT tpv.`Codice Tipo di Visita`FROM `tipo di visita` tpv JOIN `volontari disponibili` vd ON tpv.`Codice Tipo di Visita` = vd.`Tipo di Visita` JOIN `giorni programmabili delle visite` gpv ON tpv.`Codice Tipo di Visita` = gpv.`Tipo di Visita` WHERE vd.`Volontario Nickname` = ? AND gpv.`Giorno della Settimana` = DAYNAME(?)")
     private final String query;
     
     private Queries(String string) {
