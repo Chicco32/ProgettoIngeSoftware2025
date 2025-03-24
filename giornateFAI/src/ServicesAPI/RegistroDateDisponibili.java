@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class RegistroDateDisponibili extends RegistroDate {
+
 	private Date[] dateDisponibili;
 	private GestoreDateDisponibili fileManager;
+	
 	public RegistroDateDisponibili(GestoreDateDisponibili fileManager, String nome) {
         	super(fileManager);
 		this.fileManager=fileManager;
@@ -46,9 +48,8 @@ public class RegistroDateDisponibili extends RegistroDate {
 		}
 		aux.removeAll(toRem);
 	}
-	
 
-	public Date[] calcolaPossibiliDate() {
+	public Date[] calcolaPossibiliDate(String nome) {
 		// TODO da fare@Diego
 	        return null;
 	}
