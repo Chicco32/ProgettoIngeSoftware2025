@@ -2,6 +2,8 @@ package ServicesAPI;
 
 import java.util.GregorianCalendar;
 import java.util.Date;
+import java.util.function.Function;
+import java.util.ArrayList;
 
 /**
  * Classe di utilità per la gestione di eventi e date interpellabile per avere informazioni sulla data corrente e su alcuni formati.
@@ -124,5 +126,39 @@ public class Calendario extends GregorianCalendar{
 		this.set(SECOND,0);
 		this.set(MILLISECOND,0);
 	}
-
+	/**
+	 * funzione che dato un numero di mesi e conoscendo la data attuale calcola una data del mese che per il dominio applicativo è il mese i+delay
+	 * @param delay il numero di mesi di cui spostarsi
+	 */
+	public static Date getTargetMonth(int delay){
+		Calendario aux=new Calendario();
+		aux.add(-15,DATE);
+		aux.add(delay,MONTH);
+		return aux.getTime();
+	}
+	public static Date[] scan(DateRange toScan, Function<Calendario,Boolean> filter){
+		ArrayList<Date> aux=new ArrayList<Date>();
+		Calendario day=new Calendario();
+		day.setTime(toScan.getStartDate());
+		while(!day.after(toScan.getEndDate())){
+			if(filter.apply(day)){
+				aux.add(day.getTime());
+			}
+			day.add(1,DATE);
+		}
+		return aux.toArray(new Date[0]);
+	}
+	/**
+	 * Metodo che restituisce il DateRange che contiene l'intero mese della data data in input
+	 * @param day la data di cui ci serve il mese
+	 */
+	public static DateRange getWholeMonth(Date day){
+		Calendario inizio=new Calendario();
+		inizio.setTime(day);
+		inizio.onlyDay();
+		Calendario fine=(Calendario) (inizio.clone());
+		inizio.add(1-inizio.getDay(),DATE);
+		fine.add(fine.getActualMaximum(DATE)-fine.getDay(),DATE);
+		return new DateRange(inizio.getTime(),fine.getTime());
+	}
 }

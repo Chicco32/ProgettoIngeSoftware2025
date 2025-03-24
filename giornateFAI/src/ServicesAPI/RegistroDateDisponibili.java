@@ -40,26 +40,22 @@ public class RegistroDateDisponibili extends RegistroDate {
 			}
 		}
 		public Date[] getDatePossibili(Date mese){
-			ArrayList<Date> result=new ArrayList<Date>();
-			Calendario aux=new Calendario();
-			aux.setTime(mese);
-			aux.onlyDay();
-			aux.add(1-aux.getDay(),Calendario.DATE);
-			Calendario fineMese=(Calendario) (aux.clone());
+			Calendario inizioMese=new Calendario();
+			inizioMese.setTime(mese);
+			inizioMese.onlyDay();
+			inizioMese.add(1-inizioMese.getDay(),Calendario.DATE);
+			Calendario fineMese=(Calendario) (inizioMese.clone());
 			fineMese.add(fineMese.getActualMaximum(Calendario.DATE)-1,Calendario.DATE);
-			while(aux.before(fineMese)){
-				if(periodoProposta.insideRange(aux.getTime())&&Arrays.stream(giorniSettimana).anyMatch(num->num==aux.getDOW())){
-					result.add(aux.getTime());
-				}
-				aux.add(1,Calendario.DATE);
-			}
-			return result.toArray(new Date[0]);
+			DateRange meseIntero=new DateRange(inizioMese.getTime(),fineMese.getTime());
+			return Calendario.scan(meseIntero,(calendario)-> periodoProposta.insideRange(calendario.getTime())&&Arrays.stream(giorniSettimana).anyMatch(num->num==calendario.getDOW()));
 		}
 	}
+	private RegistroDatePrecluse rdp;
 	private Date[] dateDisponibili;
 	private GestoreDateDisponibili fileManager;
-	public RegistroDateDisponibili(GestoreDateDisponibili fileManager, String nome) {
+	public RegistroDateDisponibili(GestoreDateDisponibili fileManager, RegistroDatePrecluse rdp, String nome) {
         	super(fileManager);
+		this.rdp=rdp;
 		this.fileManager=fileManager;
 		String path=fileManager.getPath();
 		if(GestoreFilesConfigurazione.fileExists(path)){
@@ -70,8 +66,9 @@ public class RegistroDateDisponibili extends RegistroDate {
 		}
 	}
 
-	public RegistroDateDisponibili(GestoreDateDisponibili fileManager){
+	public RegistroDateDisponibili(GestoreDateDisponibili fileManager, RegistroDatePrecluse rdp){
 		super(fileManager);
+		this.rdp=rdp;
 		this.fileManager=fileManager;
 		this.dateDisponibili=new Date[0];
 	}
@@ -100,8 +97,7 @@ public class RegistroDateDisponibili extends RegistroDate {
 	
 
 	public Date[] calcolaPossibiliDate(String nome) {
-		Calendario meseBersaglio=(Calendario)(calendario.clone());
-		meseBersaglio.add(2, Calendario.MONTH);
+		Date meseBersaglio=Calendario.getTargetMonth(2);
 		ArrayList<Date[]> parziale=new ArrayList<>();
 		DTObject[] tabella=new VisualizzatoreSQL().estraiDOWPossibiliVolontario(nome);
 		HashMap<Integer,ArrayList<DTObject>> map=new HashMap<>();
@@ -117,11 +113,17 @@ public class RegistroDateDisponibili extends RegistroDate {
 			}
 		}
 		for(ArrayList<DTObject> temp : map.values()){
-			parziale.add(new TipoDiVisita(temp.toArray(new DTObject[0])).getDatePossibili(meseBersaglio.getTime()));
+			parziale.add(new TipoDiVisita(temp.toArray(new DTObject[0])).getDatePossibili(meseBersaglio));
 		}
-		
-		
-	        return null;
+		return Calendario.scan(Calendario.getWholeMonth(meseBersaglio),(day)->{
+			for(Date[] array: parziale){
+				if(Arrays.stream(rdp.getDatePrecluse()).anyMatch((dataPreclusa)->dataPreclusa.equals(day.getTime())))return false;
+				if(Arrays.asList(array).contains(day.getTime())){
+					return true;
+				}
+			}
+			return false;
+		});
 	}
     
 }
