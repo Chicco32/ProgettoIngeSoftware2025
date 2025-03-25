@@ -1,10 +1,12 @@
 import ServicesAPI.*;
 import java.text.*;
 import DataBaseImplementation.*;
+import javax.swing.text.*;
 
 public class GiornateDisponibili{
 	public static void main(String[] args){
 		DateFormat df=new SimpleDateFormat("dd/MM/yyyy");
+		DateFormatter form=new DateFormatter(df);
 		Calendario cal= new Calendario();
 		Date[] prova=new Date[5];
 		prova[0]=df.parse("01/05/2025");
@@ -39,6 +41,9 @@ public class GiornateDisponibili{
 		RegistroDatePrecluse rdp= new RegistroDatePrecluse( new XMLDatePrecluse("test/disponibili/datePrecluse.xml"));
 		RegistroDateDisponibili rdd=new RegistroDateDisponibili(new XMLDateDisponibili("test/disponibili/dateDisponibili/"),rdp);
 		rdp.registraDatePrecluse(prova);
-		rdd.calcolaPossibiliDate("Prova", datiFinti);
+		Date[] result=rdd.calcolaPossibiliDate("Prova", datiFinti);
+		for(Date data:result){
+			System.out.println(form.valueToString(data));
+		}
 	}
 }
