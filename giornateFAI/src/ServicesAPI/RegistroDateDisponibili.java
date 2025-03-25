@@ -125,5 +125,34 @@ public class RegistroDateDisponibili extends RegistroDate {
 			return false;
 		});
 	}
+	public Date[] calcolaPossibiliDate(String nome,DTObject[] datiTest) {
+		Date meseBersaglio=Calendario.getTargetMonth(2);
+		ArrayList<Date[]> parziale=new ArrayList<>();
+		DTObject[] tabella=datiTest;
+		HashMap<Integer,ArrayList<DTObject>> map=new HashMap<>();
+		for(DTObject entry:tabella){
+			int codice=(Integer)(entry.getValoreCampo("Codice Tipo di Visita"));
+			if(map.get(codice)==null){
+				ArrayList<DTObject> aux=new ArrayList<>();
+				aux.add(entry);
+				map.put(codice,aux);
+			}else{
+				ArrayList<DTObject> aux=map.get(codice);
+				aux.add(entry);
+			}
+		}
+		for(ArrayList<DTObject> temp : map.values()){
+			parziale.add(new TipoDiVisita(temp.toArray(new DTObject[0])).getDatePossibili(meseBersaglio));
+		}
+		return Calendario.scan(Calendario.getWholeMonth(meseBersaglio),(day)->{
+			for(Date[] array: parziale){
+				if(Arrays.stream(rdp.getDatePrecluse()).anyMatch((dataPreclusa)->dataPreclusa.equals(day.getTime())))return false;
+				if(Arrays.asList(array).contains(day.getTime())){
+					return true;
+				}
+			}
+			return false;
+		});
+	}
     
 }
