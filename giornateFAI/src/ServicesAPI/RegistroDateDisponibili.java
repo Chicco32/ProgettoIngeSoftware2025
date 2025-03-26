@@ -28,7 +28,11 @@ public class RegistroDateDisponibili extends RegistroDate {
 			}
 			List<Object> dati=input[0].getValori();
 			this.codice=(int) dati.get(0);
-			this.periodoProposta=new DateRange(df.parse((String)(dati.get(1))),df.parse((String)(dati.get(2))));
+			try{
+				this.periodoProposta=new DateRange(df.parse((String)(dati.get(1))),df.parse((String)(dati.get(2))));
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 			ArrayList<Integer> aux=new ArrayList<Integer>();
 			for(DTObject entry: input){
 				aux.add((Integer)(entry.getValoreCampo("Giorno della Settimana")));

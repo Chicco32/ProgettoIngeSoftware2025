@@ -1,4 +1,5 @@
 import ServicesAPI.*;
+import java.util.Date;
 import java.text.*;
 import DataBaseImplementation.*;
 import javax.swing.text.*;
@@ -9,14 +10,19 @@ public class GiornateDisponibili{
 		DateFormatter form=new DateFormatter(df);
 		Calendario cal= new Calendario();
 		Date[] prova=new Date[5];
-		prova[0]=df.parse("01/05/2025");
-		prova[1]=df.parse("05/05/2025");
-		prova[2]=df.parse("10/05/2025");
-		prova[3]=df.parse("20/05/2025");
-		prova[4]=df.parse("21/05/2025");
+		try{
+			prova[0]=df.parse("01/05/2025");
+			prova[1]=df.parse("05/05/2025");
+			prova[2]=df.parse("10/05/2025");
+			prova[3]=df.parse("20/05/2025");
+			prova[4]=df.parse("21/05/2025");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		Tupla[] datiFinti=new Tupla[5];
+		String[] colonne={"Codice Tipo di Visita","Giorno di Inizio (periodo anno)","Giorno di Fine (periodo anno)", "Giorno della Settimana"};
 		for(int i=0;i<5;i++){
-			datiFinti[i]=new Tupla("Tipo di Visita", {"Codice Tipo di Visita","Giorno di Inizio (periodo anno)","Giorno di Fine (periodo anno)", "Giorno della Settimana"});
+			datiFinti[i]=new Tupla("Tipo di Visita", colonne);
 		}
 		datiFinti[0].impostaValore(1, "Codice Tipo di Visita");
 		datiFinti[0].impostaValore("2025-03-31", "Giorno di Inizio (periodo anno)");
@@ -43,7 +49,11 @@ public class GiornateDisponibili{
 		rdp.registraDatePrecluse(prova);
 		Date[] result=rdd.calcolaPossibiliDate("Prova", datiFinti);
 		for(Date data:result){
-			System.out.println(form.valueToString(data));
+			try{
+				System.out.println(form.valueToString(data));
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 		}
 	}
 }
