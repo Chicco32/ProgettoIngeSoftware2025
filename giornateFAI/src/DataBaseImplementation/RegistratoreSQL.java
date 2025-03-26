@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
 import ServicesAPI.DTObject;
-import ServicesAPI.GestoreConfigurazioneRegistratore;
+import ServicesAPI.GestoreConfiguratore;
 import ServicesAPI.GestoreFilesConfigurazione;
 import ServicesAPI.Registratore;
 import java.sql.PreparedStatement;
@@ -44,7 +44,7 @@ public class RegistratoreSQL implements Registratore{
     private int maxPartecipanti;
     private String areaCompetenza;
 
-    private GestoreConfigurazioneRegistratore fileManager;
+    private GestoreConfiguratore fileManager;
 
     public RegistratoreSQL(String path){
         this.connection = ConnessioneSQL.getConnection();
@@ -169,7 +169,15 @@ public class RegistratoreSQL implements Registratore{
         CostantiDB.TIPO_VISITA, Queries.GENERA_CHIAVE_TIPO_VISITA,
         CostantiDB.ARCHIVIO_VISITE, Queries.GENERA_CHIAVE_ARCHIVIO
     );
-    public int generaNuovaChiave(String tabella) {
+
+    /**
+     * Il metodo genera una nuova chiave univoca valida per la tabella selezionata. In particolare la funzione conta il numero più alto fra le chiavi e ritorna il
+     * numero progressivo successivo come numero da usare come chiave, in questa maniera permette la generazione di chiavi anche in caso di eliminazioni di righe dalla tabella. 
+     * 
+     * @param tabella la tabella da selezionare in cui generare la chiave
+     * @return un {@code int} che rappresenta il valore della chiave da inserire. In caso di tabella di tabella vuota restitutisce valore {@code 1} e in caso di errori nella generezione restituisce {@code -1}
+     */
+    private int generaNuovaChiave(String tabella) {
 
         int nuovaChiave = -1;
         try{

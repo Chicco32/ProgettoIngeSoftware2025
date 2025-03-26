@@ -98,7 +98,6 @@ public class RegistroDateDisponibili extends RegistroDate {
 		}
 		aux.removeAll(toRem);
 	}
-	
 
 	public Date[] calcolaPossibiliDate(String nome) {
 		Date meseBersaglio=Calendario.getTargetMonth(2);

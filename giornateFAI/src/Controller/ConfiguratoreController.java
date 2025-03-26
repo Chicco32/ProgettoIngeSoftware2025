@@ -135,12 +135,12 @@ public class ConfiguratoreController implements UtenteController {
         CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().visualizzaElencoTipiDiVisite(), "Tipi Di Visite");
     }
 
-    public void inserisciAreaCompetenza() {
+    private void inserisciAreaCompetenza() {
         String areaCompetenza = CliInput.chiediConConferma(CliVisualizzazione.AREA_COMPETENZA);
         model.getRegistratore().modificaAreaCompetenza(areaCompetenza);
     }
 
-    public void inserisciMaxPartecipanti() {
+    private void inserisciMaxPartecipanti() {
         int maxPartecipanti = Integer.parseInt(CliInput.chiediConConferma(CliVisualizzazione.MAX_PARTECIPANTI));
         model.getRegistratore().modificaMaxPartecipanti(maxPartecipanti);
     }
@@ -173,7 +173,7 @@ public class ConfiguratoreController implements UtenteController {
         return nickname;
     }
 
-    public void inserisciNuovoTipoDiVisita () {
+    private void inserisciNuovoTipoDiVisita () {
         //Chiede la lista di nomi dei luoghi possibile su cui inserire la visita
         List<String> luoghiDisponibili = model.getVisualizzatore().listaLuoghiRegistrati();
         String luogoSelezionato = CliInput.selezionaLuogo(luoghiDisponibili);
@@ -181,14 +181,14 @@ public class ConfiguratoreController implements UtenteController {
         if (luogoSelezionato != null) popolaDBTipiVisite(luogoSelezionato);
     }
     
-    public void chiediStatoDaVisualizzare() {
+    private void chiediStatoDaVisualizzare() {
         CliVisualizzazione.barraIntestazione(model.getNickname());
         StatiVisite stato = CliInput.chiediStatoVisita();
         CliVisualizzazione.visualizzaRisultati(
             model.getVisualizzatore().visualizzaVisite(stato), "Archivio di: " + stato.toString());
     }
 
-    public void popolaDBLuoghiVisteVolontari() {
+    private void popolaDBLuoghiVisteVolontari() {
         //struttra ricorsiva scomposta nelle 3 funzioni private di popolamento
         boolean altroLuogo = true;
         while (altroLuogo) {
@@ -297,13 +297,13 @@ public class ConfiguratoreController implements UtenteController {
         }        
     }
 
-    public void aggiungiDatePrecluse() {
+    private void aggiungiDatePrecluse() {
         CliNotifiche.avvisa(CliNotifiche.GIORNO_CONFIGURAZIONE);
         Date[] input = CliInput.chiediDatePrecluse(model.getCalendario());
         model.getRegistroDatePrecluse().registraDatePrecluse(input);
     } 
 
-    public boolean giornoDiConfigurazione () {
+    private boolean giornoDiConfigurazione () {
         try {
             return model.getRegistroDatePrecluse().giornoDiConfigurazione();
         } catch (Exception e) {

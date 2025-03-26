@@ -45,7 +45,6 @@ public class DateRange {
         return true; // È nel range
     }
 
-    @Override
     public String toString() {
         return "DateRange{startDate=" + startDate + ", endDate=" + endDate + "}";
     }

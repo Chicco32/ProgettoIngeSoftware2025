@@ -1,6 +1,6 @@
 package DataBaseImplementation;
 
-import ServicesAPI.GestoreConfigurazioneRegistratore;
+import ServicesAPI.GestoreConfiguratore;
 import ServicesAPI.GestoreFilesConfigurazione;
 
 /**
@@ -11,7 +11,7 @@ import ServicesAPI.GestoreFilesConfigurazione;
  * @see XMLManager
  * @see GestoreFilesConfigurazione
  */
-public class XMLConfigurator extends XMLManager implements GestoreConfigurazioneRegistratore {
+public class XMLConfigurator extends XMLManager implements GestoreConfiguratore {
 
     public XMLConfigurator (String path) {
         super(path);

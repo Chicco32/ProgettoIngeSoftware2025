@@ -34,15 +34,6 @@ public interface Registratore {
     public boolean registraNuovoLuogo (DTObject luogo) throws Exception;
 
     /**
-     * Il metodo genera una nuova chiave univoca valida per la tabella selezionata. In particolare la funzione conta il numero più alto fra le chiavi e ritorna il
-     * numero progressivo successivo come numero da usare come chiave, in questa maniera permette la generazione di chiavi anche in caso di eliminazioni di righe dalla tabella. 
-     * 
-     * @param tabella la tabella da selezionare in cui generare la chiave
-     * @return un {@code int} che rappresenta il valore della chiave da inserire. In caso di tabella di tabella vuota restitutisce valore {@code 1} e in caso di errori nella generezione restituisce {@code -1}
-     */
-    public int generaNuovaChiave(String tabella);
-
-    /**
      * Funzione che registra un nuovo tipo di visita nel DB.
      * La funzione richiede le funzioni aggiuntive:  
      * <PRE>

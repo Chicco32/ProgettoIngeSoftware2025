@@ -5,11 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+
 import ServicesAPI.Configuratore;
 import ServicesAPI.DTObject;
+import ServicesAPI.FactoryServizi;
 import ServicesAPI.Login;
-import ServicesAPI.RegistroDateDisponibili;
-import ServicesAPI.RegistroDatePrecluse;
 import ServicesAPI.Utente;
 import ServicesAPI.Volontario;
 
@@ -33,9 +33,11 @@ public class LoginSQL implements Login {
     private static final String defaultNicknameAdmin = "admin";
     private static final String defaultPasswordAdmin = "admin";
     private Connection connection;
+    private FactoryServizi servizi;
 
     public LoginSQL() {
         this.connection = ConnessioneSQL.getConnection();
+        this.servizi = AvviaServiziDatabase.getFactory();
     }
 
     private static final Map<Class<? extends Utente>, Queries> accessi = Map.of(
@@ -47,27 +49,22 @@ public class LoginSQL implements Login {
     
         if (connection == null) throw new SQLException();
 
-        //preparo le istanze concrete degli strumenti che l'API offre all'applicazione 
-        VisualizzatoreSQL visualizzatore = new VisualizzatoreSQL();
-        RegistratoreSQL registratore = new RegistratoreSQL(PercorsiFiles.pathRegistratore);
-        RegistroDatePrecluse registroDatePrecluse = new RegistroDatePrecluse(new XMLDatePrecluse(PercorsiFiles.pathDatePrecluse));
         
         //prima un controllo sulle credenziali di default
         if (nickname.equals(defaultNicknameAdmin) && passwordInserita.equals(defaultPasswordAdmin)) {
-            return new Configuratore(true, defaultNicknameAdmin, visualizzatore, registratore, registroDatePrecluse);
+            return new Configuratore(true, defaultNicknameAdmin, servizi);
         }
-
 
         //se entra con le credenziali di un utente già registrato si crea una catena di richieste per capire il tipo di utente
+        //Configuratore:
         if (presenteNelDB(nickname, passwordInserita, accessi.get(Configuratore.class))) {
-            return new Configuratore(false, nickname, visualizzatore, registratore, registroDatePrecluse);
+            return new Configuratore(false, nickname, servizi);
         }
+        //Volontario:
         else if (presenteNelDB(nickname, passwordInserita, accessi.get(Volontario.class))) {
-            RegistroDateDisponibili registroDateDisponibili = new RegistroDateDisponibili(new XMLDateDisponibili(PercorsiFiles.pathDateDisponibili), nickname);
             Boolean primoAccesso = false;
             if (passwordInserita.equals(defaultPasswordVolontario)) primoAccesso = true; 
-            new RegistroDateDisponibili(new XMLDateDisponibili(PercorsiFiles.pathDateDisponibili), nickname);
-            return new Volontario(primoAccesso, nickname, visualizzatore, registroDateDisponibili);
+            return new Volontario(primoAccesso, nickname, servizi);
         }
 
         return null;

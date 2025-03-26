@@ -78,8 +78,8 @@ public class VolontarioController implements UtenteController {
         RegistroDateDisponibili aux = model.getRegistroDateDisponibili();
         try {
             if (!aux.giornoDiConfigurazione()) {
-                Date[] datePossibili = aux.calcolaPossibiliDate();
-                aux.registraDateDisponibili(model.getCalendario().getData(), CliInput.chiediDateDisponibilà(datePossibili), model.getNickname());
+                Date[] datePossibili = aux.calcolaPossibiliDate(model.getNickname());
+                aux.registraDateDisponibili(CliInput.chiediDateDisponibilà(datePossibili), model.getNickname());
             }
             else CliVisualizzazione.inserimentoVolontarioBloccato();
         } catch (Exception e) {

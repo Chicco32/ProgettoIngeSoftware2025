@@ -9,10 +9,12 @@ import ServicesAPI.GestoreDateDisponibili;
 
 public class XMLDateDisponibili extends XMLManager  implements GestoreDateDisponibili{
 
-	public XMLDateDisponibili(String path) {
-		super(path);
+	public XMLDateDisponibili(String pathDateDisponibili, String pathSuper) {
+		super(pathSuper);
+		this.path = pathDateDisponibili;
 	}
 	
+	private String path;
 	private static final DateFormat formatoData =new SimpleDateFormat("yyyy-MM-dd");
 	private static final DateFormatter form = new DateFormatter(formatoData);
 

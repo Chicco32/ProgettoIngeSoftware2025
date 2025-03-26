@@ -1,6 +1,6 @@
 package ServicesAPI;
 
-public interface GestoreConfigurazioneRegistratore extends GestoreFilesConfigurazione {
+public interface GestoreConfiguratore extends GestoreFilesConfigurazione {
 
     /**
      * Scrive il file di default del registratore con i valori inseriti.
