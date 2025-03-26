@@ -10,24 +10,26 @@ import java.text.SimpleDateFormat;
 import DataBaseImplementation.VisualizzatoreSQL;
 
 public class RegistroDateDisponibili extends RegistroDate {
+
 	private class TipoDiVisita{
+		
 		public DateRange periodoProposta;
 		private DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
 		private static final HashMap<String,Integer> map=new HashMap<String,Integer>(7);
 		public int[] giorniSettimana;
-		public int codice;
+		
+
 		public TipoDiVisita(DTObject[] input){
 			if(map==null){
-				map.put("Domenica",calendario.SUNDAY);
-				map.put("Lunedì",calendario.MONDAY);
-				map.put("Martedì",calendario.TUESDAY);
-				map.put("Mercoledì",calendario.WEDNESDAY);
-				map.put("Giovedì",calendario.THURSDAY);
-				map.put("Venerdì",calendario.FRIDAY);
-				map.put("Sabato",calendario.SATURDAY);
+				map.put("Domenica",Calendario.SUNDAY);
+				map.put("Lunedì",Calendario.MONDAY);
+				map.put("Martedì",Calendario.TUESDAY);
+				map.put("Mercoledì",Calendario.WEDNESDAY);
+				map.put("Giovedì",Calendario.THURSDAY);
+				map.put("Venerdì",Calendario.FRIDAY);
+				map.put("Sabato",Calendario.SATURDAY);
 			}
 			List<Object> dati=input[0].getValori();
-			this.codice=(int) dati.get(0);
 			try{
 				this.periodoProposta=new DateRange(df.parse((String)(dati.get(1))),df.parse((String)(dati.get(2))));
 			}catch(Exception e){
@@ -43,6 +45,7 @@ public class RegistroDateDisponibili extends RegistroDate {
 				giorniSettimana[i]=temp[i];
 			}
 		}
+		
 		public Date[] getDatePossibili(Date mese){
 			Calendario inizioMese=new Calendario();
 			inizioMese.setTime(mese);
@@ -54,11 +57,13 @@ public class RegistroDateDisponibili extends RegistroDate {
 			return Calendario.scan(meseIntero,(calendario)-> periodoProposta.insideRange(calendario.getTime())&&Arrays.stream(giorniSettimana).anyMatch(num->num==calendario.getDOW()));
 		}
 	}
+
 	private RegistroDatePrecluse rdp;
 	private Date[] dateDisponibili;
 	private GestoreDateDisponibili fileManager;
+	
 	public RegistroDateDisponibili(GestoreDateDisponibili fileManager, RegistroDatePrecluse rdp, String nome) {
-        	super(fileManager);
+        super(fileManager);
 		this.rdp=rdp;
 		this.fileManager=fileManager;
 		String path=fileManager.getPath();
@@ -99,6 +104,11 @@ public class RegistroDateDisponibili extends RegistroDate {
 		aux.removeAll(toRem);
 	}
 
+	/**
+	 * Metodo per ottenere le date possibili su cui un volontario può dare disponibilità
+	 * @param nome
+	 * @return
+	 */
 	public Date[] calcolaPossibiliDate(String nome) {
 		Date meseBersaglio=Calendario.getTargetMonth(2);
 		ArrayList<Date[]> parziale=new ArrayList<>();
@@ -128,6 +138,13 @@ public class RegistroDateDisponibili extends RegistroDate {
 			return false;
 		});
 	}
+
+	/**
+	 * Copia di debug di calcolaPossibiliDate 
+	 * @param nome
+	 * @param datiTest
+	 * @return
+	 */
 	public Date[] calcolaPossibiliDate(String nome,DTObject[] datiTest) {
 		Date meseBersaglio=Calendario.getTargetMonth(2);
 		ArrayList<Date[]> parziale=new ArrayList<>();
@@ -156,6 +173,10 @@ public class RegistroDateDisponibili extends RegistroDate {
 			}
 			return false;
 		});
+	}
+
+	public boolean giornoDiConfigurazione() throws Exception {
+		return calendario.aperturaGiornoDiConfigurazione() && !meseGiaConfigurato(fileManager.getPath());
 	}
     
 }

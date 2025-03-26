@@ -35,7 +35,7 @@ public class AvviaServiziDatabase implements FactoryServizi {
     }
 
     public GestoreDateDisponibili inizializzaDateDisponibili() {
-        return new XMLDateDisponibili(PercorsiFiles.pathDateDisponibili, PercorsiFiles.pathDatePrecluse);
+        return new XMLDateDisponibili(PercorsiFiles.pathDateDisponibili);
     }
 
     public GestoreDatePrecluse inizializzaDatePrecluse() {

@@ -31,9 +31,9 @@ public abstract class RegistroDate{
 	 * @param path il path in cui cercare il file XML
 	 * @return false se il mese corrente è superiore al mese registrato o se non trova il file XML, true altrimenti
 	 */
-	private boolean meseGiaConfigurato(String path)  throws ParseException {
+	protected boolean meseGiaConfigurato(String path)  throws ParseException {
 		if(GestoreFilesConfigurazione.fileExists(path)){
-			String  ultimaDataStr = fileManager.leggiVariabile("meseCorrente");
+			String  ultimaDataStr = fileManager.leggiVariabile("dataCorrente");
 			Date ultimaDataSalvata = formatoData.parse(ultimaDataStr);
 			int ultimoMese = new Calendario(ultimaDataSalvata).getMonth();
 			int meseOdierno = new Calendario().getMonth();
@@ -49,8 +49,8 @@ public abstract class RegistroDate{
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean giornoDiConfigurazione() throws Exception {
-		return calendario.aperturaGiornoDiConfigurazione() && !meseGiaConfigurato(fileManager.getPath());
+	public boolean giornoDiConfigurazione(String path) throws Exception {
+		return calendario.aperturaGiornoDiConfigurazione() && !meseGiaConfigurato(path);
 	}
 
 }

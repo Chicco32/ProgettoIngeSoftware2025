@@ -46,5 +46,12 @@ public class RegistroDatePrecluse extends RegistroDate {
 		//System.out.println("Mandando date precluse in quantità di "+this.datePrecluse.length);
 		return this.datePrecluse;
 	}
+
+	/**
+	 * Ovverride del RegistroDate
+	 */
+	public boolean giornoDiConfigurazione() throws Exception {
+		return calendario.aperturaGiornoDiConfigurazione() && !meseGiaConfigurato(fileManager.getPath());
+	}
     
 }

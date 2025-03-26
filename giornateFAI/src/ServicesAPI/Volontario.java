@@ -7,7 +7,8 @@ public class Volontario extends Utente{
 
     public Volontario(boolean PrimoAccesso, String nickname, FactoryServizi servizi) {
         super(PrimoAccesso, nickname);
-        this.registroDateDisponibili = new RegistroDateDisponibili(servizi.inizializzaDateDisponibili());
+        this.registroDateDisponibili = new RegistroDateDisponibili(servizi.inizializzaDateDisponibili(),
+            new RegistroDatePrecluse(servizi.inizializzaDatePrecluse()), nickname);
         this.visualizzatore = servizi.creaVisualizzatoreVolontario();
         this.setRuolo("Volontario");
     }

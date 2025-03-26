@@ -9,18 +9,17 @@ import ServicesAPI.GestoreDateDisponibili;
 
 public class XMLDateDisponibili extends XMLManager  implements GestoreDateDisponibili{
 
-	public XMLDateDisponibili(String pathDateDisponibili, String pathSuper) {
-		super(pathSuper);
+	public XMLDateDisponibili(String pathDateDisponibili) {
+		super(pathDateDisponibili);
 		this.path = pathDateDisponibili;
 	}
 	
-	private String path;
 	private static final DateFormat formatoData =new SimpleDateFormat("yyyy-MM-dd");
 	private static final DateFormatter form = new DateFormatter(formatoData);
 
 	public void registraDateDisponibili(Date today, Date[] dateDisponibili, String nomeVolontario) {
 		String aux=this.path;
-		this.path+=nomeVolontario;
+		this.path+=nomeVolontario + ".xml";
 		inizializzaWriter();
 		System.out.println("Inizio Scrittura");
 		try{

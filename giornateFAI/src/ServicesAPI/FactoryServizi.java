@@ -15,5 +15,4 @@ public interface FactoryServizi {
 
     public GestoreDatePrecluse inizializzaDatePrecluse();
 
-
 }

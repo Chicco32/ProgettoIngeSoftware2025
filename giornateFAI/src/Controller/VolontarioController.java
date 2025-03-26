@@ -63,7 +63,7 @@ public class VolontarioController implements UtenteController {
 
         //per nuove funzioni agigungere nuove righe
         Map<Integer, Runnable> actions = new HashMap<>();
-        actions.put(1, this::inserisciDisponibilia);
+        actions.put(1, this::inserisciDisponibilita);
         actions.put(2, this::visualizzaVisiteAssociate);
 
         while (true) {
@@ -73,7 +73,7 @@ public class VolontarioController implements UtenteController {
         }
     }
 
-    private void inserisciDisponibilia() {
+    private void inserisciDisponibilita() {
         CliVisualizzazione.barraIntestazione(model.getNickname());
         RegistroDateDisponibili aux = model.getRegistroDateDisponibili();
         try {

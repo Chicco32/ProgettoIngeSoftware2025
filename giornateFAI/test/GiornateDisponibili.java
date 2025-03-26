@@ -45,7 +45,7 @@ public class GiornateDisponibili{
 		datiFinti[4].impostaValore("2025-07-02", "Giorno di Fine (periodo anno)");
 		datiFinti[4].impostaValore("Domenica","Giorno della Settimana");
 		RegistroDatePrecluse rdp= new RegistroDatePrecluse( new XMLDatePrecluse("test/disponibili/datePrecluse.xml"));
-		RegistroDateDisponibili rdd=new RegistroDateDisponibili(new XMLDateDisponibili("test/disponibili/dateDisponibili/"),rdp);
+		RegistroDateDisponibili rdd=new RegistroDateDisponibili(new XMLDateDisponibili("test/disponibili/dateDisponibili/", "test/disponibili/datePrecluse.xml"),rdp);
 		rdp.registraDatePrecluse(prova);
 		Date[] result=rdd.calcolaPossibiliDate("Prova", datiFinti);
 		for(Date data:result){
