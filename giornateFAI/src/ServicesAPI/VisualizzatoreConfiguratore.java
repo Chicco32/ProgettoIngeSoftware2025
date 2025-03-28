@@ -12,46 +12,43 @@ public interface VisualizzatoreConfiguratore {
      * Richiede di filtrare le istanze di visita in cui lo stato equivale a quello richiesto
      * @param stato lo stato delle visite su cui filtrare
      * @return un oggetto {@code DTObject} con le visite salvate
-     * @throws CoerenzaException Se lo stato inserito è uno stato invalido
+     * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database
      */
-    public DTObject[] visualizzaVisite(StatiVisite stato);
-
-    /**
-     * Riporta la lista con anche i volontari non associati, da eliminare in futuro per mantenere la coerenza
-     * @deprecated andrà rimossa una volta che si creano i sistemi di controllo sui volontari per asssicurare che non ci siano
-     * volontari non associati
-     */
-    public List<String> listaCompletaVolontari() throws IllegalArgumentException;
+    public DTObject[] visualizzaVisite(StatiVisite stato) throws Eccezioni.DBConnectionException;
 
     /**
      * Controlla se ci sono luoghi registrati per avviare la procedura di popolamento del DB
      * @return true se non sono saalvati nessun luogo, false altrimenti
+     * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database
      */
-    public boolean nonCisonoLuoghiRegistrati();
+    public boolean nonCisonoLuoghiRegistrati() throws Eccezioni.DBConnectionException;
 
     /**
      * Visualizza la lista dei volontari registrati
      * @return un oggetto {@code DTObject} con i volontari registrati
+     * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database
      */
-    public DTObject[] visualizzaElencoVolontari();
+    public DTObject[] visualizzaElencoVolontari() throws Eccezioni.DBConnectionException;
 
     /**
      * Visualizza la lista dei luoghi registrati
      * @return un oggetto {@code DTObject} con i luoghi registrati
+     * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database
      */
-    public DTObject[] visualizzaElencoLuoghi();
+    public DTObject[] visualizzaElencoLuoghi() throws Eccezioni.DBConnectionException;
 
     /**
      * Ritorna i nomi dei luoghi registrati direttamente in forma di lista
      * @return {@code List<String>} con i nomi dei luoghi.
+     * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database
      */
-    public List<String> listaLuoghiRegistrati();
+    public List<String> listaLuoghiRegistrati() throws Eccezioni.DBConnectionException;
 
     /**
      * Visualizza la lista dei tipi di visita registrati
      * @return un oggetto {@code DTObject} con i tipi di visita registrati
+     * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database
      */
-    public DTObject[] visualizzaElencoTipiDiVisite();
-
+    public DTObject[] visualizzaElencoTipiDiVisite() throws Eccezioni.DBConnectionException;
 
 }

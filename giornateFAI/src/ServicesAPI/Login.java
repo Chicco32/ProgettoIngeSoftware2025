@@ -18,18 +18,18 @@ public interface Login {
      * @param password La password inserita dall'utente nel form di login.
      * @return Un oggetto {@code Utente} se le credenziali sono corrette e l'utente è verificato,
      *         altrimenti {@code null} se le credenziali sono errate o non registrate.
-     * @throws Exception In caso di errore di connessione al database.
+     * @throws DBConnectionException In caso di errore di connessione al database.
      */
-    public Utente loginUtente(String nickname, String password) throws Exception;
+    public Utente loginUtente(String nickname, String password) throws Eccezioni.DBConnectionException;
 
     /**
      * Metodo per consentire il cambio della password di un utente.
      * @param datiUtente un oggetto {@DTObject} con i nuovi dati dell'utente
      * @param ruolo il ruolo che ricopre l'utente
      * @return {@code true} se il cambio password è avvenuto con successo, altrimenti {@code false}.
-     * @throws Exception In caso di errore di connessione al database o di altri problemi.
+     * @throws DBConnectionException In caso di errore di connessione al database.
      */
-    public boolean cambioPassword(DTObject datiUtente, String ruolo) throws Exception;
+    public boolean cambioPassword(DTObject datiUtente, String ruolo) throws Eccezioni.DBConnectionException;
 
     /**
      * Questo metodo verifica se un dato nome utente è univoco, cioè se non è già stato registrato da 
@@ -37,8 +37,9 @@ public interface Login {
      * Viene invocato ogni volta che un utente tenta di registrare un nuovo nickname.
      * @param nomeUtente Il nome utente che si vuole registrare.
      * @return true se il nome utente non è già registrato, false altrimenti.
+     * @throws DBConnectionException In caso di errore di connessione al database.
      */
-    public boolean nomeUtenteUnivoco(String nomeUtente) throws Exception;
+    public boolean nomeUtenteUnivoco(String nomeUtente) throws Eccezioni.DBConnectionException;
 
     /**
      * Funzione per la registrazione di un nuovo configuratore nel DB.
@@ -48,7 +49,8 @@ public interface Login {
      * @param nickname il possibile nickname da registrare
      * @param password la password inserita dall'utente
      * @return lo stato della registrazione, true se è andata a buon fine, false altrimenti
+     * @throws DBConnectionException In caso di errore di connessione al database.
      */
-    public boolean registraNuovoConfiguratore(DTObject configuratore) throws Exception;
+    public boolean registraNuovoConfiguratore(DTObject configuratore) throws Eccezioni.DBConnectionException;
 
 }

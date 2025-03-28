@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
 import ServicesAPI.DTObject;
+import ServicesAPI.Eccezioni;
 import ServicesAPI.GestoreConfiguratore;
 import ServicesAPI.GestoreFilesConfigurazione;
 import ServicesAPI.Registratore;
@@ -105,7 +106,7 @@ public class RegistratoreSQL implements Registratore{
     }
 
     
-    public boolean nomeUtenteUnivoco(String nomeUtente) throws Exception {
+    public boolean nomeUtenteUnivoco(String nomeUtente) throws Eccezioni.DBConnectionException{
         
         try (PreparedStatement stmt = connection.prepareStatement(Queries.NICKNAME_UNIVOCO.getQuery())) {
             stmt.setString(1, nomeUtente);
@@ -113,43 +114,72 @@ public class RegistratoreSQL implements Registratore{
             ResultSet rs = stmt.executeQuery();
             //se non è presente nel DB è un nome valido
             if (!rs.next()) return true;
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore nella connessione al DB", e);            
         }
         return false;
     }
 
-    public boolean registraNuovoVolontario (DTObject volontario) throws Exception{
+    public boolean registraNuovoVolontario (DTObject volontario) throws Eccezioni.DBConnectionException{
         ServizioHash.cifraPassword(volontario);
-        return inserisciElementoDB(volontario, "Nuovo volontario");
+        try {
+            return inserisciElementoDB(volontario, "Nuovo volontario");
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore nella connessione al DB", e);
+        }
+        return false;
     }
 
-    public boolean registraNuovoLuogo (DTObject luogo) throws Exception {
-        return inserisciElementoDB(luogo, "Nuovo luogo");
+    public boolean registraNuovoLuogo (DTObject luogo) throws Eccezioni.DBConnectionException {
+        try {
+            return inserisciElementoDB(luogo, "Nuovo luogo");
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore nella connessione al DB", e);
+        }
+        return false;
     }
 
-    public boolean associaVolontarioVisita (DTObject associazione) throws Exception {
-        return inserisciElementoDB(associazione, "Associa volontario");
+    public boolean associaVolontarioVisita (DTObject associazione) throws Eccezioni.DBConnectionException {
+        try {
+            return inserisciElementoDB(associazione, "Associa volontario");
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore nella connessione al DB", e);
+        }
+        return false;
     }
 
-    public boolean registraNuovoTipoVisita(DTObject tipoVisita) throws Exception {
+    public boolean registraNuovoTipoVisita(DTObject tipoVisita) throws Eccezioni.DBConnectionException {
         //genero la chiave per la nuova visita
         int nuovoCodice = generaNuovaChiave(CostantiDB.TIPO_VISITA.getNome());
         tipoVisita.impostaValore(nuovoCodice, "Codice Tipo di Visita");
 
-
         //Prima registro nel DB la visita filtrata senza i giorni della settimana
-         String [] filtro = {"Codice Tipo di Visita","Punto di Incontro","Titolo", "Descrizione","Giorno inzio", 
+        String [] filtro = {"Codice Tipo di Visita","Punto di Incontro","Titolo", "Descrizione","Giorno inzio", 
          "Giorno fine", "Ora di inizio", "Durata", "Necessita Biglietto", "Min Partecipanti", "Max Partecipanti", "Configuratore referente"};
         DTObject visitaFiltrata = ((Tupla) tipoVisita).filtraCampi(filtro);
-        Boolean visitaInserita = inserisciElementoDB(visitaFiltrata, "Nuovo tipo visita");
+        Boolean visitaInserita = false;
+        try {
+            visitaInserita = inserisciElementoDB(visitaFiltrata, "Nuovo tipo visita");
         
-        //poi estraggo i giorni della settimana e lavoro su di essi
-        String[] giorniSettimana = (String[]) tipoVisita.getValoreCampo("Giorni settimana");
-        for (String giorno : giorniSettimana) {
-            //inserisco i giorni uno alla volta nel DataBase
-            Tupla tupla = new Tupla("Giorni settimana", new String[]{"Codice Tipo di Visita","Giorno della settimana"});
-            tupla.impostaValore(nuovoCodice,"Codice Tipo di Visita");
-            tupla.impostaValore(giorno, "Giorno della settimana");
-            inserisciElementoDB(tupla, "Associa giorno settimana");
+            //poi estraggo i giorni della settimana e lavoro su di essi
+            String[] giorniSettimana = (String[]) tipoVisita.getValoreCampo("Giorni settimana");
+            for (String giorno : giorniSettimana) {
+                //inserisco i giorni uno alla volta nel DataBase
+                Tupla tupla = new Tupla("Giorni settimana", new String[]{"Codice Tipo di Visita","Giorno della settimana"});
+                tupla.impostaValore(nuovoCodice,"Codice Tipo di Visita");
+                tupla.impostaValore(giorno, "Giorno della settimana");
+                inserisciElementoDB(tupla, "Associa giorno settimana");
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore nella connessione al DB", e);
         }
         return visitaInserita;
     }

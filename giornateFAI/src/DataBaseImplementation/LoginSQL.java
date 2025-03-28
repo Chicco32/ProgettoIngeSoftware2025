@@ -8,6 +8,7 @@ import java.util.Map;
 
 import ServicesAPI.Configuratore;
 import ServicesAPI.DTObject;
+import ServicesAPI.Eccezioni;
 import ServicesAPI.FactoryServizi;
 import ServicesAPI.Login;
 import ServicesAPI.Utente;
@@ -45,10 +46,9 @@ public class LoginSQL implements Login {
         Volontario.class, Queries.PASSWORD_ACCESSO_VOLONTARIO
     );
 
-    public Utente loginUtente(String nickname, String passwordInserita) throws Exception {
+    public Utente loginUtente(String nickname, String passwordInserita) throws Eccezioni.DBConnectionException {
     
-        if (connection == null) throw new SQLException();
-
+        if (connection == null) throw new Eccezioni.DBConnectionException("Connesisone non riuscita", new SQLException());
         
         //prima un controllo sulle credenziali di default
         if (nickname.equals(defaultNicknameAdmin) && passwordInserita.equals(defaultPasswordAdmin)) {
@@ -57,14 +57,18 @@ public class LoginSQL implements Login {
 
         //se entra con le credenziali di un utente già registrato si crea una catena di richieste per capire il tipo di utente
         //Configuratore:
-        if (presenteNelDB(nickname, passwordInserita, accessi.get(Configuratore.class))) {
-            return new Configuratore(false, nickname, servizi);
-        }
-        //Volontario:
-        else if (presenteNelDB(nickname, passwordInserita, accessi.get(Volontario.class))) {
-            Boolean primoAccesso = false;
-            if (passwordInserita.equals(defaultPasswordVolontario)) primoAccesso = true; 
-            return new Volontario(primoAccesso, nickname, servizi);
+        try {
+            if (presenteNelDB(nickname, passwordInserita, accessi.get(Configuratore.class))) {
+                return new Configuratore(false, nickname, servizi);
+            }
+            //Volontario:
+            else if (presenteNelDB(nickname, passwordInserita, accessi.get(Volontario.class))) {
+                Boolean primoAccesso = false;
+                if (passwordInserita.equals(defaultPasswordVolontario)) primoAccesso = true; 
+                return new Volontario(primoAccesso, nickname, servizi);
+            }
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante la connessione al DB", e);
         }
 
         return null;
@@ -92,13 +96,15 @@ public class LoginSQL implements Login {
         return false;
     }
 
-    public boolean nomeUtenteUnivoco(String nomeUtente) throws Exception {
+    public boolean nomeUtenteUnivoco(String nomeUtente) throws Eccezioni.DBConnectionException {
         try (PreparedStatement stmt = connection.prepareStatement(Queries.NICKNAME_UNIVOCO.getQuery())) {
             stmt.setString(1, nomeUtente);
             //prova a cercare il nome nel DB
             ResultSet rs = stmt.executeQuery();
             //se non è presente nel DB è un nome valido
             if (!rs.next()) return true;
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante la connessione al DB", e);         
         }
         return false;
     }
@@ -108,7 +114,7 @@ public class LoginSQL implements Login {
         "Volontario", Queries.CAMBIO_PASSWORD_VOLONTARIO
     );
 
-    public boolean cambioPassword(DTObject dati, String ruolo) throws Exception {
+    public boolean cambioPassword(DTObject dati, String ruolo) throws Eccezioni.DBConnectionException {
         //in nmaniera trasparente all'utente aggiunge i layer di sicurezza
         ServizioHash.cifraPassword(dati);
         String nickname = (String)dati.getValoreCampo("Nickname");
@@ -122,10 +128,12 @@ public class LoginSQL implements Login {
             stmt.setString(3,nickname);
             stmt.executeUpdate();
             return true;
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante la connessione al DB", e);
         }
     }
 
-    public boolean registraNuovoConfiguratore(DTObject configuratore) throws Exception {
+    public boolean registraNuovoConfiguratore(DTObject configuratore) throws Eccezioni.DBConnectionException {
         //in nmaniera trasparente all'utente aggiunge i layer di sicurezza
         ServizioHash.cifraPassword(configuratore);
         String nickname = (String)configuratore.getValoreCampo("Nickname");
@@ -138,6 +146,8 @@ public class LoginSQL implements Login {
             stmt.setString(3, sale);
             stmt.executeUpdate();
             return true;
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante la connessione al DB", e);
         }
     }
 
