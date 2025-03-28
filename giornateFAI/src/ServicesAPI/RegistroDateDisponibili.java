@@ -15,12 +15,13 @@ public class RegistroDateDisponibili extends RegistroDate {
 		
 		public DateRange periodoProposta;
 		private DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
-		private static final HashMap<String,Integer> map=new HashMap<String,Integer>(7);
+		private static HashMap<String,Integer> map;
 		public int[] giorniSettimana;
 		
 
 		public TipoDiVisita(DTObject[] input){
 			if(map==null){
+				map=new HashMap<String,Integer>(7);
 				map.put("Domenica",Calendario.SUNDAY);
 				map.put("Lunedì",Calendario.MONDAY);
 				map.put("Martedì",Calendario.TUESDAY);
@@ -37,7 +38,9 @@ public class RegistroDateDisponibili extends RegistroDate {
 			}
 			ArrayList<Integer> aux=new ArrayList<Integer>();
 			for(DTObject entry: input){
-				aux.add((Integer)(entry.getValoreCampo("Giorno della Settimana")));
+				String giorno=(String)(entry.getValoreCampo("Giorno della Settimana"));
+				System.out.println("Parsing "+giorno);
+				aux.add(map.get(giorno));
 			}
 			Integer[] temp=aux.toArray(new Integer[aux.size()]);
 			giorniSettimana=new int[temp.length];
@@ -47,13 +50,7 @@ public class RegistroDateDisponibili extends RegistroDate {
 		}
 		
 		public Date[] getDatePossibili(Date mese){
-			Calendario inizioMese=new Calendario();
-			inizioMese.setTime(mese);
-			inizioMese.onlyDay();
-			inizioMese.add(1-inizioMese.getDay(),Calendario.DATE);
-			Calendario fineMese=(Calendario) (inizioMese.clone());
-			fineMese.add(fineMese.getActualMaximum(Calendario.DATE)-1,Calendario.DATE);
-			DateRange meseIntero=new DateRange(inizioMese.getTime(),fineMese.getTime());
+			DateRange meseIntero=Calendario.getWholeMonth(mese);
 			return Calendario.scan(meseIntero,(calendario)-> periodoProposta.insideRange(calendario.getTime())&&Arrays.stream(giorniSettimana).anyMatch(num->num==calendario.getDOW()));
 		}
 	}

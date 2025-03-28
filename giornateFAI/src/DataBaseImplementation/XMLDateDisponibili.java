@@ -46,6 +46,8 @@ public class XMLDateDisponibili extends XMLManager  implements GestoreDateDispon
 	}
 
 	public Date[] leggiDateDisponibili(String nomeVolontario) {
+		String store=this.path;
+		this.path+=nomeVolontario;
 		inzializzaReader();
 		String[] aux={leggiVariabile("dateDisponibili")};
 		Date[] res; 
@@ -62,6 +64,7 @@ public class XMLDateDisponibili extends XMLManager  implements GestoreDateDispon
 	    		res=new Date[0];
 		}
 		chiudiReader();
+		this.path=store;
 		return res;
 	}
 

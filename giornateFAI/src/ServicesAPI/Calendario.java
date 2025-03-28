@@ -132,19 +132,19 @@ public class Calendario extends GregorianCalendar{
 	 */
 	public static Date getTargetMonth(int delay){
 		Calendario aux=new Calendario();
-		aux.add(-15,DATE);
-		aux.add(delay,MONTH);
+		aux.add(DATE,-15);
+		aux.add(MONTH,delay);
 		return aux.getTime();
 	}
 	public static Date[] scan(DateRange toScan, Function<Calendario,Boolean> filter){
 		ArrayList<Date> aux=new ArrayList<Date>();
 		Calendario day=new Calendario();
 		day.setTime(toScan.getStartDate());
-		while(!day.after(toScan.getEndDate())){
+		while(!day.getTime().after(toScan.getEndDate())){
 			if(filter.apply(day)){
 				aux.add(day.getTime());
 			}
-			day.add(1,DATE);
+			day.add(DATE,1);
 		}
 		return aux.toArray(new Date[0]);
 	}
@@ -157,8 +157,8 @@ public class Calendario extends GregorianCalendar{
 		inizio.setTime(day);
 		inizio.onlyDay();
 		Calendario fine=(Calendario) (inizio.clone());
-		inizio.add(1-inizio.getDay(),DATE);
-		fine.add(fine.getActualMaximum(DATE)-fine.getDay(),DATE);
+		inizio.add(DATE,1-inizio.getDay());
+		fine.add(DATE,fine.getActualMaximum(DATE)-fine.getDay());
 		return new DateRange(inizio.getTime(),fine.getTime());
 	}
 }

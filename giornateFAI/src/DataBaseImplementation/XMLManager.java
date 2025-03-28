@@ -67,7 +67,7 @@ public class XMLManager{
             newWriter = xmlof.createXMLStreamWriter(new FileOutputStream(this.path), "utf-8");
         } catch (Exception e) {
             System.out.println("Errore nell'inizializzazione del writer:");
-            System.out.println(e.getMessage());
+		e.printStackTrace();
         }
         this.xmlw = newWriter;
     }

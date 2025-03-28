@@ -17,6 +17,9 @@ public class XMLDatePrecluse extends XMLManager implements GestoreDatePrecluse{
     private static final DateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd");
 
     public void scriviDatePrecluse(Date today, Date[] current) {
+	    if(!fileExists(path)){
+		    creaFile(path);
+	    }
 		inizializzaWriter();
 	    System.out.println("Inizio Scrittura");
 	    DateFormatter form=new DateFormatter(formatoData);
@@ -38,6 +41,7 @@ public class XMLDatePrecluse extends XMLManager implements GestoreDatePrecluse{
 		xmlw.writeEndElement();
 	    }catch(Exception e){
 		    System.out.println("Errore nella scrittura del log del registro delle date:");
+		    e.printStackTrace();
 		}
 		chiudiWriter();
 	    //System.out.println("Fine scrittura");
