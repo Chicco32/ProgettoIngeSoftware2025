@@ -5,12 +5,8 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-
 import DataBaseImplementation.Tupla;
 import Presentation.CliInput;
 import Presentation.CliNotifiche;
@@ -95,7 +91,7 @@ public class ConfiguratoreController implements UtenteController {
         Map<Integer, Runnable> actions = new HashMap<>();
         actions.put(1, this::inserisciMaxPartecipanti);
         actions.put(2, this::inserisciNuovoTipoDiVisita);
-        actions.put(3, this::insersciVolontario);
+        actions.put(3, this::inserisciNuovoVolontario);
         actions.put(4, this::visualizzaElencoVolontari);     
         actions.put(5, this::visualizzaElencoLuoghi);
         actions.put(6, this::visualizzaElencoTipiDiVisite);
@@ -145,8 +141,15 @@ public class ConfiguratoreController implements UtenteController {
         model.getRegistratore().modificaMaxPartecipanti(maxPartecipanti);
     }
 
+    private void inserisciNuovoVolontario() {
+        String nickname = registraVolontario();
+        CliNotifiche.avvisa(CliNotifiche.NECESSARIO_ABBINARE_VOLONTARIO);
+        DTObject visitaAbbinata = CliInput.SelezionaTipoVisita(model.getVisualizzatore().visualizzaElencoTipiDiVisite());
+        associaVolontarioTipoVisita(nickname, visitaAbbinata);  
+    }
+
     //ritorna il nickname del volontario se l'inserimento è riuscito, null altrimenti
-    public String insersciVolontario() {
+    private String registraVolontario() {
         String nickname = null;
         Registratore aux = model.getRegistratore();
         CliVisualizzazione.intestazionePaginaInserimento(CliVisualizzazione.VARIABILE_VOLONTARI);
@@ -154,7 +157,6 @@ public class ConfiguratoreController implements UtenteController {
         try {
             Boolean registrato = false;
             do {
-
                 nickname = CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_NICKNAME, CliInput.MAX_CARATTERI_NICKNAME);
                 //controlla se non è gia stato inserito
                 if (aux.nomeUtenteUnivoco(nickname)) {
@@ -215,6 +217,7 @@ public class ConfiguratoreController implements UtenteController {
         } catch (Exception e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
         }
+
     }
 
     
@@ -253,48 +256,54 @@ public class ConfiguratoreController implements UtenteController {
         }
     }
 
-    private static List<String> sanificaLista(List<String> listaVolontari) {
-        // Usare un HashSet per rimuovere i duplicati
-        Set<String> setVolontari = new LinkedHashSet<>(listaVolontari);
-        
-        // Restituire una nuova ArrayList senza duplicati
-        return new ArrayList<>(setVolontari);
-    }
-
     private void popolaDBVolontari(DTObject data) {
-        boolean altroVolontario = true;
-        
-        //In questa implementazione le visite sono identificate da un codice ma
-        //possono essere sostitutiti da atltri tipi di chiave a seconda dell'implmentazione
-        //in caso basta cambiare l'identificatore 
-        int codiceVisita = (int) data.getValoreCampo("Codice Tipo di Visita"); 
-        
+        boolean altroVolontario = true;        
         while (altroVolontario) {
             //pagina per i volontari, prima mostra quelli gia registrati e chiede di sceglierne uno
             List <String> volontariRegistrati = new ArrayList<>();
             VisualizzatoreConfiguratore aux = model.getVisualizzatore();
-            
-            try {
-                volontariRegistrati = aux.listaCompletaVolontari();
-                //filtra eventuali ripetizioni
-                volontariRegistrati = sanificaLista(volontariRegistrati);
-                String volontarioSelezionato = CliInput.selezionaVolontario(volontariRegistrati);
-                //altrimenti permette di inserire un nuovo volontario se prima ha inserito null
-                while (volontarioSelezionato == null) volontarioSelezionato = insersciVolontario();
-            
-                //parte di inserimento nel db della nuova coppia visita e volontario associato
-                DTObject associazione = new Tupla("Volontari disponibili", new String[]{"CodiceVisita", "Volontario"});
-                associazione.impostaValore(codiceVisita, "CodiceVisita");
-                associazione.impostaValore(volontarioSelezionato, "Volontario");
-                model.getRegistratore().associaVolontarioVisita(associazione);
-                CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_CORRETTAMENTE_ASSOCIATO);
-            } catch (SQLIntegrityConstraintViolationException e) {
-                CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_GIA_ABBINATO_VISITA);
-            } catch (Exception e) {
-                CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
+
+            //visualizza la lista di volontari già registrati
+            DTObject[] tabellaVolontari = aux.visualizzaElencoVolontari();
+            for (DTObject tupla : tabellaVolontari) {
+                String nickname = (String) tupla.getValoreCampo("Nickname");
+                if (volontariRegistrati.isEmpty() || !volontariRegistrati.contains(nickname)){ 
+                    //aggiunge il nickname alla lista di quelli già registrati
+                    volontariRegistrati.add(nickname);
+                }   
             }
+            
+            String volontarioSelezionato = CliInput.selezionaVolontario(volontariRegistrati);
+            //altrimenti permette di inserire un nuovo volontario se prima ha inserito null
+            if (volontarioSelezionato == null) volontarioSelezionato = registraVolontario();
+            associaVolontarioTipoVisita(volontarioSelezionato, data);
             altroVolontario = CliInput.aggiungiAltroCampo("Volontario", "Tipo di visita");
         }        
+    }
+
+    /**
+     * Associa un volontario a una visita. Se il volontario è già associato alla visita, l'operazione fallisce.
+     * @param nomeVolontario il nome del volontario da associare
+     * @param visita l'oggetto visita a cui associare il volontario
+     */
+    private void associaVolontarioTipoVisita (String nomeVolontario, DTObject visita) {
+        try {
+            //parte di inserimento nel db della nuova coppia visita e volontario associato
+            DTObject associazione = new Tupla("Volontari disponibili", new String[]{"CodiceVisita", "Volontario"});
+        
+            //In questa implementazione le visite sono identificate da un codice ma
+            //possono essere sostitutiti da altri tipi di chiave a seconda dell'implmentazione
+            //in caso basta cambiare l'identificatore della visita
+            int codiceVisita = (int) visita.getValoreCampo("Codice Tipo di Visita");
+            associazione.impostaValore(codiceVisita, "CodiceVisita");
+            associazione.impostaValore(nomeVolontario, "Volontario");
+            model.getRegistratore().associaVolontarioVisita(associazione);
+            CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_CORRETTAMENTE_ASSOCIATO);
+        } catch (SQLIntegrityConstraintViolationException e) {
+            CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_GIA_ABBINATO_VISITA);
+        } catch (Exception e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
+        }
     }
 
     private void aggiungiDatePrecluse() {

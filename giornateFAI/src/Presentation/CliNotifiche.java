@@ -9,6 +9,7 @@ public enum CliNotifiche {
     CAMBIO_PASSWORD_CORRETTAMENTE_REGISTRATO("La nuova password è stata salvata, ricordatela da qui in avanti per accedere"),
     CONFIGURATORE_CORRETTAMENTE_REGISTRATO ("Configuratore correttamente reigstrato"),
     VOLONTARIO_CORRETTAMENTE_REGISTRATO ("Volontario correttamente registrato"),
+    NECESSARIO_ABBINARE_VOLONTARIO("Necessario abbinare una visita al volontario registrato"),
     LUOGO_CORRETTAMENTE_REGISTRATO ("Luogo correttamente registrato"),
     VISITA_CORRETTAMENTE_REGISTRATA ("Visita correttamente registrata"),
     VOLONTARIO_CORRETTAMENTE_ASSOCIATO("Volontario correttamente associato"),
