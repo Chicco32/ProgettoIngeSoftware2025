@@ -42,16 +42,13 @@ public interface Registratore {
     /**
      * Funzione che registra un nuovo tipo di visita nel DB.
      * La funzione richiede le funzioni aggiuntive:  
-     * <PRE>
-     *  this.formatoDataPerSQL(Date date); formatoOrarioPerSQL(Time time);
-     * </PRE>
      * @param codice codice univoco che identifica il tipo di visita
      * @param luogo il luogo in cui si tiene, deve essere gia registrato nella tabella luoghi
      * @param titolo il titolo che riassume la visita
      * @param descrizione una breve descriizione dell'evento
      * @param dataInizio un oggetto di tipo {@code Date} che serve per rappresentare l'inzio del periodo del'evento
      * @param dataFine  un oggetto di tipo {@code Date} che serve per rappresentare la fine del periodo del'evento
-     * @param oraInizio l'ora in cui l'evento si svolge
+     * @param oraInizio oggetot di tipo {@code Time} l'ora in cui l'evento si svolge
      * @param durata la durata in minuti dell'evento
      * @param necessitaBiglietto un oggetto {@code boolean} che rappreseta se la visita ha bisongo di un biglietto
      * @param minPartecipanti il numero minino di partecipanti affinche l'evento sia effettuato
@@ -60,8 +57,8 @@ public interface Registratore {
      * @return true se la registrazione è andata a buon fine, false altrimenti
      * @throws DBConnectionException In caso di errore di connessione al database.
      * 
-     * @see java.sql.Date
-     * @see java.sql.Time
+     * @see java.util.Date
+     * @see java.util.Time
      */
     public boolean registraNuovoTipoVisita(DTObject tipoVisita) throws Eccezioni.DBConnectionException;
 
