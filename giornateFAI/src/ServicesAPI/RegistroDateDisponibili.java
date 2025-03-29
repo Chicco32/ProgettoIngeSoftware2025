@@ -35,7 +35,7 @@ public class RegistroDateDisponibili extends RegistroDate {
 			}
 			List<Object> dati=input[0].getValori();
 			try{
-				this.periodoProposta=new DateRange(df.parse((String)(dati.get(1))),df.parse((String)(dati.get(2))));
+				this.periodoProposta=new DateRange(dati.get(1),dati.get(2));
 			}catch(Exception e){
 				e.printStackTrace();
 			}
