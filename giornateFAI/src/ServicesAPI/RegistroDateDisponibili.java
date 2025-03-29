@@ -56,13 +56,13 @@ public class RegistroDateDisponibili extends RegistroDate {
 		}
 	}
 
-	private RegistroDatePrecluse rdp;
+	private RegistroDatePrecluse datePrecluse;
 	private Date[] dateDisponibili;
 	private GestoreDateDisponibili fileManager;
 	
-	public RegistroDateDisponibili(GestoreDateDisponibili fileManager, RegistroDatePrecluse rdp, String nome) {
+	public RegistroDateDisponibili(GestoreDateDisponibili fileManager, RegistroDatePrecluse datePrecluse, String nome) {
 		super(fileManager);
-		this.rdp=rdp;
+		this.datePrecluse=datePrecluse;
 		this.fileManager=fileManager;
 		String path=fileManager.getPath();
 		if(GestoreFilesConfigurazione.fileExists(path)){
@@ -73,12 +73,12 @@ public class RegistroDateDisponibili extends RegistroDate {
 		}
 	}
 
-	public RegistroDateDisponibili(GestoreDateDisponibili fileManager, RegistroDatePrecluse rdp){
+	/*public RegistroDateDisponibili(GestoreDateDisponibili fileManager, RegistroDatePrecluse datePrecluse){
 		super(fileManager);
-		this.rdp=rdp;
+		this.datePrecluse=datePrecluse;
 		this.fileManager=fileManager;
 		this.dateDisponibili=new Date[0];
-	}
+	} */
 
 	public void registraDateDisponibili(Date[] input,String nome){
 		ArrayList<Date> aux=new ArrayList<Date>();
@@ -113,6 +113,7 @@ public class RegistroDateDisponibili extends RegistroDate {
 		ArrayList<Date[]> parziale=new ArrayList<>();
 		DTObject[] tabella=new VisualizzatoreSQL().estraiDOWPossibiliVolontario(nome); //TODO FARE REFACTORING PER TOGLIERE AL DIPENDENZA
 		HashMap<Integer,ArrayList<DTObject>> map=new HashMap<>();
+		
 		for(DTObject entry:tabella){
 			int codice=(Integer)(entry.getValoreCampo("Codice Tipo di Visita"));
 			if(map.get(codice)==null){
@@ -124,12 +125,14 @@ public class RegistroDateDisponibili extends RegistroDate {
 				aux.add(entry);
 			}
 		}
+
 		for(ArrayList<DTObject> temp : map.values()){
 			parziale.add(new TipoDiVisita(temp.toArray(new DTObject[0])).getDatePossibili(meseBersaglio));
 		}
+
 		return Calendario.scan(Calendario.getWholeMonth(meseBersaglio),(day)->{
 			for(Date[] array: parziale){
-				if(Arrays.stream(rdp.getDatePrecluse()).anyMatch((dataPreclusa)->dataPreclusa.equals(day.getTime())))return false;
+				if(Arrays.stream(datePrecluse.getDatePrecluse()).anyMatch((dataPreclusa)->dataPreclusa.equals(day.getTime())))return false;
 				if(Arrays.asList(array).contains(day.getTime())){
 					return true;
 				}
@@ -149,6 +152,7 @@ public class RegistroDateDisponibili extends RegistroDate {
 		ArrayList<Date[]> parziale=new ArrayList<>();
 		DTObject[] tabella=datiTest;
 		HashMap<Integer,ArrayList<DTObject>> map=new HashMap<>();
+
 		for(DTObject entry:tabella){
 			int codice=(Integer)(entry.getValoreCampo("Codice Tipo di Visita"));
 			if(map.get(codice)==null){
@@ -160,12 +164,14 @@ public class RegistroDateDisponibili extends RegistroDate {
 				aux.add(entry);
 			}
 		}
+
 		for(ArrayList<DTObject> temp : map.values()){
 			parziale.add(new TipoDiVisita(temp.toArray(new DTObject[0])).getDatePossibili(meseBersaglio));
 		}
-		return Calendario.scan(Calendario.getWholeMonth(meseBersaglio),(day)->{
+
+		return Calendario.scan(Calendario.getWholeMonth(meseBersaglio),(day) -> {
 			for(Date[] array: parziale){
-				if(Arrays.stream(rdp.getDatePrecluse()).anyMatch((dataPreclusa)->dataPreclusa.equals(day.getTime())))return false;
+				if(Arrays.stream(datePrecluse.getDatePrecluse()).anyMatch((dataPreclusa) -> dataPreclusa.equals(day.getTime())))return false;
 				if(Arrays.asList(array).contains(day.getTime())){
 					return true;
 				}

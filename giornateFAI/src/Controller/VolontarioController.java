@@ -1,7 +1,7 @@
 package Controller;
 
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import DataBaseImplementation.Tupla;
@@ -42,7 +42,7 @@ public class VolontarioController implements UtenteController {
                     CliVisualizzazione.VARIABILE_PASSWORD, CliInput.MAX_CARATTERI_PASSWORD), "Password");
                 passwordCambiata = login.cambioPassword(dati, model.getRuolo());
                 if (passwordCambiata) {
-                    CliNotifiche.avvisa(CliNotifiche.CONFIGURATORE_CORRETTAMENTE_REGISTRATO);
+                    CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_CORRETTAMENTE_REGISTRATO);
                     model.registrati(dati);
                 }        
                 
@@ -57,25 +57,19 @@ public class VolontarioController implements UtenteController {
         CliVisualizzazione.ingressoBackendVolontario();
 
         //per nuove funzioni agigungere nuove righe
-        Map<String, Runnable> actions = new HashMap<>();
+        Map<String, Runnable> actions = new LinkedHashMap<>();
         actions.put("Inserisci le disponibilità", this::inserisciDisponibilita);
-        actions.put("Visualizza visite a cui sei associato", this::visualizzaVisiteAssociate);
+        actions.put("Visualizza visite a cui sei associato", this::visualizzaVisiteAssociate);  
+        actions.put("Esci",() -> System.exit(0));
 
-        //genero dinamicaemnte il menu in vbase alle aizoni disponibili
-        String[] opzioniConfiguratore = new String[actions.size() + 1];
-        int i = 0;
-        for(String azione : actions.keySet()) {
-            opzioniConfiguratore[i] = azione;
-            i++;
-        }
-        opzioniConfiguratore[i] = "Esci";
+        //genero dinamicamente il menu in base alle aizoni disponibili
+        String[] opzioniConfiguratore = actions.keySet().toArray(new String[0]);
 
         while (true) {
             int scelta = CliInput.menuAzioni(getModel().getNickname(), opzioniConfiguratore);
             //scelta va da 1 a n+1, quindi se è uguale a n+1 esce
-            if (scelta > actions.size()) break;
             actions.get(opzioniConfiguratore[scelta - 1]).run();
-        } 
+        }     
     }
 
     private void inserisciDisponibilita() {

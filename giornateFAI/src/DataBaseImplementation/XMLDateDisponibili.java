@@ -18,10 +18,12 @@ public class XMLDateDisponibili extends XMLManager  implements GestoreDateDispon
 	private static final DateFormatter form = new DateFormatter(formatoData);
 
 	public void registraDateDisponibili(Date today, Date[] dateDisponibili, String nomeVolontario) {
-		String aux=this.path;
-		this.path+=nomeVolontario + ".xml";
+		String pathCartella = this.path;
+		this.path += nomeVolontario + ".xml";
 		inizializzaWriter();
-		System.out.println("Inizio Scrittura");
+
+		//System.out.println("Inizio Scrittura");
+		
 		try{
 			xmlw.writeStartDocument("utf-8", "1.0");
 			xmlw.writeStartElement("registro");
@@ -41,30 +43,42 @@ public class XMLDateDisponibili extends XMLManager  implements GestoreDateDispon
 		}catch(Exception e){
 		    System.out.println("Errore nella scrittura del log del registro delle date:");
 		}
+
 		chiudiWriter();
-		this.path=aux;
+		this.path = pathCartella;
 	}
 
 	public Date[] leggiDateDisponibili(String nomeVolontario) {
-		String store=this.path;
-		this.path+=nomeVolontario;
-		inzializzaReader();
-		String[] aux={leggiVariabile("dateDisponibili")};
+		String pathCartella = this.path;
+		this.path += nomeVolontario + ".xml";
 		Date[] res; 
-		if(!aux[0].equals("")){aux=aux[0].substring(1,aux[0].length()-1).split(",");
-			res=new Date[aux.length];
-			for(int i=0;i<aux.length;i++){
-				try{
-					res[i]=formatoData.parse(aux[i]);
-				}catch(Exception e){
-					System.out.println("Errore nella lettura della data:");
+
+		//appurata che la cartella esiste, bisogna verificare se il file del volontario esista a sua volta
+		if (fileExists(this.path)) {
+			
+			inzializzaReader();
+			String[] aux = {leggiVariabile("dateDisponibili")};
+			if(!aux[0].equals("")){
+				aux = aux[0].substring(1,aux[0].length()-1).split(",");
+				res=new Date[aux.length];
+				for(int i=0;i<aux.length;i++){
+					try{
+						res[i]=formatoData.parse(aux[i]);
+					}catch(Exception e){
+						e.printStackTrace();
+					}
 				}
 			}
-		}else {
-	    		res=new Date[0];
+			else {
+				res=new Date[0];
+			}
+			chiudiReader();
 		}
-		chiudiReader();
-		this.path=store;
+		else{
+			creaFile(this.path);
+			res=new Date[0];
+		}
+		this.path = pathCartella;
 		return res;
 	}
 

@@ -129,14 +129,12 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
 
     public DTObject[] visualizzaVisite(StatiVisite stato) throws Eccezioni.DBConnectionException {
         String query = Queries.SELEZIONA_VISITE_ARCHIVIO.getQuery();  // Usa le parentesi graffe per chiamare la stored procedure
-        ResultSet result = null;
         try (CallableStatement stmt = connection.prepareCall(query)) {
             stmt.setString(1, stato.toString());
-            result = stmt.executeQuery();
+            return traduciTabella(stmt.executeQuery());
         } catch (SQLException e) {
             throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
         }
-    return traduciTabella(result);
     }
 
     public DTObject[] visualizzaElencoVolontari() throws Eccezioni.DBConnectionException {

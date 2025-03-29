@@ -7,7 +7,7 @@ public enum CliNotifiche {
     BENVENUTO_NUOVO_CONFIGURATORE("Per creare un nuovo Configuratore inserisci le seguenti informazioni:"),
     BENVENUTO_NUOVO_VOLONTARIO("Volontario questo è il tuo primo accesso, ti chiediamo cortesemente di cambiare la password:"),
     CAMBIO_PASSWORD_CORRETTAMENTE_REGISTRATO("La nuova password è stata salvata, ricordatela da qui in avanti per accedere"),
-    CONFIGURATORE_CORRETTAMENTE_REGISTRATO ("Configuratore correttamente reigstrato"),
+    CONFIGURATORE_CORRETTAMENTE_REGISTRATO ("Configuratore correttamente registrato"),
     VOLONTARIO_CORRETTAMENTE_REGISTRATO ("Volontario correttamente registrato"),
     NECESSARIO_ABBINARE_VOLONTARIO("Necessario abbinare una visita al volontario registrato"),
     LUOGO_CORRETTAMENTE_REGISTRATO ("Luogo correttamente registrato"),

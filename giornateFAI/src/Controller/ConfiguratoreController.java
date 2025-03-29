@@ -2,7 +2,7 @@ package Controller;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -94,7 +94,7 @@ public class ConfiguratoreController implements UtenteController {
         }
 
         //per nuove funzioni agigungere nuove righe
-        Map<String, Runnable> actions = new HashMap<>();
+        Map<String, Runnable> actions = new LinkedHashMap<>();
         actions.put("Modifica max numero partecipanti", this::inserisciMaxPartecipanti);
         actions.put("Introduzione nuovo tipo di visita", this::inserisciNuovoTipoDiVisita);
         actions.put("Introduzione nuovo volontario", this::inserisciNuovoVolontario);
@@ -102,20 +102,14 @@ public class ConfiguratoreController implements UtenteController {
         actions.put("Visualizza luoghi visitabili", this::visualizzaElencoLuoghi);
         actions.put("Visualizza tipi di visite", this::visualizzaElencoTipiDiVisite);
         actions.put("Visualizza visite in archivio a seconda dello stato", this::chiediStatoDaVisualizzare);
+        actions.put("Esci",() -> System.exit(0));
 
-        //genero dinamicaemnte il menu in vbase alle aizoni disponibili
-        String[] opzioniConfiguratore = new String[actions.size() + 1];
-        int i = 0;
-        for(String azione : actions.keySet()) {
-            opzioniConfiguratore[i] = azione;
-            i++;
-        }
-        opzioniConfiguratore[i] = "Esci";
+        //genero dinamicamente il menu in base alle aizoni disponibili
+        String[] opzioniConfiguratore = actions.keySet().toArray(new String[0]);
 
         while (true) {
             int scelta = CliInput.menuAzioni(getModel().getNickname(), opzioniConfiguratore);
             //scelta va da 1 a n+1, quindi se è uguale a n+1 esce
-            if (scelta > actions.size()) break;
             actions.get(opzioniConfiguratore[scelta - 1]).run();
         }      
     }
