@@ -52,25 +52,30 @@ public class VolontarioController implements UtenteController {
         }
     }
 
-    public static final String[] opzioniVolontario = {
-        "Inserisci le disponibilità",
-        "Visualizza visite a cui sei associato",
-        "Esci" };
-
     private void menuVolontario() {
         
         CliVisualizzazione.ingressoBackendVolontario();
 
         //per nuove funzioni agigungere nuove righe
-        Map<Integer, Runnable> actions = new HashMap<>();
-        actions.put(1, this::inserisciDisponibilita);
-        actions.put(2, this::visualizzaVisiteAssociate);
+        Map<String, Runnable> actions = new HashMap<>();
+        actions.put("Inserisci le disponibilità", this::inserisciDisponibilita);
+        actions.put("Visualizza visite a cui sei associato", this::visualizzaVisiteAssociate);
+
+        //genero dinamicaemnte il menu in vbase alle aizoni disponibili
+        String[] opzioniConfiguratore = new String[actions.size() + 1];
+        int i = 0;
+        for(String azione : actions.keySet()) {
+            opzioniConfiguratore[i] = azione;
+            i++;
+        }
+        opzioniConfiguratore[i] = "Esci";
 
         while (true) {
-            int scelta = CliInput.menuAzioni(getModel().getNickname(), opzioniVolontario);
+            int scelta = CliInput.menuAzioni(getModel().getNickname(), opzioniConfiguratore);
+            //scelta va da 1 a n+1, quindi se è uguale a n+1 esce
             if (scelta > actions.size()) break;
-            actions.get(scelta).run();
-        }
+            actions.get(opzioniConfiguratore[scelta - 1]).run();
+        } 
     }
 
     private void inserisciDisponibilita() {

@@ -94,33 +94,31 @@ public class ConfiguratoreController implements UtenteController {
         }
 
         //per nuove funzioni agigungere nuove righe
-        Map<Integer, Runnable> actions = new HashMap<>();
-        actions.put(1, this::inserisciMaxPartecipanti);
-        actions.put(2, this::inserisciNuovoTipoDiVisita);
-        actions.put(3, this::inserisciNuovoVolontario);
-        actions.put(4, this::visualizzaElencoVolontari);     
-        actions.put(5, this::visualizzaElencoLuoghi);
-        actions.put(6, this::visualizzaElencoTipiDiVisite);
-        actions.put(7, this::chiediStatoDaVisualizzare);
+        Map<String, Runnable> actions = new HashMap<>();
+        actions.put("Modifica max numero partecipanti", this::inserisciMaxPartecipanti);
+        actions.put("Introduzione nuovo tipo di visita", this::inserisciNuovoTipoDiVisita);
+        actions.put("Introduzione nuovo volontario", this::inserisciNuovoVolontario);
+        actions.put("Visualizza elenco volontari", this::visualizzaElencoVolontari);     
+        actions.put("Visualizza luoghi visitabili", this::visualizzaElencoLuoghi);
+        actions.put("Visualizza tipi di visite", this::visualizzaElencoTipiDiVisite);
+        actions.put("Visualizza visite in archivio a seconda dello stato", this::chiediStatoDaVisualizzare);
+
+        //genero dinamicaemnte il menu in vbase alle aizoni disponibili
+        String[] opzioniConfiguratore = new String[actions.size() + 1];
+        int i = 0;
+        for(String azione : actions.keySet()) {
+            opzioniConfiguratore[i] = azione;
+            i++;
+        }
+        opzioniConfiguratore[i] = "Esci";
 
         while (true) {
             int scelta = CliInput.menuAzioni(getModel().getNickname(), opzioniConfiguratore);
+            //scelta va da 1 a n+1, quindi se è uguale a n+1 esce
             if (scelta > actions.size()) break;
-            actions.get(scelta).run();
+            actions.get(opzioniConfiguratore[scelta - 1]).run();
         }      
     }
-
-    //le opzioni stampate a video, in modo da da sapere in che ordine le vede l'utente
-    private static final String[] opzioniConfiguratore = {
-        "Modifica max numero partecipanti",
-        "Introduzione nuovo tipo di visita",
-        "Introduzione nuovo volontario",
-        "Visualizza elenco volontari",
-        "Visualizza luoghi visitabili",
-        "Visualizza tipi di visite",
-        "Visualizza visite in archivio a seconda dello stato",
-        "Esci" 
-    };
 
     private void visualizzaElencoVolontari() {
         CliVisualizzazione.barraIntestazione(model.getNickname());
