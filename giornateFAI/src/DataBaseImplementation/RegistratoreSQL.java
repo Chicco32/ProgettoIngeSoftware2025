@@ -267,10 +267,12 @@ public class RegistratoreSQL implements Registratore{
         throw new UnsupportedOperationException("Unimplemented method 'rimozioneVolontario'");
     }
 
-    @Override
     public void verificaCoerenzaPostRimozione() throws DBConnectionException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'verificaCoerenzaPostRimozione'");
+        try {
+            connection.createStatement().executeQuery(Queries.ELIMINA_DATI_ORFANI.getQuery());
+        } catch (SQLException e) {
+            throw new DBConnectionException("Errore nella connessione al DB", e);
+        }
     }
 
 

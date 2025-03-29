@@ -22,12 +22,13 @@ public enum CliNotifiche {
     ERRORE_REGISTRAZIONE("Errore nella registrazione!"),
     ERRORE_CONNESSIONE ("Errore nella connesisone col DB, controlla che sia acceso e che l'indirizzo sia giusto"),
     //ERRORE_DRIVER("Driver non trovato! Controlla che il driver sia correttamente installato"),
+    //ERROE_INSERIMENTO("Attenzione hai inserito un valore non valido"),
+    //ERRORE_QUERY("Errore durante l'inserimento della query, potrebbe essere che non ha trovato la tabella o i parametri sono errati"),
     ERRORE_LETTURA_FILE ("Errore nella lettura del file"),
     ERRORE_SCRITTURA_FILE ("Errore nella scrittura del file"),
     ERRORE_CREAZIONE_FILE("Errore nella creazione del file"),
     ERRORE_ACCESSO("Errore durante l'accesso");
-    //ERROE_INSERIMENTO("Attenzione hai inserito un valore non valido"),
-    //ERRORE_QUERY("Errore durante l'inserimento della query, potrebbe essere che non ha trovato la tabella o i parametri sono errati");
+
 
 
 
