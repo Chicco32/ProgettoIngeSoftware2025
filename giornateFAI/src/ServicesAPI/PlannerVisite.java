@@ -3,6 +3,8 @@ package ServicesAPI;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PlannerVisite {
 
@@ -16,9 +18,11 @@ public class PlannerVisite {
 
 	}
 
-	public DTObject[] creaPianoVisite(List<String> volontari) {
-		return null; //TODO @Diego
-	}
+	//public DTObject[] creaPianoVisite(List<String> volontari) {
+	//	ArrayList<RegistroDateDisponibili> rdd=new ArrayList<>();
+	//	for(String vol:volontati){
+	//		rdd.add(new RegistroDateDisponibili(,datePrecluse,vol)
+	//}
 
 	//TODO @Diego ricordati di pulire le date disponibili e precluse alla fine del piano visite
 }
