@@ -19,7 +19,7 @@ public abstract interface GestoreFilesConfigurazione {
     }
 
     /**
-     * Crea un file
+     * Crea un file nel percorso speficato se il file non esiste gia, altrimenti non fa nulla.
      * @param path il percorso del file
      */
     public static void creaFile(String path) {
@@ -27,11 +27,14 @@ public abstract interface GestoreFilesConfigurazione {
             File file = new File(path);
             file.createNewFile();
         } catch (Exception e) {
-            System.out.println("Errore nella creazione del file:");
             System.out.println(e.getMessage());
         }
     }
 
+    /**
+     * Ritorna il percorso del file di configurazione associato al gestore.
+     * @return Il percorso del file
+     */
     public String getPath();
 
     /**

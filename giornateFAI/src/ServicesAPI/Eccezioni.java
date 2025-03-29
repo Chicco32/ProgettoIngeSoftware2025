@@ -13,5 +13,11 @@ public class Eccezioni extends Exception {
             super(message, cause); // Il costruttore di Exception accetta una causa
         } 
     }
+
+    public static class ConfigFilesException extends Exception {
+        public ConfigFilesException(String message, Throwable cause) {
+            super(message, cause); // Il costruttore di Exception accetta una causa
+        } 
+    }
 }
 

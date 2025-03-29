@@ -15,6 +15,7 @@ import ServicesAPI.Configuratore;
 import ServicesAPI.DTObject;
 import ServicesAPI.DateRange;
 import ServicesAPI.Eccezioni;
+import ServicesAPI.Eccezioni.ConfigFilesException;
 import ServicesAPI.Eccezioni.DBConnectionException;
 import ServicesAPI.Login;
 import ServicesAPI.Registratore;
@@ -347,8 +348,8 @@ public class ConfiguratoreController implements UtenteController {
     private boolean giornoDiConfigurazione () {
         try {
             return model.getRegistroDatePrecluse().giornoDiConfigurazione();
-        } catch (Exception e) {
-            CliNotifiche.avvisa(CliNotifiche.ERRORE_CREAZIONE_FILE);
+        } catch (ConfigFilesException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_LETTURA_FILE);
         }
         return true;
     }

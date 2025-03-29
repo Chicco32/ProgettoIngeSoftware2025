@@ -6,7 +6,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
+import ServicesAPI.Eccezioni.ConfigFilesException;
 import ServicesAPI.Eccezioni.DBConnectionException;
 
 public class RegistroDateDisponibili extends RegistroDate {
@@ -180,8 +183,12 @@ public class RegistroDateDisponibili extends RegistroDate {
 		});
 	}
 
-	public boolean giornoDiConfigurazione() throws Exception {
-		return calendario.aperturaGiornoDiConfigurazione() && !meseGiaConfigurato(fileManager.getPath());
+	public boolean giornoDiConfigurazione() throws ConfigFilesException {
+		try {
+			return calendario.aperturaGiornoDiConfigurazione() && !meseGiaConfigurato(fileManager.getPath());
+		} catch (ParseException e) {
+			throw new ConfigFilesException("Problemi con i files di configurazione", e);
+		}
 	}
     
 }

@@ -1,8 +1,11 @@
 package ServicesAPI;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+
+import ServicesAPI.Eccezioni.ConfigFilesException;
 
 public class RegistroDatePrecluse extends RegistroDate {
 
@@ -50,8 +53,12 @@ public class RegistroDatePrecluse extends RegistroDate {
 	/**
 	 * Ovverride del RegistroDate
 	 */
-	public boolean giornoDiConfigurazione() throws Exception {
-		return calendario.aperturaGiornoDiConfigurazione() && !meseGiaConfigurato(fileManager.getPath());
+	public boolean giornoDiConfigurazione() throws ConfigFilesException {
+		try {
+			return calendario.aperturaGiornoDiConfigurazione() && !meseGiaConfigurato(fileManager.getPath());
+		} catch (ParseException e) {
+			throw new ConfigFilesException("Errore nella lettura del file di configurazione", e);
+		}
 	}
     
 }

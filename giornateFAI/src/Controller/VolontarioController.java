@@ -13,6 +13,8 @@ import ServicesAPI.Login;
 import ServicesAPI.RegistroDateDisponibili;
 import ServicesAPI.Utente;
 import ServicesAPI.Volontario;
+import ServicesAPI.Eccezioni.ConfigFilesException;
+import ServicesAPI.Eccezioni.DBConnectionException;
 
 public class VolontarioController implements UtenteController {
 
@@ -81,8 +83,10 @@ public class VolontarioController implements UtenteController {
                 aux.registraDateDisponibili(CliInput.chiediDateDisponibilà(datePossibili), model.getNickname());
             }
             else CliVisualizzazione.inserimentoVolontarioBloccato();
-        } catch (Exception e) {
-            CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE); //trovare l'eccezione corretta
+        } catch (DBConnectionException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
+        } catch (ConfigFilesException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_LETTURA_FILE);
         }
         CliInput.invioPerContinuare();
     }
