@@ -1,5 +1,7 @@
 package ServicesAPI;
 
+import ServicesAPI.Eccezioni.ConfigFilesException;
+
 public interface Registratore {
 
     /**
@@ -78,14 +80,16 @@ public interface Registratore {
      * di default. Puo' essere modificata solo da un Configuratore.
      * Può essere invocata la prima volta per settare il primo valore  in caso non fosse ancora inserito.
      * @param areaCompetenza la nuova area di competenza in cui adopera la società che riguardeà i luoghi da inserire.
+     * @throws ConfigFilesException In caso di errore di scrittura del file di configurazione.
      */
-    public void modificaAreaCompetenza(String areaCompetenza);
+    public void modificaAreaCompetenza(String areaCompetenza) throws Eccezioni.ConfigFilesException;
 
     /**
      * Modifica il max numero di partecipanti che possono essere iscritti. Ogni volta che viene invocata questa funzione viene anche scritta nel file
      * di default. Puo' essere modificata solo da un Configuratore.
      * Può essere invocata la prima volta per settare il primo valore in caso non fosse ancora inserito.
      * @param areaCompetenza la nuova area di competenza in cui adopera la società che riguardeà i luoghi da inserire.
+     * @throws ConfigFilesException In caso di errore di scrittura del file di configurazione.
      */
-    public void modificaMaxPartecipanti(int maxPartecipanti);
+    public void modificaMaxPartecipanti(int maxPartecipanti) throws Eccezioni.ConfigFilesException;
 }

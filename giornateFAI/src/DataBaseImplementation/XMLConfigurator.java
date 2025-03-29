@@ -1,5 +1,7 @@
 package DataBaseImplementation;
 
+import java.io.FileNotFoundException;
+
 import ServicesAPI.GestoreConfiguratore;
 import ServicesAPI.GestoreFilesConfigurazione;
 
@@ -17,7 +19,7 @@ public class XMLConfigurator extends XMLManager implements GestoreConfiguratore 
         super(path);
     }
 
-    public void scriviRegistratoreDefault (String areaCompetenza, int maxPartecipanti) {
+    public void scriviRegistratoreDefault (String areaCompetenza, int maxPartecipanti) throws FileNotFoundException {
 		inizializzaWriter();
     	try {
 			xmlw.writeStartDocument("utf-8", "1.0");

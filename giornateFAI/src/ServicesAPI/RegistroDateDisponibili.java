@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,7 +18,7 @@ public class RegistroDateDisponibili extends RegistroDate {
 	private class TipoDiVisita{
 		
 		public DateRange periodoProposta;
-		private DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+		//private DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
 		private static HashMap<String,Integer> map;
 		public int[] giorniSettimana;
 		
@@ -66,13 +67,14 @@ public class RegistroDateDisponibili extends RegistroDate {
 		super(fileManager);
 		this.datePrecluse=datePrecluse;
 		this.fileManager=fileManager;
-		String path=fileManager.getPath();
-		if(GestoreFilesConfigurazione.fileExists(path)){
+
+		try {
 			this.dateDisponibili=fileManager.leggiDateDisponibili(nome);
-		}else{
+		} catch (FileNotFoundException e) {
 			fileManager.cleanDates(calendario.getTime(),nome);
 			this.dateDisponibili=new Date[0];
 		}
+	
 	}
 
 	/*public RegistroDateDisponibili(GestoreDateDisponibili fileManager, RegistroDatePrecluse datePrecluse){
@@ -82,7 +84,7 @@ public class RegistroDateDisponibili extends RegistroDate {
 		this.dateDisponibili=new Date[0];
 	} */
 
-	public void registraDateDisponibili(Date[] input,String nome){
+	public void registraDateDisponibili(Date[] input,String nome) throws FileNotFoundException {
 		ArrayList<Date> aux=new ArrayList<Date>();
 		aux.addAll(Arrays.asList(dateDisponibili));
 		aux.addAll(Arrays.asList(input));

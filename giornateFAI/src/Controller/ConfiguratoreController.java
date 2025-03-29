@@ -1,5 +1,6 @@
 package Controller;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -144,12 +145,20 @@ public class ConfiguratoreController implements UtenteController {
 
     private void inserisciAreaCompetenza() {
         String areaCompetenza = CliInput.chiediConConferma(CliVisualizzazione.AREA_COMPETENZA);
-        model.getRegistratore().modificaAreaCompetenza(areaCompetenza);
+        try {
+            model.getRegistratore().modificaAreaCompetenza(areaCompetenza);
+        } catch (ConfigFilesException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_SCRITTURA_FILE);
+        }
     }
 
     private void inserisciMaxPartecipanti() {
         int maxPartecipanti = Integer.parseInt(CliInput.chiediConConferma(CliVisualizzazione.MAX_PARTECIPANTI));
-        model.getRegistratore().modificaMaxPartecipanti(maxPartecipanti);
+        try {
+            model.getRegistratore().modificaMaxPartecipanti(maxPartecipanti);
+        } catch (ConfigFilesException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_SCRITTURA_FILE);
+        }
     }
 
     private void inserisciNuovoVolontario() {
@@ -342,7 +351,11 @@ public class ConfiguratoreController implements UtenteController {
     private void aggiungiDatePrecluse() {
         CliNotifiche.avvisa(CliNotifiche.GIORNO_CONFIGURAZIONE);
         Date[] input = CliInput.chiediDatePrecluse(model.getCalendario());
-        model.getRegistroDatePrecluse().registraDatePrecluse(input);
+        try {
+            model.getRegistroDatePrecluse().registraDatePrecluse(input);
+        } catch (FileNotFoundException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_SCRITTURA_FILE);
+        }
     } 
 
     private boolean giornoDiConfigurazione () {

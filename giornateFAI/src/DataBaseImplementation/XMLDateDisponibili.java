@@ -1,5 +1,6 @@
 package DataBaseImplementation;
 
+import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,7 +18,7 @@ public class XMLDateDisponibili extends XMLManager  implements GestoreDateDispon
 	private static final DateFormat formatoData =new SimpleDateFormat("yyyy-MM-dd");
 	private static final DateFormatter form = new DateFormatter(formatoData);
 
-	public void registraDateDisponibili(Date today, Date[] dateDisponibili, String nomeVolontario) {
+	public void registraDateDisponibili(Date today, Date[] dateDisponibili, String nomeVolontario) throws FileNotFoundException {
 		String pathCartella = this.path;
 		this.path += nomeVolontario + ".xml";
 		inizializzaWriter();
@@ -48,7 +49,7 @@ public class XMLDateDisponibili extends XMLManager  implements GestoreDateDispon
 		this.path = pathCartella;
 	}
 
-	public Date[] leggiDateDisponibili(String nomeVolontario) {
+	public Date[] leggiDateDisponibili(String nomeVolontario) throws FileNotFoundException {
 		String pathCartella = this.path;
 		this.path += nomeVolontario + ".xml";
 		Date[] res; 
@@ -83,6 +84,10 @@ public class XMLDateDisponibili extends XMLManager  implements GestoreDateDispon
 	}
 
 	public void cleanDates(Date data, String nome){
-		registraDateDisponibili(data,new Date[0],nome);
+		try {
+			registraDateDisponibili(data,new Date[0],nome);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 }

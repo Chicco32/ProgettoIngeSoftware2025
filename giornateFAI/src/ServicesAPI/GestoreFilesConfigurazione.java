@@ -1,6 +1,7 @@
 package ServicesAPI;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
 /**
  * Interfaccia per la gestione delle impostazioni di Configurazione.
@@ -44,7 +45,8 @@ public abstract interface GestoreFilesConfigurazione {
      * @param path il percorso del file
      * @param tag il tag associato alla variabile da leggere
      * @return Il valore della variabile letta nel file
+     * @throws FileNotFoundException se il file non esiste o ci sono problemi di accesso
      */
-    public String leggiVariabile (String tag);
+    public String leggiVariabile (String tag) throws FileNotFoundException;
 
 }

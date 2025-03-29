@@ -1,5 +1,6 @@
 package Controller;
 
+import java.io.FileNotFoundException;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -85,9 +86,9 @@ public class VolontarioController implements UtenteController {
             else CliVisualizzazione.inserimentoVolontarioBloccato();
         } catch (DBConnectionException e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
-        } catch (ConfigFilesException e) {
+        } catch (ConfigFilesException | FileNotFoundException e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_LETTURA_FILE);
-        }
+        } 
         CliInput.invioPerContinuare();
     }
 

@@ -1,5 +1,6 @@
 package DataBaseImplementation;
 
+import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -16,7 +17,7 @@ public class XMLDatePrecluse extends XMLManager implements GestoreDatePrecluse{
     
     private static final DateFormat formatoData = new SimpleDateFormat("yyyy-MM-dd");
 
-    public void scriviDatePrecluse(Date today, Date[] current) {
+    public void scriviDatePrecluse(Date today, Date[] current) throws FileNotFoundException {
 	    if(!fileExists(path)){
 		    creaFile(path);
 	    }
@@ -47,7 +48,7 @@ public class XMLDatePrecluse extends XMLManager implements GestoreDatePrecluse{
 	    //System.out.println("Fine scrittura");
     }
 
-    public Date[] leggiDatePrecluse(){
+    public Date[] leggiDatePrecluse() throws FileNotFoundException{
 		inzializzaReader();
 		String[] aux={leggiVariabile("datePrecluse")};
 		Date[] res; 
@@ -69,7 +70,11 @@ public class XMLDatePrecluse extends XMLManager implements GestoreDatePrecluse{
     }
 
 	public void cleanDates(Date data){
-		scriviDatePrecluse(data,new Date[0]);
+		try {
+			scriviDatePrecluse(data,new Date[0]);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

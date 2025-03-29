@@ -2,9 +2,13 @@ package DataBaseImplementation;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+
+import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -39,14 +43,15 @@ public class XMLManager{
      * Inizializza un reader per il file XML
      * @param path il percorso del file XML
      */
-    protected void inzializzaReader() {
+    protected void inzializzaReader() throws FileNotFoundException {
         XMLInputFactory xmlif = null;
         XMLStreamReader newReader = null;
         try {
             xmlif = XMLInputFactory.newInstance();
-            newReader = xmlif.createXMLStreamReader(this.path, new FileInputStream(this.path));
+            FileInputStream fis = new FileInputStream(this.path);
+            newReader = xmlif.createXMLStreamReader(this.path, fis);
         } 
-        catch (Exception e) {
+        catch (XMLStreamException | FactoryConfigurationError e) {
             System.out.println("Errore nell'inizializzazione del reader:");
             System.out.println(e.getMessage());
         }
@@ -59,13 +64,14 @@ public class XMLManager{
      * deve essere invocato solo appena è necessaria la scrittura del file
      * @param path il percorso del file XML
      */
-    protected void inizializzaWriter() {
+    protected void inizializzaWriter() throws FileNotFoundException {
         XMLOutputFactory xmlof = null;
         XMLStreamWriter newWriter = null;
         try {
             xmlof = XMLOutputFactory.newInstance();
-            newWriter = xmlof.createXMLStreamWriter(new FileOutputStream(this.path), "utf-8");
-        } catch (Exception e) {
+            FileOutputStream fos = new FileOutputStream(this.path);
+            newWriter = xmlof.createXMLStreamWriter(fos, "utf-8");
+        } catch (FactoryConfigurationError | XMLStreamException e) {
             System.out.println("Errore nell'inizializzazione del writer:");
 		e.printStackTrace();
         }
@@ -79,7 +85,7 @@ public class XMLManager{
     protected void chiudiReader() {
         try {
             this.xmlr.close();
-        } catch (Exception e) {
+        } catch (XMLStreamException e) {
             System.out.println("Errore nella chiusura del reader:");
             System.out.println(e.getMessage());
         }
@@ -94,7 +100,7 @@ public class XMLManager{
             this.xmlw.writeEndDocument();
             this.xmlw.flush();
             this.xmlw.close();
-        } catch (Exception e) {
+        } catch (XMLStreamException e) {
             System.out.println("Errore nella chiusura del writer:");
             System.out.println(e.getMessage());
         }
@@ -131,7 +137,7 @@ public class XMLManager{
      * @param tag il tag associato alla variabile da leggere
      * @return Il valore della variabile letta nel file XML
      */
-    public String leggiVariabile (String tag) {
+    public String leggiVariabile (String tag) throws FileNotFoundException {
         inzializzaReader();
         String variabile = null;
         try {

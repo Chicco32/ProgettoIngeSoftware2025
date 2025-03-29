@@ -1,5 +1,6 @@
 package DataBaseImplementation;
 
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
@@ -228,14 +229,22 @@ public class RegistratoreSQL implements Registratore{
         return nuovaChiave;
     }
 
-    public void modificaAreaCompetenza(String areaCompetenza) {
+    public void modificaAreaCompetenza(String areaCompetenza) throws Eccezioni.ConfigFilesException {
         this.areaCompetenza = areaCompetenza;
-       fileManager.scriviRegistratoreDefault(areaCompetenza, maxPartecipanti);
+       try {
+        fileManager.scriviRegistratoreDefault(areaCompetenza, maxPartecipanti);
+    } catch (FileNotFoundException e) {
+        throw new Eccezioni.ConfigFilesException("File non trovato", e);
+    }
     }
 
-    public void modificaMaxPartecipanti(int maxPartecipanti) {
+    public void modificaMaxPartecipanti(int maxPartecipanti) throws Eccezioni.ConfigFilesException {
         this.maxPartecipanti = maxPartecipanti;
-        fileManager.scriviRegistratoreDefault(areaCompetenza, maxPartecipanti);
+        try {
+            fileManager.scriviRegistratoreDefault(areaCompetenza, maxPartecipanti);
+        } catch (FileNotFoundException e) {
+            throw new Eccezioni.ConfigFilesException("File non trovato", e);
+        }
     }
 
 

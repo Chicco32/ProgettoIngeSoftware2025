@@ -1,6 +1,10 @@
 package ServicesAPI;
 
 import java.util.Date;
+
+import ServicesAPI.Eccezioni.ConfigFilesException;
+
+import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,14 +35,20 @@ public abstract class RegistroDate{
 	 * @param path il path in cui cercare il file XML
 	 * @return false se il mese corrente è superiore al mese registrato o se non trova il file XML, true altrimenti
 	 */
-	protected boolean meseGiaConfigurato(String path)  throws ParseException {
+	protected boolean meseGiaConfigurato(String path)  throws ParseException, ConfigFilesException {
 		if(GestoreFilesConfigurazione.fileExists(path)){
-			String  ultimaDataStr = fileManager.leggiVariabile("dataCorrente");
-			Date ultimaDataSalvata = formatoData.parse(ultimaDataStr);
+			String ultimaDataStr;
+			try {
+				ultimaDataStr = fileManager.leggiVariabile("dataCorrente");
+				Date ultimaDataSalvata = formatoData.parse(ultimaDataStr);
 			int ultimoMese = new Calendario(ultimaDataSalvata).getMonth();
 			int meseOdierno = new Calendario().getMonth();
 			if (meseOdierno != ultimoMese) return false;
 			else return true;
+			} catch (FileNotFoundException e) {
+				throw new ConfigFilesException("File non trovato", e);
+			}
+			
 		}
 		return false;
 	}
