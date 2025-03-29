@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import ServicesAPI.DTObject;
+import ServicesAPI.Eccezioni;
 import ServicesAPI.StatiVisite;
 import ServicesAPI.VisualizzatoreConfiguratore;
 import ServicesAPI.VisualizzatoreVolontario;
@@ -70,12 +71,12 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
      * @param query la query da far eseguire, il metodo è specifico per le query solo di visualizzazione non di modifica, per quelle usare il registratore
      * @return Un oggetto {@code ResultSet} con le tuple risultate dalla interrogazione
      */
-    private ResultSet eseguiQuery(Queries query) {
+    private ResultSet eseguiQuery(Queries query) throws Eccezioni.DBConnectionException {
     if (connection != null) {
         try {
             return connection.createStatement().executeQuery(query.getQuery());
         } catch (SQLException e) {
-            e.printStackTrace(); //problemi interni di serverSQL
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: " + query.getQuery(), e);
         }
     }
     return null;
@@ -109,71 +110,46 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
      * @param tabella il nome della tabella da ispezionare (per ora supporta solo "luogo" e "tipo di visita")
      * @return true se la tabella è vuota, false altrimenti
      */
-    private boolean tabellaDBVuota(String tabella) {
+    private boolean tabellaDBVuota(String tabella) throws Eccezioni.DBConnectionException {
         Map<String, String> selezioneTabella = Map.ofEntries(
             Map.entry("luogo", Queries.SELEZIONA_LUOGHI.getQuery()),
             Map.entry("tipo di visita", Queries.SELEZIONA_TIPI_VISITE.getQuery())
         );
-        if (connection != null) {
-            //next da true se trova una riga e sposta il cursore su tale riga
-            try {
-                return !connection.createStatement().executeQuery(selezioneTabella.get(tabella)).next();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+        //next da true se trova una riga e sposta il cursore su tale riga
+        try {
+            return !connection.createStatement().executeQuery(selezioneTabella.get(tabella)).next();
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
         }
-        return false;
     }
 
-    public boolean nonCisonoLuoghiRegistrati() {
+    public boolean nonCisonoLuoghiRegistrati() throws Eccezioni.DBConnectionException {
         return tabellaDBVuota("luogo");
     }
 
-    public DTObject[] visualizzaVisite(StatiVisite stato) {
-    if (connection != null) {
+    public DTObject[] visualizzaVisite(StatiVisite stato) throws Eccezioni.DBConnectionException {
         String query = Queries.SELEZIONA_VISITE_ARCHIVIO.getQuery();  // Usa le parentesi graffe per chiamare la stored procedure
-        CallableStatement stmt = null;
-        try {
-            stmt = connection.prepareCall(query);
+        try (CallableStatement stmt = connection.prepareCall(query)) {
             stmt.setString(1, stato.toString());
-        return traduciTabella(stmt.executeQuery());
+            return traduciTabella(stmt.executeQuery());
         } catch (SQLException e) {
-            e.printStackTrace(); //problemi del server
-        }    
-    }
-    return null;
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
     }
 
-    /**
-     * Riporta la lista con anche i volontari non associati, da eliminare in futuro per mantenere la coerenza
-     * @deprecated
-     */
-    public List<String> listaCompletaVolontari() throws IllegalArgumentException{
-        //riporta la lista completa dei volontari
-        String queryVolontari = "SELECT * FROM dbingesw.volontario;";
-        try {
-            ResultSet results = connection.createStatement().executeQuery(queryVolontari);
-            return estraiColonna(results, "Nickname");
-        }
-        catch (SQLException e) {
-            //Non può non esserci il campo dato che è inserito forzatamente dentro, da migliorare con la seprazione delle query
-        }
-        return null;
-    }
-
-    public DTObject[] visualizzaElencoVolontari() {
+    public DTObject[] visualizzaElencoVolontari() throws Eccezioni.DBConnectionException {
         return traduciTabella(eseguiQuery(Queries.SELEZIONA_VOLONTARI));
     }
 
-    public DTObject[] visualizzaElencoLuoghi() {
+    public DTObject[] visualizzaElencoLuoghi() throws Eccezioni.DBConnectionException {
         return traduciTabella(eseguiQuery(Queries.SELEZIONA_LUOGHI));
     }
 
-    public DTObject[] visualizzaElencoTipiDiVisite() {
+    public DTObject[] visualizzaElencoTipiDiVisite() throws Eccezioni.DBConnectionException {
         return traduciTabella(eseguiQuery(Queries.SELEZIONA_TIPI_VISITE));
     }
 
-    public List<String> listaLuoghiRegistrati() {
+    public List<String> listaLuoghiRegistrati() throws Eccezioni.DBConnectionException {
         List<String> luoghiDisponibili = new ArrayList<>();
         try {
             luoghiDisponibili = estraiColonna(eseguiQuery(Queries.SELEZIONA_LUOGHI), "Nome");
@@ -183,24 +159,22 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
         return luoghiDisponibili;
     }
 
-    public DTObject[] visualizzaElenecoTipiDiVisiteAssociate(String volontarioAssociato) {
+    public DTObject[] visualizzaElenecoTipiDiVisiteAssociate(String volontarioAssociato) throws Eccezioni.DBConnectionException {
         try (PreparedStatement stmt = connection.prepareStatement(Queries.VISITE_ASSOCIATE_VOLONTARIO.getQuery())) {
             stmt.setString(1, volontarioAssociato);
             return traduciTabella(stmt.executeQuery());
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
         }
-        return null;
     }
 
-    public DTObject[] estraiDOWPossibiliVolontario(String volontarioAssociato) {
+    public DTObject[] estraiDOWPossibiliVolontario(String volontarioAssociato) throws Eccezioni.DBConnectionException {
         try (PreparedStatement stmt = connection.prepareStatement(Queries.GIORNI_POSSIBILI_VOLONTARIO.getQuery())) {
             stmt.setString(1, volontarioAssociato);
             return traduciTabella(stmt.executeQuery());
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
         }
-        return null;
     }
     
 }

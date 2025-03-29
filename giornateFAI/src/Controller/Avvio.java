@@ -3,6 +3,7 @@ package Controller;
 import Presentation.CliInput;
 import Presentation.CliNotifiche;
 import Presentation.CliVisualizzazione;
+import ServicesAPI.Eccezioni;
 import ServicesAPI.Login;
 import ServicesAPI.Utente;
 
@@ -23,7 +24,7 @@ public class Avvio {
             try {
                 utente = login.loginUtente(CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_NICKNAME, CliInput.MAX_CARATTERI_NICKNAME),
                 CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_PASSWORD, CliInput.MAX_CARATTERI_PASSWORD));
-            } catch (Exception e) {
+            } catch (Eccezioni.DBConnectionException e) {
                 CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
             }
             if (utente == null) CliNotifiche.avvisa(CliNotifiche.CREDENZIALI_ERRATE);

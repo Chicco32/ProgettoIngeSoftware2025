@@ -20,7 +20,6 @@ public class App {
 		    connection = ConnessioneSQL.getConnection();
 	    }
 
-		//se ci sono problemi nella connesisone 
 		if (notificaConnesione(connection)) {
 			Avvio avvio = new Avvio(new LoginSQL());
 			avvio.avviaApp();

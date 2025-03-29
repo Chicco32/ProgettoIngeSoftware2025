@@ -10,8 +10,9 @@ public interface Registratore {
      * @param nickname il possibile nickname da registrare
      * @param password la password inserita dall'utente
      * @return lo stato della registrazione, true se è andata a buon fine, false altrimenti
+     * @throws DBConnectionException In caso di errore di connessione al database.
      */
-    public boolean registraNuovoVolontario (DTObject volontario) throws Exception;
+    public boolean registraNuovoVolontario (DTObject volontario) throws Eccezioni.DBConnectionException;
 
     /**
      * Questo metodo verifica se un dato nome utente è univoco, cioè se non è già stato registrato da 
@@ -19,8 +20,9 @@ public interface Registratore {
      * Viene invocato ogni volta che un utente tenta di registrare un nuovo nickname.
      * @param nomeUtente Il nome utente che si vuole registrare.
      * @return true se il nome utente non è già registrato, false altrimenti.
+     * @throws DBConnectionException In caso di errore di connessione al database.
      */
-    public boolean nomeUtenteUnivoco (String nomeUtente) throws Exception;
+    public boolean nomeUtenteUnivoco (String nomeUtente) throws Eccezioni.DBConnectionException;
 
     /**
      * Funzione per la registrazione di un nuovo luogo nel DB.
@@ -30,8 +32,10 @@ public interface Registratore {
      * @param descrizione la descrizione di al massimo 100 caratteri del luogo
      * @param indirizzo l'inidirizzo di al massimo 45 caratteri
      * @return lo stato della registrazione, true se è andata a buon fine, false altrimenti
+     * @throws DBConnectionException In caso di errore di connessione al database.
+     * @throws CoerenzaException In caso di errore di coerenza dei dati.
      */
-    public boolean registraNuovoLuogo (DTObject luogo) throws Exception;
+    public boolean registraNuovoLuogo (DTObject luogo) throws Eccezioni.CoerenzaException, Eccezioni.DBConnectionException;
 
     /**
      * Funzione che registra un nuovo tipo di visita nel DB.
@@ -52,20 +56,22 @@ public interface Registratore {
      * @param maxPartecipanti il numero massimo di partecipanti che l'evento può ospitare
      * @param configuratore il nickname del configuratore che ha inserito l'evento
      * @return true se la registrazione è andata a buon fine, false altrimenti
+     * @throws DBConnectionException In caso di errore di connessione al database.
      * 
      * @see java.sql.Date
      * @see java.sql.Time
      */
-    public boolean registraNuovoTipoVisita(DTObject tipoVisita) throws Exception;
+    public boolean registraNuovoTipoVisita(DTObject tipoVisita) throws Eccezioni.DBConnectionException;
 
     /**
      * Funziona per inserire le disponibilità dei volontari a uno specifico tipo di visita
      * @param codiceVisita il codice del tipo di visita da associare
      * @param volontarioSelezionato il nickname del volontario
      * @return true se l'inserimento è andato a buon fine, false altrimenti
-     * @throws Exception
+     * @throws DBConnectionException In caso di errore di connessione al database.
+     * @throws CoerenzaException In caso di errore di coerenza dei dati.
      */
-    public boolean associaVolontarioVisita (DTObject associazione) throws Exception;
+    public boolean associaVolontarioVisita (DTObject associazione) throws Eccezioni.CoerenzaException, Eccezioni.DBConnectionException;
 
     /**
      * Modifica l'area di competenza della società, Ogni volta che viene invocata questa funzione viene anche scritta nel file

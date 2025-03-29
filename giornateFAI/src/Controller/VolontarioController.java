@@ -1,7 +1,7 @@
 package Controller;
 
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import DataBaseImplementation.Tupla;
@@ -42,7 +42,7 @@ public class VolontarioController implements UtenteController {
                     CliVisualizzazione.VARIABILE_PASSWORD, CliInput.MAX_CARATTERI_PASSWORD), "Password");
                 passwordCambiata = login.cambioPassword(dati, model.getRuolo());
                 if (passwordCambiata) {
-                    CliNotifiche.avvisa(CliNotifiche.CONFIGURATORE_CORRETTAMENTE_REGISTRATO);
+                    CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_CORRETTAMENTE_REGISTRATO);
                     model.registrati(dati);
                 }        
                 
@@ -52,25 +52,24 @@ public class VolontarioController implements UtenteController {
         }
     }
 
-    public static final String[] opzioniVolontario = {
-        "Inserisci le disponibilità",
-        "Visualizza visite a cui sei associato",
-        "Esci" };
-
     private void menuVolontario() {
         
         CliVisualizzazione.ingressoBackendVolontario();
 
         //per nuove funzioni agigungere nuove righe
-        Map<Integer, Runnable> actions = new HashMap<>();
-        actions.put(1, this::inserisciDisponibilita);
-        actions.put(2, this::visualizzaVisiteAssociate);
+        Map<String, Runnable> actions = new LinkedHashMap<>();
+        actions.put("Inserisci le disponibilità", this::inserisciDisponibilita);
+        actions.put("Visualizza visite a cui sei associato", this::visualizzaVisiteAssociate);  
+        actions.put("Esci",() -> System.exit(0));
+
+        //genero dinamicamente il menu in base alle aizoni disponibili
+        String[] opzioniConfiguratore = actions.keySet().toArray(new String[0]);
 
         while (true) {
-            int scelta = CliInput.menuAzioni(getModel().getNickname(), opzioniVolontario);
-            if (scelta > actions.size()) break;
-            actions.get(scelta).run();
-        }
+            int scelta = CliInput.menuAzioni(getModel().getNickname(), opzioniConfiguratore);
+            //scelta va da 1 a n+1, quindi se è uguale a n+1 esce
+            actions.get(opzioniConfiguratore[scelta - 1]).run();
+        }     
     }
 
     private void inserisciDisponibilita() {
@@ -78,7 +77,7 @@ public class VolontarioController implements UtenteController {
         RegistroDateDisponibili aux = model.getRegistroDateDisponibili();
         try {
             if (!aux.giornoDiConfigurazione()) {
-                Date[] datePossibili = aux.calcolaPossibiliDate(model.getNickname());
+                Date[] datePossibili = aux.calcolaPossibiliDate(model.getNickname(), model.getVisualizzatore());
                 aux.registraDateDisponibili(CliInput.chiediDateDisponibilà(datePossibili), model.getNickname());
             }
             else CliVisualizzazione.inserimentoVolontarioBloccato();
@@ -91,7 +90,11 @@ public class VolontarioController implements UtenteController {
     private void visualizzaVisiteAssociate() {
         String aux = model.getNickname();
         CliVisualizzazione.barraIntestazione(aux);
-        CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().visualizzaElenecoTipiDiVisiteAssociate(aux), "Visite Associate");
+        try {
+            CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().visualizzaElenecoTipiDiVisiteAssociate(aux), "Visite Associate");
+        } catch (Exception e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
+        }
     }
 
 }

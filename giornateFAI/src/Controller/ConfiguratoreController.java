@@ -1,23 +1,21 @@
 package Controller;
 
-import java.sql.SQLIntegrityConstraintViolationException;
-
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 
 import DataBaseImplementation.Tupla;
+
 import Presentation.CliInput;
 import Presentation.CliNotifiche;
 import Presentation.CliVisualizzazione;
 import ServicesAPI.Configuratore;
 import ServicesAPI.DTObject;
 import ServicesAPI.DateRange;
+import ServicesAPI.Eccezioni;
+import ServicesAPI.Eccezioni.DBConnectionException;
 import ServicesAPI.Login;
 import ServicesAPI.Registratore;
 import ServicesAPI.StatiVisite;
@@ -58,7 +56,7 @@ public class ConfiguratoreController implements UtenteController {
                 else CliNotifiche.avvisa(CliNotifiche.NICKNAME_GIA_USATO);
 
             } while (!registrato);
-        } catch (Exception e) {
+        } catch (Eccezioni.DBConnectionException e) {
             //se c'è un errore salata la registraizone e va direttamente all'interno per non bloccare il flusso di esecuzione
             CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
         }   
@@ -75,15 +73,19 @@ public class ConfiguratoreController implements UtenteController {
         /*Se è la prima volta che il configuratore accede al db dei luoghi e non ci sono dati
         *nel database, deve iniziare la procedura di popolamento generale del corpo dei dati
         */
-        if(aux.nonCisonoLuoghiRegistrati()) {
+        try {
+            if(aux.nonCisonoLuoghiRegistrati()) {
 
-            CliVisualizzazione.avvisoDBVuoto();
-            //prima chiede all'utente di inserire l'area di competenza e il max numero partecipanti
-            inserisciAreaCompetenza();
-            inserisciMaxPartecipanti();
+                CliVisualizzazione.avvisoDBVuoto();
+                //prima chiede all'utente di inserire l'area di competenza e il max numero partecipanti
+                inserisciAreaCompetenza();
+                inserisciMaxPartecipanti();
 
-            //poi gli chiede di popolare il corpo dei dati
-            popolaDBLuoghiVisteVolontari();
+                //poi gli chiede di popolare il corpo dei dati
+                popolaDBLuoghiVisteVolontari();
+            }
+        } catch (Exception e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
         }
 
         //manda alla pagina di configuazione se rileva che è il giorno di configurazione
@@ -92,47 +94,51 @@ public class ConfiguratoreController implements UtenteController {
         }
 
         //per nuove funzioni agigungere nuove righe
-        Map<Integer, Runnable> actions = new HashMap<>();
-        actions.put(1, this::inserisciMaxPartecipanti);
-        actions.put(2, this::inserisciNuovoTipoDiVisita);
-        actions.put(3, this::insersciVolontario);
-        actions.put(4, this::visualizzaElencoVolontari);     
-        actions.put(5, this::visualizzaElencoLuoghi);
-        actions.put(6, this::visualizzaElencoTipiDiVisite);
-        actions.put(7, this::chiediStatoDaVisualizzare);
+        Map<String, Runnable> actions = new LinkedHashMap<>();
+        actions.put("Modifica max numero partecipanti", this::inserisciMaxPartecipanti);
+        actions.put("Introduzione nuovo tipo di visita", this::inserisciNuovoTipoDiVisita);
+        actions.put("Introduzione nuovo volontario", this::inserisciNuovoVolontario);
+        actions.put("Visualizza elenco volontari", this::visualizzaElencoVolontari);     
+        actions.put("Visualizza luoghi visitabili", this::visualizzaElencoLuoghi);
+        actions.put("Visualizza tipi di visite", this::visualizzaElencoTipiDiVisite);
+        actions.put("Visualizza visite in archivio a seconda dello stato", this::chiediStatoDaVisualizzare);
+        actions.put("Esci",() -> System.exit(0));
+
+        //genero dinamicamente il menu in base alle aizoni disponibili
+        String[] opzioniConfiguratore = actions.keySet().toArray(new String[0]);
 
         while (true) {
             int scelta = CliInput.menuAzioni(getModel().getNickname(), opzioniConfiguratore);
-            if (scelta > actions.size()) break;
-            actions.get(scelta).run();
+            //scelta va da 1 a n+1, quindi se è uguale a n+1 esce
+            actions.get(opzioniConfiguratore[scelta - 1]).run();
         }      
     }
 
-    //le opzioni stampate a video, in modo da da sapere in che ordine le vede l'utente
-    private static final String[] opzioniConfiguratore = {
-        "Modifica max numero partecipanti",
-        "Introduzione nuovo tipo di visita",
-        "Introduzione nuovo volontario",
-        "Visualizza elenco volontari",
-        "Visualizza luoghi visitabili",
-        "Visualizza tipi di visite",
-        "Visualizza visite in archivio a seconda dello stato",
-        "Esci" 
-    };
-
     private void visualizzaElencoVolontari() {
         CliVisualizzazione.barraIntestazione(model.getNickname());
-        CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().visualizzaElencoVolontari(), "Volontari");
+        try {
+            CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().visualizzaElencoVolontari(), "Volontari");
+        } catch (DBConnectionException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
+        }
     }
 
     private void visualizzaElencoLuoghi() {
         CliVisualizzazione.barraIntestazione(model.getNickname());
-        CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().visualizzaElencoLuoghi(), "Luoghi");
+        try {
+            CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().visualizzaElencoLuoghi(), "Luoghi");
+        } catch (DBConnectionException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
+        }
     }
 
     private void visualizzaElencoTipiDiVisite() {
         CliVisualizzazione.barraIntestazione(model.getNickname());
-        CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().visualizzaElencoTipiDiVisite(), "Tipi Di Visite");
+        try {
+            CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().visualizzaElencoTipiDiVisite(), "Tipi Di Visite");
+        } catch (DBConnectionException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
+        }
     }
 
     private void inserisciAreaCompetenza() {
@@ -145,8 +151,21 @@ public class ConfiguratoreController implements UtenteController {
         model.getRegistratore().modificaMaxPartecipanti(maxPartecipanti);
     }
 
+    private void inserisciNuovoVolontario() {
+        String nickname = registraVolontario();
+        CliNotifiche.avvisa(CliNotifiche.NECESSARIO_ABBINARE_VOLONTARIO);
+        DTObject visitaAbbinata;
+        try {
+            visitaAbbinata = CliInput.SelezionaTipoVisita(model.getVisualizzatore().visualizzaElencoTipiDiVisite());
+            associaVolontarioTipoVisita(nickname, visitaAbbinata); 
+        }catch (DBConnectionException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
+        }
+ 
+    }
+
     //ritorna il nickname del volontario se l'inserimento è riuscito, null altrimenti
-    public String insersciVolontario() {
+    private String registraVolontario() {
         String nickname = null;
         Registratore aux = model.getRegistratore();
         CliVisualizzazione.intestazionePaginaInserimento(CliVisualizzazione.VARIABILE_VOLONTARI);
@@ -154,7 +173,6 @@ public class ConfiguratoreController implements UtenteController {
         try {
             Boolean registrato = false;
             do {
-
                 nickname = CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_NICKNAME, CliInput.MAX_CARATTERI_NICKNAME);
                 //controlla se non è gia stato inserito
                 if (aux.nomeUtenteUnivoco(nickname)) {
@@ -166,7 +184,7 @@ public class ConfiguratoreController implements UtenteController {
                 }
                 else CliNotifiche.avvisa(CliNotifiche.NICKNAME_GIA_USATO);
             } while (!registrato);
-        } catch (Exception e) {
+        } catch (Eccezioni.DBConnectionException e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
         }
         CliInput.invioPerContinuare();
@@ -175,17 +193,26 @@ public class ConfiguratoreController implements UtenteController {
 
     private void inserisciNuovoTipoDiVisita () {
         //Chiede la lista di nomi dei luoghi possibile su cui inserire la visita
-        List<String> luoghiDisponibili = model.getVisualizzatore().listaLuoghiRegistrati();
-        String luogoSelezionato = CliInput.selezionaLuogo(luoghiDisponibili);
-        //se seleziona un luogo fra quelli disponibili inoltra alla procedura di inserimento delle visite
-        if (luogoSelezionato != null) popolaDBTipiVisite(luogoSelezionato);
+        List<String> luoghiDisponibili;
+        try {
+            luoghiDisponibili = model.getVisualizzatore().listaLuoghiRegistrati();
+            String luogoSelezionato = CliInput.selezionaLuogo(luoghiDisponibili);
+            //se seleziona un luogo fra quelli disponibili inoltra alla procedura di inserimento delle visite
+            if (luogoSelezionato != null) popolaDBTipiVisite(luogoSelezionato);
+        }catch (DBConnectionException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
+        }
     }
     
     private void chiediStatoDaVisualizzare() {
         CliVisualizzazione.barraIntestazione(model.getNickname());
         StatiVisite stato = CliInput.chiediStatoVisita();
-        CliVisualizzazione.visualizzaRisultati(
-            model.getVisualizzatore().visualizzaVisite(stato), "Archivio di: " + stato.toString());
+        try {
+            CliVisualizzazione.visualizzaRisultati(
+                model.getVisualizzatore().visualizzaVisite(stato), "Archivio di: " + stato.toString());
+        } catch (DBConnectionException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
+        }
     }
 
     private void popolaDBLuoghiVisteVolontari() {
@@ -210,11 +237,12 @@ public class ConfiguratoreController implements UtenteController {
             CliNotifiche.avvisa(CliNotifiche.LUOGO_CORRETTAMENTE_REGISTRATO);
             CliVisualizzazione.avvisaReindirizzamentoNuovoCampo("Tipi di visita", "Luogo");
             popolaDBTipiVisite(nomeLuogo);
-        } catch (SQLIntegrityConstraintViolationException e) {
+        } catch (Eccezioni.CoerenzaException e) {
            CliNotifiche.avvisa(CliNotifiche.NOME_LUOGO_GIA_USATO);
-        } catch (Exception e) {
+        } catch (Eccezioni.DBConnectionException e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
         }
+
     }
 
     
@@ -253,48 +281,61 @@ public class ConfiguratoreController implements UtenteController {
         }
     }
 
-    private static List<String> sanificaLista(List<String> listaVolontari) {
-        // Usare un HashSet per rimuovere i duplicati
-        Set<String> setVolontari = new LinkedHashSet<>(listaVolontari);
-        
-        // Restituire una nuova ArrayList senza duplicati
-        return new ArrayList<>(setVolontari);
-    }
-
     private void popolaDBVolontari(DTObject data) {
-        boolean altroVolontario = true;
-        
-        //In questa implementazione le visite sono identificate da un codice ma
-        //possono essere sostitutiti da atltri tipi di chiave a seconda dell'implmentazione
-        //in caso basta cambiare l'identificatore 
-        int codiceVisita = (int) data.getValoreCampo("Codice Tipo di Visita"); 
-        
+        boolean altroVolontario = true;        
         while (altroVolontario) {
             //pagina per i volontari, prima mostra quelli gia registrati e chiede di sceglierne uno
             List <String> volontariRegistrati = new ArrayList<>();
             VisualizzatoreConfiguratore aux = model.getVisualizzatore();
-            
+
+            //visualizza la lista di volontari già registrati
+            DTObject[] tabellaVolontari;
             try {
-                volontariRegistrati = aux.listaCompletaVolontari();
-                //filtra eventuali ripetizioni
-                volontariRegistrati = sanificaLista(volontariRegistrati);
+
+                tabellaVolontari = aux.visualizzaElencoVolontari();
+                for (DTObject tupla : tabellaVolontari) {
+                    String nickname = (String) tupla.getValoreCampo("Nickname");
+                    if (volontariRegistrati.isEmpty() || !volontariRegistrati.contains(nickname)){ 
+                        //aggiunge il nickname alla lista di quelli già registrati
+                        volontariRegistrati.add(nickname);
+                    }   
+                }
+                
                 String volontarioSelezionato = CliInput.selezionaVolontario(volontariRegistrati);
                 //altrimenti permette di inserire un nuovo volontario se prima ha inserito null
-                while (volontarioSelezionato == null) volontarioSelezionato = insersciVolontario();
-            
-                //parte di inserimento nel db della nuova coppia visita e volontario associato
-                DTObject associazione = new Tupla("Volontari disponibili", new String[]{"CodiceVisita", "Volontario"});
-                associazione.impostaValore(codiceVisita, "CodiceVisita");
-                associazione.impostaValore(volontarioSelezionato, "Volontario");
-                model.getRegistratore().associaVolontarioVisita(associazione);
-                CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_CORRETTAMENTE_ASSOCIATO);
-            } catch (SQLIntegrityConstraintViolationException e) {
-                CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_GIA_ABBINATO_VISITA);
+                if (volontarioSelezionato == null) volontarioSelezionato = registraVolontario();
+                associaVolontarioTipoVisita(volontarioSelezionato, data);
+
             } catch (Exception e) {
                 CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
             }
             altroVolontario = CliInput.aggiungiAltroCampo("Volontario", "Tipo di visita");
         }        
+    }
+
+    /**
+     * Associa un volontario a una visita. Se il volontario è già associato alla visita, l'operazione fallisce.
+     * @param nomeVolontario il nome del volontario da associare
+     * @param visita l'oggetto visita a cui associare il volontario
+     */
+    private void associaVolontarioTipoVisita (String nomeVolontario, DTObject visita) {
+        try {
+            //parte di inserimento nel db della nuova coppia visita e volontario associato
+            DTObject associazione = new Tupla("Volontari disponibili", new String[]{"CodiceVisita", "Volontario"});
+        
+            //In questa implementazione le visite sono identificate da un codice ma
+            //possono essere sostitutiti da altri tipi di chiave a seconda dell'implmentazione
+            //in caso basta cambiare l'identificatore della visita
+            int codiceVisita = (int) visita.getValoreCampo("Codice Tipo di Visita");
+            associazione.impostaValore(codiceVisita, "CodiceVisita");
+            associazione.impostaValore(nomeVolontario, "Volontario");
+            model.getRegistratore().associaVolontarioVisita(associazione);
+            CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_CORRETTAMENTE_ASSOCIATO);
+        } catch (Eccezioni.CoerenzaException e) {
+            CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_GIA_ABBINATO_VISITA);
+        } catch (Eccezioni.DBConnectionException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
+        }
     }
 
     private void aggiungiDatePrecluse() {
@@ -307,7 +348,7 @@ public class ConfiguratoreController implements UtenteController {
         try {
             return model.getRegistroDatePrecluse().giornoDiConfigurazione();
         } catch (Exception e) {
-            CliNotifiche.avvisa(CliNotifiche.ERROE_CREAZIONE_FILE);
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_CREAZIONE_FILE);
         }
         return true;
     }

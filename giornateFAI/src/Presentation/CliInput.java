@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import ServicesAPI.Calendario;
+import ServicesAPI.DTObject;
 import ServicesAPI.DateRange;
 import ServicesAPI.StatiVisite;
 import it.unibs.fp.mylib.InputDati;
@@ -357,6 +358,25 @@ public class CliInput {
         } while (continua);
 
         return dateDisponibili.toArray(new Date[0]);
+	}
+
+	public static DTObject SelezionaTipoVisita(DTObject[] elencoTipiDiVisite) {
+        CliVisualizzazione.pulisciSchermo();
+        System.out.println("Tipi di visita registrati:");
+        for (int i = 0; i < elencoTipiDiVisite.length; i++) {
+            System.out.println((i + 1) + ") " + elencoTipiDiVisite[i].getValoreCampo("Titolo"));
+        }
+
+        boolean conferma = false;
+        while (!conferma) {
+            int scelta = InputDati.leggiIntero("Seleziona il numero del tipo di visita: ", 1, elencoTipiDiVisite.length);
+            DTObject visitaSelezionata = elencoTipiDiVisite[scelta - 1];
+            conferma = InputDati.yesOrNo("Hai selezionato " + visitaSelezionata.getValoreCampo("Titolo") + ". Confermi? ");
+            if (conferma){
+                return visitaSelezionata;
+            }
+        }
+        return null;
 	}
 
 }
