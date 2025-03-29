@@ -8,6 +8,7 @@ import java.util.Map;
 import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
 import ServicesAPI.DTObject;
 import ServicesAPI.Eccezioni;
+import ServicesAPI.Eccezioni.DBConnectionException;
 import ServicesAPI.GestoreConfiguratore;
 import ServicesAPI.GestoreFilesConfigurazione;
 import ServicesAPI.Registratore;
@@ -30,6 +31,7 @@ import java.text.SimpleDateFormat;
  * @see ConnessioneSQL
  * @see PercorsiFiles
  * @see Registratore
+ * @see Queries
  */
 public class RegistratoreSQL implements Registratore{
 
@@ -245,6 +247,30 @@ public class RegistratoreSQL implements Registratore{
         } catch (FileNotFoundException e) {
             throw new Eccezioni.ConfigFilesException("File non trovato", e);
         }
+    }
+
+    @Override
+    public boolean rimozioneLuogo(String nomeLuogo) throws DBConnectionException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'rimozioneLuogo'");
+    }
+
+    @Override
+    public boolean rimozioneVisita(String titoloVisita) throws DBConnectionException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'rimozioneVisita'");
+    }
+
+    @Override
+    public boolean rimozioneVolontario(String nickname) throws DBConnectionException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'rimozioneVolontario'");
+    }
+
+    @Override
+    public void verificaCoerenzaPostRimozione() throws DBConnectionException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'verificaCoerenzaPostRimozione'");
     }
 
 

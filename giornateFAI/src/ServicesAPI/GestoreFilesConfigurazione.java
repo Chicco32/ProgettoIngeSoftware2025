@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 /**
- * Interfaccia per la gestione delle impostazioni di Configurazione.
+ * Interfaccia Repository per la gestione delle impostazioni di Configurazione.
  * Questa inerfaccia dovrebbe essere implementata da un gestore di lettura e scrittura di dati per poter permettere
  * l'accesso persistente alle impostazioni di configurazione del programma. 
  */

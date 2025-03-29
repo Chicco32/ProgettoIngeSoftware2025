@@ -4,11 +4,17 @@ import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import javax.swing.text.DateFormatter;
-
 import ServicesAPI.GestoreDatePrecluse;
 
+/**
+ * Classe implementativa di XMLManager specifica per questo programma. Esso cerca i file di configuraizone richiesti e li mostra all'applicazione.
+ * In particolare implementa la verisone XML dei metodi richiesti da Gestore delle Date precluse e per farlo si appoggia sulla creazione di
+ * oggetti di lettura e scrittura xml forniti da XMLManager
+ * 
+ * @see XMLManager
+ * @see GestoreDatePrecluse
+ */
 public class XMLDatePrecluse extends XMLManager implements GestoreDatePrecluse{
 
     public XMLDatePrecluse(String path) {

@@ -3,7 +3,7 @@ package ServicesAPI;
 import java.util.List;
 
 /**
- * Interfaccia che definisce i metodi per visualizzare e configurare i dati relativi alle visite, 
+ * Interfaccia che definisce i metodi per ricevere e visualizzare i dati relativi alle visite salvate, 
  * ai volontari e ai luoghi registrati, con i permessi del visualizzatore.
  */
 public interface VisualizzatoreConfiguratore {

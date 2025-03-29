@@ -92,4 +92,46 @@ public interface Registratore {
      * @throws ConfigFilesException In caso di errore di scrittura del file di configurazione.
      */
     public void modificaMaxPartecipanti(int maxPartecipanti) throws Eccezioni.ConfigFilesException;
+
+    /**
+     * Funzione per la rimozione di un luogo dal DB.
+     * In particolare la funzione richiede al DB la rimozione dei dati forniti e riporta la risposta del DB in caso di avvenuta rimozione o meno
+     * La funzione deve rimuovere anche tutti gli eventuali tipi di visita istanziabili in quel luogo e le disponilità associate a quelle visite.
+     * @param nomeLuogo il nome del luogo da rimuovere
+     * @return lo stato della rimozione, true se è andata a buon fine, false altrimenti
+     * @throws Eccezioni.DBConnectionException In caso di errore di connessione al database.
+     */
+    public boolean rimozioneLuogo (String nomeLuogo) throws Eccezioni.DBConnectionException;
+
+    /**
+     * Funzione per la rimozione di un tipo di Visita dal DB.
+     * In particolare la funzione richiede al DB la rimozione dei dati forniti e riporta la risposta del DB in caso di avvenuta rimozione o meno
+     * La funzione deve anche rimuovere a cascata tutte le disponibilità associate al tipo di visita.
+     * @param titoloVisita il nome del tipo di Visita da rimuovere
+     * @return lo stato della rimozione, true se è andata a buon fine, false altrimenti
+     * @throws Eccezioni.DBConnectionException In caso di errore di connessione al database.
+     */
+    public boolean rimozioneVisita (String titoloVisita) throws Eccezioni.DBConnectionException;
+
+    /**
+     * Funzione per la rimozione di un tipo di volontario dal DB.
+     * In particolare la funzione richiede al DB la rimozione dei dati forniti e riporta la risposta del DB in caso di avvenuta rimozione o meno
+     * La funzione deve anche rimuovere a cascata tutte le disponibilità associate al volontario.
+     * @param nickname il nome del tipo di volontario da rimuovere
+     * @return lo stato della rimozione, true se è andata a buon fine, false altrimenti
+     * @throws Eccezioni.DBConnectionException In caso di errore di connessione al database.
+     */
+    public boolean rimozioneVolontario (String nickname) throws Eccezioni.DBConnectionException;
+
+    /**
+     * Funzione che va invocata successivamente alla rimozione di un qualsiasi elemento dal DB, sia esso un luogo, un volontario o Un tipo di visita.
+     * In particolare il programma richiede che non vi siano:
+     * <ul>
+     * <li> Volontari salvati a cui non sia associata più nessuna disponiblità </li>
+     * <li> Tipi di visite che non hanno più nessun volontario disponiblie associato a quella visita  </li>
+     * <Li> Luoghi che non hanno più nessun tipo di visita associato </li>
+     * </ul>
+     * @throws Eccezioni.DBConnectionException In caso di errore di connessione al database.
+     */
+    public void verificaCoerenzaPostRimozione() throws Eccezioni.DBConnectionException;
 }

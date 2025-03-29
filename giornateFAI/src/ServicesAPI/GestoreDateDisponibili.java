@@ -2,6 +2,14 @@ package ServicesAPI;
 import java.io.FileNotFoundException;
 import java.util.Date;
 
+/**
+ * Interfaccia Repository per la gestione delle date disponibili.
+ * Questa interfaccia dovrebbe essere implementata da un gestore di lettura e scrittura di dati per poter permettere
+ * l'accesso persistente alle disponibilità di un volontario al programma. 
+ * In particolare questa interfaccia estende le funzionalità di GestoreFilesConfigurazione per la gestione generica dei file di configurazione..
+ * 
+ * @see GestoreFilesConfigurazione
+ */
 public interface GestoreDateDisponibili extends GestoreFilesConfigurazione {
 
     /**

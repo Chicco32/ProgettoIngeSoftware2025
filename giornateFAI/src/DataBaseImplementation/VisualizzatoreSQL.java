@@ -22,8 +22,10 @@ import ServicesAPI.VisualizzatoreVolontario;
  * Per inserire i dati necessita di connettersi al DB con un connettore.
  * Utilizza un file XML per la memorizzazione dei dati di default.
  * 
- * @see ConnesioneSQL
- * @see Visualizzatore
+ * @see ConnessioneSQL
+ * @see VisualizzatoreConfiguratore
+ * @see VisualizzatoreVolontario
+ * @see Queries
  */
 public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, VisualizzatoreVolontario {
 

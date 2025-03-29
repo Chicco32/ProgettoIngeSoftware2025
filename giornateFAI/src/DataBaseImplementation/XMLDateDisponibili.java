@@ -5,9 +5,16 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.text.DateFormatter;
-
 import ServicesAPI.GestoreDateDisponibili;
 
+/**
+ * Classe implementativa di XMLManager specifica per questo programma. Esso cerca i file di configuraizone richiesti e li mostra all'applicazione.
+ * In particolare implementa la verisone XML dei metodi richiesti da Gestore delle Date Disponibili e per farlo si appoggia sulla creazione di
+ * oggetti di lettura e scrittura xml forniti da XMLManager
+ * 
+ * @see XMLManager
+ * @see GestoreDateDisponibili
+ */
 public class XMLDateDisponibili extends XMLManager  implements GestoreDateDisponibili{
 
 	public XMLDateDisponibili(String pathDateDisponibili) {
