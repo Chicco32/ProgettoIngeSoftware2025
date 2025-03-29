@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import DataBaseImplementation.VisualizzatoreSQL;
 import ServicesAPI.Eccezioni.DBConnectionException;
 
 public class RegistroDateDisponibili extends RegistroDate {
@@ -108,10 +107,11 @@ public class RegistroDateDisponibili extends RegistroDate {
 	 * @return
 	 * @throws DBConnectionException 
 	 */
-	public Date[] calcolaPossibiliDate(String nome) throws DBConnectionException {
+	public Date[] calcolaPossibiliDate(String nome, VisualizzatoreVolontario visualizzatore) throws DBConnectionException {
 		Date meseBersaglio=Calendario.getTargetMonth(2);
 		ArrayList<Date[]> parziale=new ArrayList<>();
-		DTObject[] tabella=new VisualizzatoreSQL().estraiDOWPossibiliVolontario(nome); //TODO FARE REFACTORING PER TOGLIERE AL DIPENDENZA
+
+		DTObject[] tabella = visualizzatore.estraiDOWPossibiliVolontario(nome); 
 		HashMap<Integer,ArrayList<DTObject>> map=new HashMap<>();
 		
 		for(DTObject entry:tabella){
