@@ -19,6 +19,7 @@ import ServicesAPI.Eccezioni;
 import ServicesAPI.Eccezioni.ConfigFilesException;
 import ServicesAPI.Eccezioni.DBConnectionException;
 import ServicesAPI.Login;
+import ServicesAPI.PlannerVisite;
 import ServicesAPI.Registratore;
 import ServicesAPI.StatiVisite;
 import ServicesAPI.VisualizzatoreConfiguratore;
@@ -93,6 +94,7 @@ public class ConfiguratoreController implements UtenteController {
         //manda alla pagina di configuazione se rileva che è il giorno di configurazione
         if (giornoDiConfigurazione()) {
             aggiungiDatePrecluse();
+            registraNuovoPianoVisite();
         }
 
         //per nuove funzioni agigungere nuove righe
@@ -359,6 +361,26 @@ public class ConfiguratoreController implements UtenteController {
         }
         return true;
     }
+
+    private boolean registraNuovoPianoVisite() {
+		VisualizzatoreConfiguratore aux = model.getVisualizzatore();
+        PlannerVisite planner = new PlannerVisite(model.getRegistroDatePrecluse());
+        boolean statoPianoVisite = true;
+        try {
+            DTObject[] tabella;
+            tabella = aux.visualizzaElencoVolontari();
+            List<String> lista = estraiCampoTabella(tabella, "Volontario Nickname");
+            DTObject[] proposte = planner.creaPianoVisite(lista);
+            for (DTObject proposta : proposte) {
+                boolean registrato = model.getRegistratore().registraIstanzaDiVisita(proposta);
+                if (! registrato) statoPianoVisite = false;
+            }
+            return statoPianoVisite;
+        } catch (DBConnectionException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
+        }
+        return false;
+	}
 
     private List<String> estraiCampoTabella(DTObject[] tabella, String nomeCampo) {
 

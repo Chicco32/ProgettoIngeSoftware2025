@@ -10,7 +10,8 @@ public enum CostantiDB {
     DATABASE("dbingesw"),
     //tabelle
     TIPO_VISITA("`tipo di visita`"),
-    ARCHIVIO_VISITE("`archivio delle visite`"),
+    ARCHIVIO_VISITE_ATTIVE("`archivio visite attive`"),
+    ARCHIVIO_STORICO_VISITE("`archivio storico visite`"),
     LUOGHI("luogo"),
     GIORNI_PROGRAMMABILI_VISITE("`giorni programmabili delle visite`"),
     GIORNI_SETTIMANA("`giorni della settimana`"),

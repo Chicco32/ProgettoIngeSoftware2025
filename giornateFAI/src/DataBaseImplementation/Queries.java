@@ -29,6 +29,7 @@ public enum Queries {
     RIMUOVI_LUOGO("DELETE FROM `dbingesw`.`luogo` WHERE Nome = ?"),
     RIMUOVI_VOLONTARIO("DELETE FROM `dbingesw`.`volontario` WHERE Nickname = ?"),
     RIMUOVI_TIPO_DI_VISITA("DELETE FROM `dbingesw`.`tipo di visita` WHERE Titolo = ?"), //se ci sono due visite omonime le elmina entrambe non essendo chiave primaria
+    REGISTRA_ISTANZA_VISITA("INSERT INTO `dbingesw`.`archivio visite attive` (`Codice Archivio`, `Stato Visita`, `Tipo di Visita`, `Volontario Selezionato`, `Data programmata`) VALUES (?,?,?,?,?)"),
 
     //XMLDateDisponibili
     GIORNI_POSSIBILI_VOLONTARIO("SELECT `Codice Tipo di Visita`, `Giorno di Inizio (periodo anno)`, `Giorno di Fine (periodo anno)`, `Giorno della Settimana` FROM dbingesw.`tipo di visita` AS tpv JOIN dbingesw.`volontari disponibili` AS vd ON tpv.`Codice Tipo di Visita` = vd.`Tipo di Visita` JOIN dbingesw.`giorni programmabili delle visite` AS gpv ON tpv.`Codice Tipo di Visita` = gpv.`Tipo di Visita` WHERE vd.`Volontario Nickname` = ? ORDER BY `Codice Tipo di Visita`"),

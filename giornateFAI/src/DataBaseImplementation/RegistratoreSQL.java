@@ -199,7 +199,7 @@ public class RegistratoreSQL implements Registratore{
     //estraggo l'interrogazione corretta in base alla tabella
     Map<CostantiDB, Queries> chiaviNuove = Map.of(
         CostantiDB.TIPO_VISITA, Queries.GENERA_CHIAVE_TIPO_VISITA,
-        CostantiDB.ARCHIVIO_VISITE, Queries.GENERA_CHIAVE_ARCHIVIO
+        CostantiDB.ARCHIVIO_VISITE_ATTIVE, Queries.GENERA_CHIAVE_ARCHIVIO
     );
 
     /**
@@ -268,6 +268,21 @@ public class RegistratoreSQL implements Registratore{
         }
     }
 
+    //TODO L'implementazione dipende da come @Diego mette i parametri nel DTOBject di ingresso
+    public boolean registraIstanzaDiVisita(DTObject istanza) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.REGISTRA_ISTANZA_VISITA.getQuery())) {
+            stmt.setInt(1, generaNuovaChiave("archivio visite attive"));
+            stmt.setString(2, "proposta");
+            stmt.setString(3, (String) istanza.getValoreCampo("Codice Tipo di Visita"));
+            stmt.setString(4, (String) istanza.getValoreCampo("Volontario"));
+            stmt.setString(5, formatoDataPerSQL((Date) istanza.getValoreCampo("Data")));
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+    }
+
     public void modificaAreaCompetenza(String areaCompetenza) throws Eccezioni.ConfigFilesException {
         this.areaCompetenza = areaCompetenza;
        try {
@@ -285,6 +300,5 @@ public class RegistratoreSQL implements Registratore{
             throw new Eccezioni.ConfigFilesException("File non trovato", e);
         }
     }
-
 
 }   

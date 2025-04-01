@@ -13,16 +13,14 @@ public class PlannerVisite {
 	private Map<String, Date[]> dateDisponibili;
 	
 
-	public PlannerVisite(FactoryServizi servizi) {
-		this.datePrecluse = new RegistroDatePrecluse(servizi.inizializzaDatePrecluse());
+	public PlannerVisite(RegistroDatePrecluse datePrecluse) {
+		this.datePrecluse = datePrecluse;
 
 	}
 
-	//public DTObject[] creaPianoVisite(List<String> volontari) {
-	//	ArrayList<RegistroDateDisponibili> rdd=new ArrayList<>();
-	//	for(String vol:volontati){
-	//		rdd.add(new RegistroDateDisponibili(,datePrecluse,vol)
-	//}
+	public DTObject[] creaPianoVisite(List<String> volontari) {
+		return null; 
+	}
 
 	//TODO @Diego ricordati di pulire le date disponibili e precluse alla fine del piano visite
 }

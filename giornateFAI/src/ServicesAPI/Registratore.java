@@ -131,4 +131,16 @@ public interface Registratore {
      * @throws Eccezioni.DBConnectionException In caso di errore di connessione al database.
      */
     public void verificaCoerenzaPostRimozione() throws Eccezioni.DBConnectionException;
+
+    /**
+     * Funzione che registra le effettive istanze dei tipi di visita nel DB. 
+     * In particolare essa va chiamata dopo la creazione del piano delle visite
+     * in quanto semplicemente registra le nuove istanze di visite create senza il controllo sulla loro validità.
+     * Cosa debba contenere l'istanza dipende dall'implementazione specifica del database.
+     * La funzione non si occupa nè dell'aggiornamento dei dati ne sulla rimozione delle istanze.
+     * @param istanza i dati sull'istanza di visita da salvare
+     * @return true in caso di registrazione eseguita correttamente, false altrimenti
+     * @throws Eccezioni.DBConnectionException  In caso di errore di connessione al database.
+     */
+    public boolean registraIstanzaDiVisita(DTObject istanza) throws Eccezioni.DBConnectionException;
 }
