@@ -104,6 +104,10 @@ public class ConfiguratoreController implements UtenteController {
         actions.put("Visualizza luoghi visitabili", this::visualizzaElencoLuoghi);
         actions.put("Visualizza tipi di visite", this::visualizzaElencoTipiDiVisite);
         actions.put("Visualizza visite in archivio a seconda dello stato", this::chiediStatoDaVisualizzare);
+        actions.put("Rimuovi un volontario dalla lista", this::rimuoviVolontario);
+        actions.put("Rimuovi un luogo", this::rimuoviLuogo);
+        actions.put("Rimuovi una tipologia di visita", this::rimuoviTipoDiVisita);
+
         actions.put("Esci",() -> System.exit(0));
 
         //genero dinamicamente il menu in base alle aizoni disponibili
@@ -295,27 +299,16 @@ public class ConfiguratoreController implements UtenteController {
         boolean altroVolontario = true;        
         while (altroVolontario) {
             //pagina per i volontari, prima mostra quelli gia registrati e chiede di sceglierne uno
-            List <String> volontariRegistrati = new ArrayList<>();
             VisualizzatoreConfiguratore aux = model.getVisualizzatore();
-
             //visualizza la lista di volontari già registrati
             DTObject[] tabellaVolontari;
             try {
-
                 tabellaVolontari = aux.visualizzaElencoVolontari();
-                for (DTObject tupla : tabellaVolontari) {
-                    String nickname = (String) tupla.getValoreCampo("Nickname");
-                    if (volontariRegistrati.isEmpty() || !volontariRegistrati.contains(nickname)){ 
-                        //aggiunge il nickname alla lista di quelli già registrati
-                        volontariRegistrati.add(nickname);
-                    }   
-                }
-                
-                String volontarioSelezionato = CliInput.selezionaVolontario(volontariRegistrati);
+                List <String> volontariRegistrati = estraiCampoTabella(tabellaVolontari, "Nickname");
+                String volontarioSelezionato = CliInput.selezionaVolontarioConNull(volontariRegistrati);
                 //altrimenti permette di inserire un nuovo volontario se prima ha inserito null
                 if (volontarioSelezionato == null) volontarioSelezionato = registraVolontario();
                 associaVolontarioTipoVisita(volontarioSelezionato, data);
-
             } catch (Exception e) {
                 CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
             }
@@ -365,6 +358,63 @@ public class ConfiguratoreController implements UtenteController {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_LETTURA_FILE);
         }
         return true;
+    }
+
+    private List<String> estraiCampoTabella(DTObject[] tabella, String nomeCampo) {
+
+        List<String> listaElementi = new ArrayList<>(); 
+        for (DTObject tupla : tabella) {
+            String elemento = (String) tupla.getValoreCampo(nomeCampo);
+            if (listaElementi.isEmpty() || !listaElementi.contains(elemento)){ 
+                //aggiunge l'elemento alla lista di quelli già registrati
+                listaElementi.add(elemento);
+            }   
+        }
+        return listaElementi;
+    }
+
+    private void rimuoviVolontario() {
+
+        VisualizzatoreConfiguratore aux = model.getVisualizzatore();
+        try {
+            DTObject[] tabella;
+            tabella = aux.visualizzaElencoVolontari();
+            List<String> lista = estraiCampoTabella(tabella, "Volontario Nickname"); //violazione abbasstanza brutta di inversione della dipendenza
+            String elemento = CliInput.selezionaVolontario(lista);
+            model.getRegistratore().rimozioneVolontario(elemento);
+            model.getRegistratore().verificaCoerenzaPostRimozione();
+        } catch (DBConnectionException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
+        }
+    }
+
+    private void rimuoviLuogo() {
+
+        VisualizzatoreConfiguratore aux = model.getVisualizzatore();
+        try {
+            DTObject[] tabella;
+            tabella = aux.visualizzaElencoLuoghi();
+            List<String> lista = estraiCampoTabella(tabella, "Nome");
+            String elemento = CliInput.selezionaLuogo(lista);
+            model.getRegistratore().rimozioneLuogo(elemento);
+            model.getRegistratore().verificaCoerenzaPostRimozione();
+        } catch (DBConnectionException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
+        }
+    }
+
+    private void rimuoviTipoDiVisita() {
+
+        VisualizzatoreConfiguratore aux = model.getVisualizzatore();
+        try {
+            DTObject[] tabella;
+            tabella = aux.visualizzaElencoTipiDiVisite();
+            String elemento = (String) CliInput.SelezionaTipoVisita(tabella).getValoreCampo("Titolo");
+            model.getRegistratore().rimozioneVisita(elemento);
+            model.getRegistratore().verificaCoerenzaPostRimozione();
+        } catch (DBConnectionException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
+        }
     }
 
 }

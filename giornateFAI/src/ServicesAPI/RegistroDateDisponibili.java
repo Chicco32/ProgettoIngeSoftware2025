@@ -6,9 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.io.FileNotFoundException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import ServicesAPI.Eccezioni.ConfigFilesException;
 import ServicesAPI.Eccezioni.DBConnectionException;
@@ -36,7 +34,7 @@ public class RegistroDateDisponibili extends RegistroDate {
 			}
 			List<Object> dati=input[0].getValori();
 			try{
-				this.periodoProposta=new DateRange(dati.get(1),dati.get(2));
+				this.periodoProposta=new DateRange((Date)dati.get(1),(Date)dati.get(2));
 			}catch(Exception e){
 				e.printStackTrace();
 			}

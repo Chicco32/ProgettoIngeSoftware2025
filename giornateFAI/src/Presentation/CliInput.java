@@ -195,7 +195,7 @@ public class CliInput {
      * la funzione mostra all'utente i volontari gia registrati e chiede di scegliere fra uno di essi,
      * se non sceglie nessuno della lista per inserire uno nuovo o la lista è vuota ritorna null 
      */
-    public static String selezionaVolontario (List<String> volontariRegistrati) {
+    public static String selezionaVolontarioConNull (List<String> volontariRegistrati) {
         if (volontariRegistrati.isEmpty()) {
             System.out.println("Nessun volontario registrato.");
             return null;
@@ -209,6 +209,29 @@ public class CliInput {
         boolean nuovaSelezione = InputDati.yesOrNo("Vuoi registrare un nuovo volontario che non sia fra quelli nell'elenco qua sopra? ");
         if (nuovaSelezione) {
             return null;
+        }
+
+        boolean conferma = false;
+        while (!conferma) {
+            int scelta = InputDati.leggiIntero("Seleziona il numero del volontario: ", 1, volontariRegistrati.size());
+            String volontarioSelezionato = volontariRegistrati.get(scelta - 1);
+            conferma = InputDati.yesOrNo("Hai selezionato " + volontarioSelezionato + ". Confermi? ");
+            if (conferma){
+                return volontarioSelezionato;
+            }
+        }
+        return null;
+    }
+
+    public static String selezionaVolontario(List<String> volontariRegistrati) {
+        if (volontariRegistrati.isEmpty()) {
+            System.out.println("Nessun volontario registrato.");
+            return null;
+        }
+
+        System.out.println("Volontari registrati:");
+        for (int i = 0; i < volontariRegistrati.size(); i++) {
+            System.out.println((i + 1) + ". " + volontariRegistrati.get(i));
         }
 
         boolean conferma = false;
@@ -245,6 +268,25 @@ public class CliInput {
         }
         return null;
     }
+
+    public static DTObject SelezionaTipoVisita(DTObject[] elencoTipiDiVisite) {
+        CliVisualizzazione.pulisciSchermo();
+        System.out.println("Tipi di visita registrati:");
+        for (int i = 0; i < elencoTipiDiVisite.length; i++) {
+            System.out.println((i + 1) + ") " + elencoTipiDiVisite[i].getValoreCampo("Titolo"));
+        }
+
+        boolean conferma = false;
+        while (!conferma) {
+            int scelta = InputDati.leggiIntero("Seleziona il numero del tipo di visita: ", 1, elencoTipiDiVisite.length);
+            DTObject visitaSelezionata = elencoTipiDiVisite[scelta - 1];
+            conferma = InputDati.yesOrNo("Hai selezionato " + visitaSelezionata.getValoreCampo("Titolo") + ". Confermi? ");
+            if (conferma){
+                return visitaSelezionata;
+            }
+        }
+        return null;
+	}
 
     public static boolean tornareIndietro() {
         return InputDati.yesOrNo("Desideri tornare indietro?");        
@@ -358,25 +400,6 @@ public class CliInput {
         } while (continua);
 
         return dateDisponibili.toArray(new Date[0]);
-	}
-
-	public static DTObject SelezionaTipoVisita(DTObject[] elencoTipiDiVisite) {
-        CliVisualizzazione.pulisciSchermo();
-        System.out.println("Tipi di visita registrati:");
-        for (int i = 0; i < elencoTipiDiVisite.length; i++) {
-            System.out.println((i + 1) + ") " + elencoTipiDiVisite[i].getValoreCampo("Titolo"));
-        }
-
-        boolean conferma = false;
-        while (!conferma) {
-            int scelta = InputDati.leggiIntero("Seleziona il numero del tipo di visita: ", 1, elencoTipiDiVisite.length);
-            DTObject visitaSelezionata = elencoTipiDiVisite[scelta - 1];
-            conferma = InputDati.yesOrNo("Hai selezionato " + visitaSelezionata.getValoreCampo("Titolo") + ". Confermi? ");
-            if (conferma){
-                return visitaSelezionata;
-            }
-        }
-        return null;
 	}
 
 }

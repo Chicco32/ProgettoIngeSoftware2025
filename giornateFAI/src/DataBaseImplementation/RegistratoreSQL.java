@@ -41,7 +41,6 @@ public class RegistratoreSQL implements Registratore{
         "Nuovo tipo visita", Queries.REGISTRA_TIPO_VISITA,
         "Associa volontario", Queries.ASSOCIA_VOLONTARIO_VISITA,
         "Associa giorno settimana", Queries.ASSOCIA_GIORNI_SETTIMANA_VISITA
-
     );
 
     private Connection connection;
@@ -231,6 +230,44 @@ public class RegistratoreSQL implements Registratore{
         return nuovaChiave;
     }
 
+    public boolean rimozioneLuogo(String nomeLuogo) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.RIMUOVI_LUOGO.getQuery())) {
+            stmt.setString(1, nomeLuogo);
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+    }
+
+    public boolean rimozioneVisita(String titoloVisita) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.RIMUOVI_TIPO_DI_VISITA.getQuery())) {
+            stmt.setString(1, titoloVisita);
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+    }
+
+    public boolean rimozioneVolontario(String nickname) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.RIMUOVI_VOLONTARIO.getQuery())) {
+            stmt.setString(1, nickname);
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+    }
+
+    public void verificaCoerenzaPostRimozione() throws DBConnectionException {
+        try {
+            connection.createStatement().executeQuery(Queries.ELIMINA_DATI_ORFANI.getQuery());
+        } catch (SQLException e) {
+            throw new DBConnectionException("Errore nella connessione al DB", e);
+        }
+    }
+
     public void modificaAreaCompetenza(String areaCompetenza) throws Eccezioni.ConfigFilesException {
         this.areaCompetenza = areaCompetenza;
        try {
@@ -246,32 +283,6 @@ public class RegistratoreSQL implements Registratore{
             fileManager.scriviRegistratoreDefault(areaCompetenza, maxPartecipanti);
         } catch (FileNotFoundException e) {
             throw new Eccezioni.ConfigFilesException("File non trovato", e);
-        }
-    }
-
-    @Override
-    public boolean rimozioneLuogo(String nomeLuogo) throws DBConnectionException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'rimozioneLuogo'");
-    }
-
-    @Override
-    public boolean rimozioneVisita(String titoloVisita) throws DBConnectionException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'rimozioneVisita'");
-    }
-
-    @Override
-    public boolean rimozioneVolontario(String nickname) throws DBConnectionException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'rimozioneVolontario'");
-    }
-
-    public void verificaCoerenzaPostRimozione() throws DBConnectionException {
-        try {
-            connection.createStatement().executeQuery(Queries.ELIMINA_DATI_ORFANI.getQuery());
-        } catch (SQLException e) {
-            throw new DBConnectionException("Errore nella connessione al DB", e);
         }
     }
 
