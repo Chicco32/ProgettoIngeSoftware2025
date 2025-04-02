@@ -402,9 +402,10 @@ public class ConfiguratoreController implements UtenteController {
             DTObject[] tabella;
             tabella = aux.visualizzaElencoVolontari();
             List<String> lista = estraiCampoTabella(tabella, "Volontario Nickname"); //violazione abbasstanza brutta di inversione della dipendenza
-            String elemento = CliInput.selezionaVolontario(lista);
-            model.getRegistratore().rimozioneVolontario(elemento);
+            String volontarioSelezionato = CliInput.selezionaVolontario(lista);
+            model.getRegistratore().rimozioneVolontario(volontarioSelezionato);
             model.getRegistratore().verificaCoerenzaPostRimozione();
+            model.getRegistroDateDisponibili().eliminaVolontario(volontarioSelezionato);
         } catch (DBConnectionException e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
         }

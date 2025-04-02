@@ -1,5 +1,6 @@
 package DataBaseImplementation;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -100,5 +101,13 @@ public class XMLDateDisponibili extends XMLManager  implements GestoreDateDispon
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void rimuoviDatiVolontario(String nickname) {
+		String pathCartella = this.path;
+		this.path += nickname + ".xml";
+		File file = new File(this.path);
+		file.delete();
+		this.path = pathCartella;
 	}
 }

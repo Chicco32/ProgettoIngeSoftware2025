@@ -35,4 +35,12 @@ public interface GestoreDateDisponibili extends GestoreFilesConfigurazione {
      */
 	public void cleanDates(Date data, String nomeVolontario);
 
+    /**
+     * Rimuove fra i files di configurazione tutti i files e sezioni che fanno riferimento al volontario selezionato.
+     * Questo metodo va invocato dopo la rimozione di un volontario per non tenere dei files o partin di files orfani
+     * che potrebbero causare conflitti o rallentare il sistema.
+     * @param nickname il nickname del volontario eliminato da cancellare
+     */
+	public void rimuoviDatiVolontario(String nickname);
+
 }

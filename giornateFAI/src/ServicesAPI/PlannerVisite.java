@@ -43,4 +43,5 @@ public class PlannerVisite {
 	}
 
 	//TODO @Diego ricordati di pulire le date disponibili e precluse alla fine del piano visite
+	//TODO @Diego ricordati che le date dispoonibili da pulire e ottenere contengono dei duplicati
 }

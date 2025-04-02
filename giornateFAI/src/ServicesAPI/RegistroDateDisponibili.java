@@ -156,5 +156,9 @@ public class RegistroDateDisponibili extends RegistroDate {
 			throw new ConfigFilesException("Problemi con i files di configurazione", e);
 		}
 	}
+
+	public void eliminaVolontario(String nickname) {
+		fileManager.rimuoviDatiVolontario(nickname);
+	}
     
 }

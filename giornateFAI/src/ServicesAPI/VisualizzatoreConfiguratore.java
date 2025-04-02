@@ -51,4 +51,14 @@ public interface VisualizzatoreConfiguratore {
      */
     public DTObject[] visualizzaElencoTipiDiVisite() throws Eccezioni.DBConnectionException;
 
+    /**
+     * Metodo per ottenere le date possibili in termini di giorni della settimana
+     * su cui un volontario può dare disponibilità, associate anche al tipo di visita in cui la visita si può
+     * tenere in quel suddetto giorno.
+     * @param volontarioAssociato il nome del volontario su cui filtrare la ricerca
+     * @return un array di {@code DTObject} contenente i giorni della settimana e i tipi di visita associati
+     * @throws Eccezioni.DBConnectionException
+     */
+    public DTObject[] estraiDOWPossibiliVolontario(String volontarioAssociato) throws Eccezioni.DBConnectionException;
+
 }
