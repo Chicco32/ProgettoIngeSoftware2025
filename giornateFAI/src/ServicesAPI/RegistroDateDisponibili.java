@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.io.FileNotFoundException;
 import java.text.ParseException;
 
@@ -17,6 +16,12 @@ public class RegistroDateDisponibili extends RegistroDate {
 	private Date[] dateDisponibili;
 	private GestoreDateDisponibili fileManager;
 	
+	/**
+	 * Costruttore con nome specifico per il volontario, usa il nome per funzioni di creazione e modifica dei file riferiti al volntario stesso
+	 * @param fileManager
+	 * @param datePrecluse
+	 * @param nome
+	 */
 	public RegistroDateDisponibili(GestoreDateDisponibili fileManager, RegistroDatePrecluse datePrecluse, String nome) {
 		super(fileManager);
 		this.datePrecluse=datePrecluse;
@@ -31,12 +36,17 @@ public class RegistroDateDisponibili extends RegistroDate {
 	
 	}
 
-	/*public RegistroDateDisponibili(GestoreDateDisponibili fileManager, RegistroDatePrecluse datePrecluse){
+	/**
+	 * Costruttore per il configuratore generale senza i diritti sui dati solo di un volontario specifico
+	 * @param fileManager
+	 * @param datePrecluse
+	 */
+	public RegistroDateDisponibili(GestoreDateDisponibili fileManager, RegistroDatePrecluse datePrecluse){
 		super(fileManager);
 		this.datePrecluse=datePrecluse;
 		this.fileManager=fileManager;
 		this.dateDisponibili=new Date[0];
-	} */
+	}
 
 	public void registraDateDisponibili(Date[] input,String nome) throws FileNotFoundException {
 		ArrayList<Date> aux=new ArrayList<Date>();

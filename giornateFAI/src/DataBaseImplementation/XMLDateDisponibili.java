@@ -2,6 +2,7 @@ package DataBaseImplementation;
 
 import java.io.FileNotFoundException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.text.DateFormatter;
@@ -46,6 +47,9 @@ public class XMLDateDisponibili extends XMLManager  implements GestoreDateDispon
 				}
 				xmlw.writeCharacters(form.valueToString(dateDisponibili[dateDisponibili.length-1])+"]");
 			}
+			else {
+				xmlw.writeCharacters("[]");
+			}
 			xmlw.writeEndElement();
 			xmlw.writeEndElement();
 		}catch(Exception e){
@@ -66,13 +70,13 @@ public class XMLDateDisponibili extends XMLManager  implements GestoreDateDispon
 			
 			inzializzaReader();
 			String[] aux = {leggiVariabile("dateDisponibili")};
-			if(!aux[0].equals("")){
+			if(!aux[0].equals("[]")){
 				aux = aux[0].substring(1,aux[0].length()-1).split(",");
 				res=new Date[aux.length];
 				for(int i=0;i<aux.length;i++){
 					try{
 						res[i]=formatoData.parse(aux[i]);
-					}catch(Exception e){
+					}catch(ParseException e){
 						e.printStackTrace();
 					}
 				}
@@ -83,8 +87,8 @@ public class XMLDateDisponibili extends XMLManager  implements GestoreDateDispon
 			chiudiReader();
 		}
 		else{
-			creaFile(this.path);
-			res=new Date[0];
+			this.path = pathCartella;
+			throw new FileNotFoundException();
 		}
 		this.path = pathCartella;
 		return res;

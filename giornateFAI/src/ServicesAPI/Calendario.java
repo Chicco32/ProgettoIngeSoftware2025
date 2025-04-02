@@ -125,6 +125,7 @@ public class Calendario extends GregorianCalendar{
 		this.set(MINUTE,0);
 		this.set(SECOND,0);
 		this.set(MILLISECOND,0);
+		this.set(AM_PM, AM);
 	}
 	/**
 	 * funzione che dato un numero di mesi e conoscendo la data attuale calcola una data del mese che per il dominio applicativo è il mese i+delay

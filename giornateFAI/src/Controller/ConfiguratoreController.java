@@ -364,7 +364,7 @@ public class ConfiguratoreController implements UtenteController {
 
     private boolean registraNuovoPianoVisite() {
 		VisualizzatoreConfiguratore aux = model.getVisualizzatore();
-        PlannerVisite planner = new PlannerVisite(model.getRegistroDatePrecluse());
+        PlannerVisite planner = new PlannerVisite(model.getRegistroDateDisponibili(), aux);
         boolean statoPianoVisite = true;
         try {
             DTObject[] tabella;

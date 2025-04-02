@@ -1,7 +1,5 @@
 package ServicesAPI;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,20 +10,26 @@ public class TipoDiVisita{
 	
 	private int codice;
 	private DateRange periodoProposta;
-	private DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+	//private DateFormat df=new SimpleDateFormat("yyyy-MM-dd");
 	private static HashMap<String,Integer> map;
 	private int[] giorniSettimana;		
 
 	public TipoDiVisita(DTObject[] input){
 		if(map==null){
-			map=new HashMap<String,Integer>(7);
+			map=new HashMap<String,Integer>(12);
 			map.put("Domenica",Calendario.SUNDAY);
+			map.put("Lunedi",Calendario.MONDAY);
+			map.put("Martedi",Calendario.TUESDAY);
+			map.put("Mercoledi",Calendario.WEDNESDAY);
+			map.put("Giovedi",Calendario.THURSDAY);
+			map.put("Venerdi",Calendario.FRIDAY);
+			map.put("Sabato",Calendario.SATURDAY);
+
 			map.put("Lunedì",Calendario.MONDAY);
 			map.put("Martedì",Calendario.TUESDAY);
 			map.put("Mercoledì",Calendario.WEDNESDAY);
 			map.put("Giovedì",Calendario.THURSDAY);
 			map.put("Venerdì",Calendario.FRIDAY);
-			map.put("Sabato",Calendario.SATURDAY);
 		}
 		List<Object> dati=input[0].getValori();
 		try{
@@ -37,7 +41,7 @@ public class TipoDiVisita{
 		ArrayList<Integer> aux=new ArrayList<Integer>();
 		for(DTObject entry: input){
 			String giorno=(String)(entry.getValoreCampo("Giorno della Settimana"));
-			System.out.println("Parsing "+giorno);
+			//System.out.println("Parsing "+giorno);
 			aux.add(map.get(giorno));
 		}
 		Integer[] temp=aux.toArray(new Integer[aux.size()]);

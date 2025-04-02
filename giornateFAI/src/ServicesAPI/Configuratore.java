@@ -5,6 +5,7 @@ public class Configuratore extends Utente {
     private Registratore registratore;
     private VisualizzatoreConfiguratore visualizzatore;
     private RegistroDatePrecluse datePrecluse;
+    private RegistroDateDisponibili dateDisponibili;
 
     /**
      * Crea un nuovo utente di tipo configuratore. Il configuratore ha piu permessi rispoetto all'utente normale in quanto
@@ -14,6 +15,7 @@ public class Configuratore extends Utente {
      * @param visualizzatore l'implementazione dell'API {@code visualizzatore}
      * @param registratore l'implementazione dell'API {@code registratore}
      * @param datePrecluse l'implementazione dell'API {@code RegistroDatePrecluse}
+     * @param dateDisponibili l'implementazione dell'API {@code RegistroDateDisponibili}
      */
     public Configuratore(boolean PrimoAccesso, String nickname, FactoryServizi servizi) {
         super(PrimoAccesso, nickname);
@@ -21,6 +23,7 @@ public class Configuratore extends Utente {
         this.setRuolo("Configuratore");
         this.registratore = servizi.creaRegistratore();
         this.datePrecluse = new RegistroDatePrecluse(servizi.inizializzaDatePrecluse());
+        this.dateDisponibili = new RegistroDateDisponibili(servizi.inizializzaDateDisponibili(), datePrecluse);
     }
 
     public Registratore getRegistratore() {
@@ -33,6 +36,10 @@ public class Configuratore extends Utente {
 
     public VisualizzatoreConfiguratore getVisualizzatore() {
         return this.visualizzatore;
+    }
+
+    public RegistroDateDisponibili getRegistroDateDisponibili() {
+        return this.dateDisponibili;
     }
 
 }

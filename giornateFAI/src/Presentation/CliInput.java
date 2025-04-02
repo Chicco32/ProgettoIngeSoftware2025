@@ -365,28 +365,40 @@ public class CliInput {
 	public static Date[] chiediDateDisponibilà(Date[] datePossibili) {
         List<Date> dateDisponibili = new ArrayList<>();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        List<String> dateString = new ArrayList<>();
 
+        //stampa le date possibili in righe da 5 date
         System.out.println("Date possibili:");
         for (int i = 0; i < datePossibili.length; i++) {
-            System.out.println((i + 1) + ". " + format.format(datePossibili[i]));
+            String stringa = format.format(datePossibili[i]);
+            dateString.add(stringa);
+            System.out.print(stringa);
+            System.out.print("\t");
+            if (i % 5 == 4) System.out.println(""); //ritorna a capo ogni 5 elementi
         }
+        System.out.println("");
 
         boolean continua = true;
         do {
             try {
-                String dataStr = InputDati.leggiStringa("Inserisci una data disponibile (yyyy-MM-dd) o 'fine' per terminare: ");
-                if (dataStr.equalsIgnoreCase("fine")) {
+                String inserimento = InputDati.leggiStringa("Inserisci una data disponibile (yyyy-MM-dd) o 'fine' per terminare: ");
+                if (inserimento.equalsIgnoreCase("fine")) {
                     continua = false;
                     break;
                 }
-                Date dataInserita = format.parse(dataStr);
+
+                //cerca fra le date salvate se corrisponde a una di essi
+                Date dataInserita = new Date();
                 boolean valida = false;
-                for (Date data : datePossibili) {
-                    if (data.equals(dataInserita)) {
+                for (String data : dateString) {
+                    if (data.equalsIgnoreCase(inserimento)) {
                         valida = true;
+                        dataInserita = format.parse(inserimento);
                         break;
                     }
                 }
+                
+                //comportamento dopo l'inserimento
                 if (!valida) {
                     System.out.println("La data inserita non è tra quelle possibili. Riprova.");
                 } else if (dateDisponibili.contains(dataInserita)) {

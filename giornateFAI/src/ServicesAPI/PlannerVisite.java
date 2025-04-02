@@ -3,20 +3,19 @@ package ServicesAPI;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class PlannerVisite {
 
-	private RegistroDatePrecluse datePrecluse;
+	private RegistroDateDisponibili registroDateDisponibili;
+	private VisualizzatoreConfiguratore visualizzatore;
+	
 	private List<String> volontari;
 	private Map<String, Date[]> dateDisponibili;
-	private GestoreDateDisponibili fileManager;
 
-	public PlannerVisite(FactoryServizi servizi) {
-		this.datePrecluse = new RegistroDatePrecluse(servizi.inizializzaDatePrecluse());
-		this.fileManager = servizi.inizializzaDateDisponibili();
+	public PlannerVisite(RegistroDateDisponibili dateDisponibili, VisualizzatoreConfiguratore visualizzatore) {
+		this.visualizzatore = visualizzatore;
+		this.registroDateDisponibili = dateDisponibili;
 	}
 
 	public DTObject[] creaPianoVisite(List<String> volontari) {
