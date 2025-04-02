@@ -102,13 +102,14 @@ public class ConfiguratoreController implements UtenteController {
         actions.put("Modifica max numero partecipanti", this::inserisciMaxPartecipanti);
         actions.put("Introduzione nuovo tipo di visita", this::inserisciNuovoTipoDiVisita);
         actions.put("Introduzione nuovo volontario", this::inserisciNuovoVolontario);
+        actions.put("Introduzione nuovo luogo", this::popolaDBLuoghi); //se introducessi inserisci luogo sarrebbe una funzione identica
         actions.put("Visualizza elenco volontari", this::visualizzaElencoVolontari);     
         actions.put("Visualizza luoghi visitabili", this::visualizzaElencoLuoghi);
         actions.put("Visualizza tipi di visite", this::visualizzaElencoTipiDiVisite);
         actions.put("Visualizza visite in archivio a seconda dello stato", this::chiediStatoDaVisualizzare);
-        actions.put("Rimuovi un volontario dalla lista", this::rimuoviVolontario);
-        actions.put("Rimuovi un luogo", this::rimuoviLuogo);
-        actions.put("Rimuovi una tipologia di visita", this::rimuoviTipoDiVisita);
+        actions.put("Rimuovi volontario dalla lista", this::rimuoviVolontario);
+        actions.put("Rimuovi luogo", this::rimuoviLuogo);
+        actions.put("Rimuovi tipo di visita", this::rimuoviTipoDiVisita);
 
         actions.put("Esci",() -> System.exit(0));
 
@@ -168,12 +169,17 @@ public class ConfiguratoreController implements UtenteController {
     }
 
     private void inserisciNuovoVolontario() {
-        String nickname = registraVolontario();
+        String nickname = registraNomeVolontario();
         CliNotifiche.avvisa(CliNotifiche.NECESSARIO_ABBINARE_VOLONTARIO);
+        CliInput.invioPerContinuare();
         DTObject visitaAbbinata;
+        boolean altraVisita = true;
         try {
-            visitaAbbinata = CliInput.SelezionaTipoVisita(model.getVisualizzatore().visualizzaElencoTipiDiVisite());
-            associaVolontarioTipoVisita(nickname, visitaAbbinata); 
+            while (altraVisita) {
+                visitaAbbinata = CliInput.SelezionaTipoVisita(model.getVisualizzatore().visualizzaElencoTipiDiVisite());
+                associaVolontarioTipoVisita(nickname, visitaAbbinata);
+                altraVisita = CliInput.aggiungiAltroCampo("Tipo di visita", "volontario");
+            } 
         }catch (DBConnectionException e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
         }
@@ -181,7 +187,7 @@ public class ConfiguratoreController implements UtenteController {
     }
 
     //ritorna il nickname del volontario se l'inserimento è riuscito, null altrimenti
-    private String registraVolontario() {
+    private String registraNomeVolontario() {
         String nickname = null;
         Registratore aux = model.getRegistratore();
         CliVisualizzazione.intestazionePaginaInserimento(CliVisualizzazione.VARIABILE_VOLONTARI);
@@ -306,10 +312,10 @@ public class ConfiguratoreController implements UtenteController {
             DTObject[] tabellaVolontari;
             try {
                 tabellaVolontari = aux.visualizzaElencoVolontari();
-                List <String> volontariRegistrati = estraiCampoTabella(tabellaVolontari, "Nickname");
+                List <String> volontariRegistrati = estraiCampoTabella(tabellaVolontari, "Volontario Nickname");
                 String volontarioSelezionato = CliInput.selezionaVolontarioConNull(volontariRegistrati);
                 //altrimenti permette di inserire un nuovo volontario se prima ha inserito null
-                if (volontarioSelezionato == null) volontarioSelezionato = registraVolontario();
+                if (volontarioSelezionato == null) volontarioSelezionato = registraNomeVolontario();
                 associaVolontarioTipoVisita(volontarioSelezionato, data);
             } catch (Exception e) {
                 CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);

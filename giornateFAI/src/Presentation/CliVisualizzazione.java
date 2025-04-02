@@ -64,6 +64,7 @@ public class CliVisualizzazione {
                 System.out.println(String.join(" | ", colonne));
 
                 //stampo i risultati
+                System.out.println(""); //per distanziare i dati dalla tabella
                 if (results != null) {
                     for (int i = 0; i<results.length; i++) { //cicla per ogni riga della tabella
                         for (int j = 0; j < numColonne; j++) { //stampa ogni elemento
