@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import ServicesAPI.DTObject;
 import ServicesAPI.Eccezioni;
+import ServicesAPI.Eccezioni.DBConnectionException;
 import ServicesAPI.StatiVisite;
 import ServicesAPI.VisualizzatoreConfiguratore;
 import ServicesAPI.VisualizzatoreVolontario;
@@ -173,6 +174,23 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
     public DTObject[] estraiDOWPossibiliVolontario(String volontarioAssociato) throws Eccezioni.DBConnectionException {
         try (PreparedStatement stmt = connection.prepareStatement(Queries.GIORNI_POSSIBILI_VOLONTARIO.getQuery())) {
             stmt.setString(1, volontarioAssociato);
+            return traduciTabella(stmt.executeQuery());
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+    }
+
+    public DTObject[] estraiTipiDiVisiteVolontario() throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.VISITE_PER_OGNI_VOLONTARIO.getQuery())) {
+            return traduciTabella(stmt.executeQuery());
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+    }
+
+    
+    public DTObject[] estraiGiorniTipoDiVisita() throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.GIORNI_POSSIBILI_VISITA.getQuery())) {
             return traduciTabella(stmt.executeQuery());
         } catch (SQLException e) {
             throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
