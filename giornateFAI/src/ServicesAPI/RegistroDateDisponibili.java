@@ -48,6 +48,20 @@ public class RegistroDateDisponibili extends RegistroDate {
 		this.dateDisponibili=new Date[0];
 	}
 
+	/**
+	 * Metodo che carica le date disponibili da un volontario specifico nell'oggetto
+	 * @param nome il nickname del volontario
+	 */
+	public void caricaDateDisponibili(String nome) throws IllegalArgumentException{
+		try{
+			this.dateDisponibili=fileManager.leggiDateDisponibili(nome);
+		}catch(FileNotFoundException e){
+			throw new IllegalArgumentException("Il volontario non ha un file di date disponibili");
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
 	public void registraDateDisponibili(Date[] input,String nome) throws FileNotFoundException {
 		ArrayList<Date> aux=new ArrayList<Date>();
 		aux.addAll(Arrays.asList(dateDisponibili));
@@ -58,6 +72,19 @@ public class RegistroDateDisponibili extends RegistroDate {
 
 	public Date[] getDateDisponibili(){
 		return this.dateDisponibili;
+	}
+
+	/**
+	 * Funzione che carica nel registro e restituisce in output le date disponibili di un dato volontario
+	 * @param nome il nickname del volontario
+	 */
+	public Date[] getDateDisponibili(String nome){
+		try{
+			caricaDateDisponibili(nome);
+			return getDateDisponibili();
+		}catch(IllegalArgumentException e){
+			e.printStackTrace();
+		}
 	}
 	
 	public void cancellaDate(DateRange periodo){

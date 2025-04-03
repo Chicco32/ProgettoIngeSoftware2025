@@ -19,14 +19,11 @@ public class PlannerVisite {
 	}
 
 	public DTObject[] creaPianoVisite(List<String> volontari) {
-		HashMap<String,RegistroDateDisponibili> rdd=new HashMap<>();
-		HashMap<TipoDiVisita,String> appaiamenti=new HashMap<>();
+		HashMap<Integer,ArrayList<String> appaiamenti=new HashMap<>();
+		ArrayList<TipoDiVisita> visite=new ArrayList<>();
 		dateDisponibili=new HashMap<String,Date[]>();
 		for(String vol:volontari){
-			rdd.put(vol, new RegistroDateDisponibili(fileManager,datePrecluse,vol));
-		}
-		for(String vol:volontari){
-			dateDisponibili.put(vol,rdd.get(vol).getDateDisponibili());
+			dateDisponibili.put(vol,registroDateDisponibili.getDateDisponibili(vol));
 		}
 		//TODO sbobba per capire le associazioni fra tipi di visita e volontari
 		//Intenzione: raccogliere i tipi di visita e i volontari associati
