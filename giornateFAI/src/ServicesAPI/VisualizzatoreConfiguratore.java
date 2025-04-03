@@ -57,8 +57,27 @@ public interface VisualizzatoreConfiguratore {
      * tenere in quel suddetto giorno.
      * @param volontarioAssociato il nome del volontario su cui filtrare la ricerca
      * @return un array di {@code DTObject} contenente i giorni della settimana e i tipi di visita associati
-     * @throws Eccezioni.DBConnectionException
+     * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database
      */
     public DTObject[] estraiDOWPossibiliVolontario(String volontarioAssociato) throws Eccezioni.DBConnectionException;
 
+    /**
+     * Funzione che estrae le coppie di volontari e i tipi di visite asscoiati ad ognuno di essi per poter ricostruire 
+     * le associazioni durante la creaiozne del piano delle visite. Idealmente questo metodo dovrbbe essere
+     * utilizzato solo dal Planner delle visite
+     * @return un {@code DTObject} contente le coppie
+     * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database
+     * @see PlannerVisite
+     */
+    public DTObject[] estraiTipiDiVisiteVolontario() throws Eccezioni.DBConnectionException;
+
+    /**
+     * Funzione che estrae le coppie di giorni della setitmana e i tipi di visite asscoiati ad ognuno di essi per poter ricostruire 
+     * le associazioni durante la creazione del piano delle visite. Idealmente questo metodo dovrbbe essere
+     * utilizzato solo dal Planner delle visite
+     * @return un {@code DTObject} contente le coppie
+     * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database
+     * @see PlannerVisite
+     */
+    public DTObject[] estraiGiorniTipoDiVisita() throws Eccezioni.DBConnectionException;
 }
