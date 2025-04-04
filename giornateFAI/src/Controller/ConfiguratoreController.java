@@ -48,7 +48,7 @@ public class ConfiguratoreController implements UtenteController {
             do {
                 String nickname = CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_NICKNAME, CliInput.MAX_CARATTERI_NICKNAME);
                 if (model.getRegistratore().nomeUtenteUnivoco(nickname)) {
-
+                    model.setNickname(nickname);
                     DTObject dati = new Tupla("Configuratore", Tupla.FORMATO_UTENTE);
                     dati.impostaValore(nickname, "Nickname");
                     dati.impostaValore(CliInput.chiediConLunghezzaMax(
@@ -153,7 +153,7 @@ public class ConfiguratoreController implements UtenteController {
     private void inserisciAreaCompetenza() {
         String areaCompetenza = CliInput.chiediConConferma(CliVisualizzazione.AREA_COMPETENZA);
         try {
-            model.getRegistratore().modificaAreaCompetenza(areaCompetenza);
+            model.modificaAreaCompetenza(areaCompetenza);
         } catch (ConfigFilesException e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_SCRITTURA_FILE);
         }
@@ -162,7 +162,7 @@ public class ConfiguratoreController implements UtenteController {
     private void inserisciMaxPartecipanti() {
         int maxPartecipanti = Integer.parseInt(CliInput.chiediConConferma(CliVisualizzazione.MAX_PARTECIPANTI));
         try {
-            model.getRegistratore().modificaMaxPartecipanti(maxPartecipanti);
+            model.modificaMaxPartecipanti(maxPartecipanti);
         } catch (ConfigFilesException e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_SCRITTURA_FILE);
         }

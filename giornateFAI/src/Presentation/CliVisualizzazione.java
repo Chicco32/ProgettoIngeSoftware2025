@@ -40,15 +40,27 @@ public class CliVisualizzazione {
     }
 
     public static void ingressoBackendConfiguratore() {
-        System.out.println("Benvenuto Configuratore! Stai per accedere al backEnd di sistema");
+        System.out.println("Benvenuto Configuratore! Stai per accedere al Backend di sistema");
         CliInput.invioPerContinuare();
     }
 
     public static void ingressoBackendVolontario() {
-        System.out.println("Benvenuto Volontario! Stai per accedere al backEnd di sistema");
+        System.out.println("Benvenuto Volontario! Stai per accedere al Backend di sistema");
         CliInput.invioPerContinuare();
     }
 
+    public static void ingressoFrontendFruitore() {
+        System.out.println("Benvenuto Fruitore! Stai per accedere al Frontend di sistema");
+        CliInput.invioPerContinuare();
+    }
+
+    /**
+     * Funzione per stampare a video i dati di una qualche relazione in formato tabellare.
+     * In partcolare stampa ogni elemento {@code DtObject} della relazione in una riga della tabella.
+     * Prima di stamparne il contenutor stampa anche i nomi delle colonne.
+     * @param results L'insieme di dati da stampare, in formato {@code DTObject[]}
+     * @param tabella Il nome della tabella da stampare, che verrà visualizzato come titolo informativo.
+     */
     public static void visualizzaRisultati(DTObject[] results, String tabella) {
         System.out.println("\n<========= " + tabella.toUpperCase() + " =========>");
         try {
@@ -93,7 +105,14 @@ public class CliVisualizzazione {
         CliVisualizzazione.pulisciSchermo();
         System.out.println("Configuratore, questa è la pagina per l'inserimento di " + campo + " nel DB");
         System.out.println("Di seguito puoi riportare i dati su " + campo);
-    }    
+    }
+    
+    //Intestazione della pagina di rindirizzamento per la rimozione di un certo tipo di dato
+    public static void intestazionePaginaRimozione(String campo) {
+        CliVisualizzazione.pulisciSchermo();
+        System.out.println("Configuratore, questa è la pagina per la rimozione di " + campo + " nel DB");
+        System.out.println("Di seguito puoi riportare i dati su " + campo);
+    } 
 
     /**
      * Avviso di rindirizzamento alla pagina di inserimento di un nuovo campo.

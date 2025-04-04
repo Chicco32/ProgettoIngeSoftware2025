@@ -1,6 +1,5 @@
 package DataBaseImplementation;
 
-import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
@@ -9,9 +8,12 @@ import com.mysql.cj.jdbc.exceptions.MysqlDataTruncation;
 import ServicesAPI.DTObject;
 import ServicesAPI.Eccezioni;
 import ServicesAPI.Eccezioni.DBConnectionException;
-import ServicesAPI.GestoreConfiguratore;
+import ServicesAPI.Eccezioni.IscrizioneImpossibileException;
+import ServicesAPI.Eccezioni.RimozioneIscrizioneImpossibileException;
 import ServicesAPI.GestoreFilesConfigurazione;
 import ServicesAPI.Registratore;
+import ServicesAPI.RegistratoreIscrizioni;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -27,13 +29,13 @@ import java.text.SimpleDateFormat;
  * I path sono salvati nella classe Percorsi files ma essendo richiesti solo in fase di creaizone possono essere modificati
  * 
  * @see GestoreFilesConfigurazione
- * @see XMLConfigurator
+ * @see XMLConfiguratore
  * @see ConnessioneSQL
  * @see PercorsiFiles
  * @see Registratore
  * @see Queries
  */
-public class RegistratoreSQL implements Registratore{
+public class RegistratoreSQL implements Registratore, RegistratoreIscrizioni{
 
     private static final Map<String, Queries> inserimenti = Map.of(
         "Nuovo volontario", Queries.REGISTRA_VOLONTARIO,
@@ -44,30 +46,9 @@ public class RegistratoreSQL implements Registratore{
     );
 
     private Connection connection;
-    private int maxPartecipanti;
-    private String areaCompetenza;
-
-    private GestoreConfiguratore fileManager;
 
     public RegistratoreSQL(String path){
         this.connection = ConnessioneSQL.getConnection();
-        this.fileManager = new XMLConfigurator(path);
-
-        try {
-            // Carica i dati di default dal file
-            if (GestoreFilesConfigurazione.fileExists(path)) {
-                this.maxPartecipanti = Integer.parseInt(fileManager.leggiVariabile("maxPartecipanti"));
-                this.areaCompetenza = fileManager.leggiVariabile( "areaCompetenza");
-            }
-            //avvia la creazione di un nuovo file default
-            else {
-                GestoreFilesConfigurazione.creaFile(path);
-                this.areaCompetenza = null;
-                this.maxPartecipanti = 0;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -283,22 +264,19 @@ public class RegistratoreSQL implements Registratore{
         }
     }
 
-    public void modificaAreaCompetenza(String areaCompetenza) throws Eccezioni.ConfigFilesException {
-        this.areaCompetenza = areaCompetenza;
-       try {
-        fileManager.scriviRegistratoreDefault(areaCompetenza, maxPartecipanti);
-    } catch (FileNotFoundException e) {
-        throw new Eccezioni.ConfigFilesException("File non trovato", e);
-    }
+    @Override
+    public String iscrivitiVisita(int codiceIstanza, String nickname, int numPartecipanti)
+            throws DBConnectionException, IscrizioneImpossibileException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'iscrivitiVisita'");
     }
 
-    public void modificaMaxPartecipanti(int maxPartecipanti) throws Eccezioni.ConfigFilesException {
-        this.maxPartecipanti = maxPartecipanti;
-        try {
-            fileManager.scriviRegistratoreDefault(areaCompetenza, maxPartecipanti);
-        } catch (FileNotFoundException e) {
-            throw new Eccezioni.ConfigFilesException("File non trovato", e);
-        }
+    @Override
+    public boolean rimuoviIscrizioneVisita(int codiceIstanza, String nickname, String CodiceIscrizione)
+            throws DBConnectionException, RimozioneIscrizioneImpossibileException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'rimuoviIscrizioneVisita'");
     }
+
 
 }   

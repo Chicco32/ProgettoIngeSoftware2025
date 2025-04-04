@@ -1,5 +1,4 @@
 package DataBaseImplementation;
-
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +12,7 @@ import ServicesAPI.Eccezioni;
 import ServicesAPI.Eccezioni.DBConnectionException;
 import ServicesAPI.StatiVisite;
 import ServicesAPI.VisualizzatoreConfiguratore;
+import ServicesAPI.VisualizzatoreFruitore;
 import ServicesAPI.VisualizzatoreVolontario;
 
 
@@ -26,9 +26,10 @@ import ServicesAPI.VisualizzatoreVolontario;
  * @see ConnessioneSQL
  * @see VisualizzatoreConfiguratore
  * @see VisualizzatoreVolontario
+ * @see VisualizzatoreFruitore
  * @see Queries
  */
-public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, VisualizzatoreVolontario {
+public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, VisualizzatoreVolontario, VisualizzatoreFruitore {
 
     private Connection connection;
 
@@ -181,20 +182,30 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
     }
 
     public DTObject[] estraiTipiDiVisiteVolontario() throws DBConnectionException {
-        try (PreparedStatement stmt = connection.prepareStatement(Queries.VISITE_PER_OGNI_VOLONTARIO.getQuery())) {
-            return traduciTabella(stmt.executeQuery());
-        } catch (SQLException e) {
-            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
-        }
+        return traduciTabella(eseguiQuery(Queries.VISITE_PER_OGNI_VOLONTARIO));
     }
 
     
     public DTObject[] estraiGiorniTipoDiVisita() throws DBConnectionException {
-        try (PreparedStatement stmt = connection.prepareStatement(Queries.GIORNI_POSSIBILI_VISITA.getQuery())) {
-            return traduciTabella(stmt.executeQuery());
-        } catch (SQLException e) {
-            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
-        }
+        return traduciTabella(eseguiQuery(Queries.GIORNI_POSSIBILI_VISITA));
+    }
+
+    @Override
+    public DTObject[] VisualizzaIstanzeVisiteDisponibili() throws DBConnectionException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'VisualizzaIstanzeVisiteDisponibili'");
+    }
+
+    @Override
+    public DTObject[] VisualizzaIstanzeIscritte(String nickname) throws DBConnectionException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'VisualizzaIstanzeIscritte'");
+    }
+
+    @Override
+    public DTObject[] VisualizzaIstanzeCancellate(String nickname) throws DBConnectionException {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'VisualizzaIstanzeCancellate'");
     }
     
 }

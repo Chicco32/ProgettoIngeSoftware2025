@@ -23,7 +23,7 @@ public class PlannerVisite {
 		HashMap<TipoDiVisita,String> appaiamenti=new HashMap<>();
 		dateDisponibili=new HashMap<String,Date[]>();
 		for(String vol:volontari){
-			rdd.put(vol, new RegistroDateDisponibili(fileManager,datePrecluse,vol));
+			//rdd.put(vol, new RegistroDateDisponibili(fileManager,datePrecluse,vol));
 		}
 		for(String vol:volontari){
 			dateDisponibili.put(vol,rdd.get(vol).getDateDisponibili());
@@ -39,7 +39,7 @@ public class PlannerVisite {
 		//	Assegnare prima le visite con meno volontari associati
 		//	Assegnare la visita a chi ha meno visite assegnate
 		//	In caso di ulteriore pareggio si va un po' a caso (o si chiede?)
-			
+			return null;
 	}
 
 	//TODO @Diego ricordati di pulire le date disponibili e precluse alla fine del piano visite

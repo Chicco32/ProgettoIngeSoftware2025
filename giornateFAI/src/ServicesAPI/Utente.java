@@ -46,7 +46,7 @@ public abstract class Utente {
         return this.nickname;
     }
 
-    protected void setNickname(String nickname) {
+    public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 

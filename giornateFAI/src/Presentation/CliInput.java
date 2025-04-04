@@ -414,4 +414,19 @@ public class CliInput {
         return dateDisponibili.toArray(new Date[0]);
 	}
 
+	public static int selezionaIstanza(DTObject[] VisiteDisponibili) {
+
+        while (true) {
+            int codiceArchivio = InputDati.leggiIntero("Inserisci il codice archivio della visita desiderata");
+
+            for (int i = 0; i < VisiteDisponibili.length; i++) {
+                if (VisiteDisponibili[i].getValoreCampo("codice archivio").equals(codiceArchivio)) {
+                    return codiceArchivio; // Ritorna l'indice della visita selezionata
+                }
+            }
+
+            System.out.println("Codice archivio non valido. Riprova.");
+        }
+	}
+
 }

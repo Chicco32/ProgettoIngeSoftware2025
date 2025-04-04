@@ -12,6 +12,9 @@ import java.io.FileNotFoundException;
  */
 public interface GestoreConfiguratore extends GestoreFilesConfigurazione {
 
+    String AREA_COMPETENZA = "areaCompetenza";
+	String MAX_PARTECIPANTI = "maxPartecipanti";
+
     /**
      * Scrive il file di default del registratore con i valori inseriti.
      * @param maxPartecipanti il numero massimo di partecipanti che lo stesso Fruitore può inserire
