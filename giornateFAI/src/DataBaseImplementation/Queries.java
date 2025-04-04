@@ -6,21 +6,24 @@ public enum Queries {
     NICKNAME_UNIVOCO("SELECT Nickname FROM(SELECT * FROM dbingesw.configuratore UNION ALL SELECT * FROM dbingesw.volontario UNION ALL SELECT * FROM dbingesw.fruitori) AS utenti WHERE utenti.Nickname = ?"),
     PASSWORD_ACCESSO_CONFIGURATORE("SELECT Password, Salt FROM `dbingesw`.`configuratore` WHERE `Nickname` = ?"),
     PASSWORD_ACCESSO_VOLONTARIO("SELECT Password, Salt FROM `dbingesw`.`volontario` WHERE `Nickname` = ?"),
+    PASSWORD_ACCESSO_FRUITORE("SELECT Password, Salt FROM `dbingesw`.`fruitori` WHERE `Nickname` = ?"),
     CAMBIO_PASSWORD_CONFIGURATORE("UPDATE `dbingesw`.`configuratore` SET `Password` = ?,`Salt` = ? WHERE `Nickname` = ?"),
     CAMBIO_PASSWORD_VOLONTARIO("UPDATE `dbingesw`.`volontario` SET `Password` = ?,`Salt` = ? WHERE `Nickname` = ?"),
-    REGISTRA_FRUITORE("INSERT into `dbingesw`.`fruitori` (`Nickname`,`Password`, `Salt`) VALUES (?,?,?)"),
-
+    
     //VisualizzatoreSQL e configuratore
     SELEZIONA_VOLONTARI("SELECT `Volontario Nickname`,Titolo FROM dbingesw.`volontari disponibili` join dbingesw.`Tipo di Visita` on `volontari disponibili`.`Tipo di Visita` = `Tipo di Visita`.`Codice Tipo di Visita` ORDER BY `Volontario Nickname`"),
     SELEZIONA_LUOGHI("SELECT * FROM `dbingesw`.`luogo`"),
     SELEZIONA_TIPI_VISITE("SELECT * FROM dbingesw.`tipo di visita`"),
     SELEZIONA_VISITE_ARCHIVIO("{call GetVisite(?)}"),
     VISITE_ASSOCIATE_VOLONTARIO("SELECT `Codice Tipo di Visita`, `Punto di Incontro`, `Titolo`, `Descrizione`, `Giorno di Inizio (periodo anno)`, `Giorno di Fine (periodo anno)`, `Ora di inizio`, `Durata`, `Min Partecipanti`, `Max Partecipanti` FROM dbingesw.`tipo di visita` JOIN dbingesw.`volontari disponibili` ON `tipo di visita`.`Codice Tipo di Visita` = `volontari disponibili`.`Tipo di Visita` WHERE `Volontario Nickname` = ?"),
-    
+    VISUALIZZA_ISTANZE_ISCRITTO("SELECT `Codice Archivio`, titolo, Descrizione, `Data programmata`,`Ora di inizio`, `Necessita Biglietto`, `Numero iscritti` FROM dbingesw.`archivio visite attive` as av JOIN dbingesw.`tipo di visita` as tdv ON av.`Tipo di Visita` = tdv.`Codice Tipo di Visita` JOIN dbingesw.`fruitori iscritti alle visite` as fi ON fi.`Visita iscritta` = av.`Codice Archivio` WHERE `Stato Visita` IN ('proposta', 'completa', 'confermata') AND Fruitore = ?"),
+    ISTANZE_VISITE_DISPONIBILI("SELECT `Codice Archivio`, titolo, Descrizione, `Data programmata`,`Ora di inizio`, `Necessita Biglietto` FROM dbingesw.`archivio visite attive` as av JOIN dbingesw.`tipo di visita` as tdv ON av.`Tipo di Visita` = tdv.`Codice Tipo di Visita` WHERE `Stato Visita` = 'proposta'"),
+    VISUALIZZA_ISTANZE_CANCELLATE("SELECT `Codice Archivio`, titolo,`Data programmata` FROM dbingesw.`archivio visite attive` as av JOIN dbingesw.`tipo di visita` as tdv ON av.`Tipo di Visita` = tdv.`Codice Tipo di Visita` JOIN dbingesw.`fruitori iscritti alle visite` as fi ON fi.`Visita iscritta` = av.`Codice Archivio` WHERE `Stato Visita` = 'cancellata' AND Fruitore = ?"),
 
     //RegistratoreSQL
     REGISTRA_CONFIGURATORE("INSERT into `dbingesw`.`configuratore` (`Nickname`,`Password`, `Salt`) VALUES (?,?,?)"),
     REGISTRA_VOLONTARIO("INSERT into `dbingesw`.`volontario` (`Nickname`,`Password`, `Salt`) VALUES (?,?,?)"),
+    REGISTRA_FRUITORE("INSERT into `dbingesw`.`fruitori` (`Nickname`,`Password`, `Salt`) VALUES (?,?,?)"),
     REGISTRA_LUOGO("INSERT into `dbingesw`.`luogo` (`Nome`,`Descrizione`, `Indirizzo`) VALUES (?,?,?)"),
     REGISTRA_VISITA_ARCHIVIO("INSERT INTO `dbingesw`.`archivio visite attive` (`Codice Archivio`, `Stato Visita`, `Tipo di Visita`,`Volontario Selezionato`, `Data programmata`) VALUES (generaChiaveArchivio(), 'proponibile', ?, ?, ?);"),
     REGISTRA_TIPO_VISITA ("INSERT INTO `dbingesw`.`tipo di visita` (`Codice Tipo di Visita`,`Punto di Incontro`,`Titolo`,`Descrizione`,`Giorno di Inizio (periodo anno)`,`Giorno di Fine (periodo anno)`,`Ora di inizio`,`Durata`,`Necessita Biglietto`,`Min Partecipanti`,`Max Partecipanti`,`Configuratore referente`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)"),
@@ -31,6 +34,10 @@ public enum Queries {
     RIMUOVI_VOLONTARIO("DELETE FROM `dbingesw`.`volontario` WHERE Nickname = ?"),
     RIMUOVI_TIPO_DI_VISITA("DELETE FROM `dbingesw`.`tipo di visita` WHERE Titolo = ?"), //se ci sono due visite omonime le elmina entrambe non essendo chiave primaria
     REGISTRA_ISTANZA_VISITA("INSERT INTO `dbingesw`.`archivio visite attive` (`Codice Archivio`, `Stato Visita`, `Tipo di Visita`, `Volontario Selezionato`, `Data programmata`) VALUES (?,?,?,?,?)"),
+    OTTENI_INFO_PRE_ISCRIZIONE("SELECT `Max Partecipanti`, `Stato Visita`, SUM(`Numero iscritti`) AS partecipanti FROM dbingesw.`archivio visite attive` as av JOIN dbingesw.`tipo di visita` as tdv ON av.`Tipo di Visita` = tdv.`Codice Tipo di Visita` JOIN dbingesw.`fruitori iscritti alle visite` as fi ON fi.`Visita iscritta` = av.`Codice Archivio` WHERE `Codice Archivio` = ? GROUP BY `Visita iscritta`"),
+    REGISTRA_ISCRIZIONE("INSERT INTO `dbingesw`.`fruitori iscritti alle visite` (`Fruitore`, `Visita iscritta`, `Codice prenotazione`, `Numero iscritti`) VALUES (?,?,?,?)"),
+    OTTENI_INFO_ISCRIZIONE("SELECT * FROM dbingesw.`fruitori iscritti alle visite` WHERE `Visita iscritta` = ? AND Fruitore = ?"),
+    RIMUOVI_ISCRIZIONE("DELETE FROM dbingesw.`fruitori iscritti alle visite` WHERE `Codice prenotazione` = ?"),
 
     //XMLDateDisponibili
     GIORNI_POSSIBILI_VOLONTARIO("SELECT `Codice Tipo di Visita`, `Giorno di Inizio (periodo anno)`, `Giorno di Fine (periodo anno)`, `Giorno della Settimana` FROM dbingesw.`tipo di visita` AS tpv JOIN dbingesw.`volontari disponibili` AS vd ON tpv.`Codice Tipo di Visita` = vd.`Tipo di Visita` JOIN dbingesw.`giorni programmabili delle visite` AS gpv ON tpv.`Codice Tipo di Visita` = gpv.`Tipo di Visita` WHERE vd.`Volontario Nickname` = ? ORDER BY `Codice Tipo di Visita`"),

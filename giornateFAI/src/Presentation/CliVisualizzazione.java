@@ -130,4 +130,12 @@ public class CliVisualizzazione {
         System.out.println("Perciò questa azione è bloccata fino a che la configurazione non sarà completata");
     }
 
+	public static void VisualizzaCodiceIscrizione(String codice) {
+		System.out.println("Il codice di iscrizione è: " + codice);
+        System.out.println("Puoi usarlo per disiscriverti in un secondo momento");
+        System.out.println("Ti verrà chiesto di inserirlo al momento di inizio della visita e non potrai recuperarlo dalla piattaforma, quindi annotatelo bene!");
+        CliInput.invioPerContinuare();
+        pulisciSchermo();
+	}
+
 }

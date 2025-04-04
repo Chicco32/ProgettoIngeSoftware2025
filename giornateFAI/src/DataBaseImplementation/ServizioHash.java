@@ -17,4 +17,9 @@ public class ServizioHash {
 	public static boolean passwordValida(String passwordInserita, String passwordSalvata) {
 		return BCrypt.checkpw(passwordInserita, passwordSalvata);
 	}
+
+    public static String generaCodice(String dati) {
+        String salt = BCrypt.gensalt(15);
+        return BCrypt.hashpw(dati, salt);
+    }
 }

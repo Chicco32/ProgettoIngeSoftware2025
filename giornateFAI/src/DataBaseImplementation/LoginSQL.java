@@ -47,7 +47,8 @@ public class LoginSQL implements Login {
 
     private static final Map<Class<? extends Utente>, Queries> accessi = Map.of(
         Configuratore.class, Queries.PASSWORD_ACCESSO_CONFIGURATORE,
-        Volontario.class, Queries.PASSWORD_ACCESSO_VOLONTARIO
+        Volontario.class, Queries.PASSWORD_ACCESSO_VOLONTARIO,
+        Fruitore.class, Queries.PASSWORD_ACCESSO_FRUITORE
     );
 
     public Utente loginUtente(String nickname, String passwordInserita) throws Eccezioni.DBConnectionException {
@@ -55,7 +56,7 @@ public class LoginSQL implements Login {
         if (connection == null) throw new Eccezioni.DBConnectionException("Connesisone non riuscita", new SQLException());
         //prima controllo se non è un nuovo fruitore che tenta di iscriversi
         if (nickname.equals(defaultNicknameFruitore)) {
-            return new Configuratore(true, defaultNicknameAdmin, servizi);
+            return new Fruitore(true, defaultNicknameAdmin, servizi);
         }
 
         //prima un controllo sulle credenziali di default
@@ -76,7 +77,7 @@ public class LoginSQL implements Login {
                 return new Volontario(primoAccesso, nickname, servizi);
             }
             //Fruitore:
-            else if (presenteNelDB(nickname, passwordInserita, Queries.PASSWORD_ACCESSO_VOLONTARIO)) {
+            else if (presenteNelDB(nickname, passwordInserita, accessi.get(Fruitore.class))) {
                 return new Fruitore(primoAccesso, nickname, servizi);
             }
         } catch (SQLException e) {
@@ -163,7 +164,7 @@ public class LoginSQL implements Login {
         }
     }
 
-    public boolean registraNuovoVolontario(DTObject fruitore) throws DBConnectionException {
+    public boolean registraNuovoFruitore(DTObject fruitore) throws DBConnectionException {
         //in nmaniera trasparente all'utente aggiunge i layer di sicurezza
         ServizioHash.cifraPassword(fruitore);
         String nickname = (String)fruitore.getValoreCampo("Nickname");

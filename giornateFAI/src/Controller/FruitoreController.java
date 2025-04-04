@@ -28,7 +28,7 @@ public class FruitoreController implements UtenteController {
 
 
 	public void registrati(Login login) {
-		CliNotifiche.avvisa(CliNotifiche.BENVENUTO_NUOVO_VOLONTARIO);
+		CliNotifiche.avvisa(CliNotifiche.BENVENUTO_NUOVO_FRUITORE);
         boolean registrato = false;
         try {
 
@@ -36,12 +36,12 @@ public class FruitoreController implements UtenteController {
                 String nickname = CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_NICKNAME, CliInput.MAX_CARATTERI_NICKNAME);
                 if (model.getRegistratoreIscrizioni().nomeUtenteUnivoco(nickname)) {
 					model.setNickname(nickname);
-                    DTObject dati = new Tupla("Volontario", Tupla.FORMATO_UTENTE);
+                    DTObject dati = new Tupla("Fruitore", Tupla.FORMATO_UTENTE);
                     dati.impostaValore(nickname, "Nickname");
                     dati.impostaValore(CliInput.chiediConLunghezzaMax(
                         CliVisualizzazione.VARIABILE_PASSWORD, CliInput.MAX_CARATTERI_PASSWORD), "Password");
-                    registrato = login.registraNuovoVolontario(dati);
-                    if (registrato) CliNotifiche.avvisa(CliNotifiche.VOLONTARIO_CORRETTAMENTE_REGISTRATO);
+                    registrato = login.registraNuovoFruitore(dati);
+                    if (registrato) CliNotifiche.avvisa(CliNotifiche.FRUITORE_CORRETTAMENTE_REGISTRATO);
                 }
                 else CliNotifiche.avvisa(CliNotifiche.NICKNAME_GIA_USATO);
 
@@ -97,7 +97,7 @@ public class FruitoreController implements UtenteController {
 
 	private void visualizzaVisiteCancellate() {
 		try {
-			model.getVisualizzatore().VisualizzaIstanzeCancellate(model.getNickname());
+			CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().VisualizzaIstanzeCancellate(model.getNickname()), "Visite cancellate");
 		} catch (DBConnectionException e) {
 			CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
 		}
@@ -120,8 +120,9 @@ public class FruitoreController implements UtenteController {
 					CliNotifiche.avvisa(CliNotifiche.ERRORE_NUMERO_PARTECIPANTI);
 				}
 			} while (numPartecipanti <= maxIscrivibili);
-			model.getRegistratoreIscrizioni().iscrivitiVisita(codiceIstanza, model.getNickname(), numPartecipanti);
+			String codice = model.getRegistratoreIscrizioni().iscrivitiVisita(codiceIstanza, model.getNickname(), numPartecipanti);
 			CliNotifiche.avvisa(CliNotifiche.VISITA_CORRETTAMENTE_REGISTRATA);
+			CliVisualizzazione.VisualizzaCodiceIscrizione(codice);
 		} catch (DBConnectionException e) {
 			CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
 		} catch (Eccezioni.IscrizioneImpossibileException e) {

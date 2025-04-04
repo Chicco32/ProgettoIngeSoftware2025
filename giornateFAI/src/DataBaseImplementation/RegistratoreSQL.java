@@ -264,18 +264,70 @@ public class RegistratoreSQL implements Registratore, RegistratoreIscrizioni{
         }
     }
 
-    @Override
     public String iscrivitiVisita(int codiceIstanza, String nickname, int numPartecipanti)
-            throws DBConnectionException, IscrizioneImpossibileException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'iscrivitiVisita'");
+     throws DBConnectionException, IscrizioneImpossibileException {
+        
+        int partecipantiAttuali, maxPartecipanti = 0;
+
+        //prima otteniamo le informazioni sulla vista
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.OTTENI_INFO_PRE_ISCRIZIONE.getQuery())) {
+            stmt.setInt(1, codiceIstanza);
+            ResultSet info = stmt.executeQuery();
+            if (!info.next() || !info.getString("Stato Visita").equals("proposta")) {
+                throw new IscrizioneImpossibileException("Visita non trovata", null);
+            }
+
+            //poi controllo se il numero di partecipanti è valido
+            partecipantiAttuali = info.getInt("partecipanti");
+            maxPartecipanti = info.getInt("maxPartecipanti");
+            if (partecipantiAttuali + numPartecipanti > maxPartecipanti) {
+                throw new IscrizioneImpossibileException("Numero di partecipanti massimo superato", null);
+            }
+        } catch (SQLException e) {
+            throw new DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+
+        //se non ci sono problemi di iscrizione procedo a registrare l'iscrizione
+        String codiceIscrizone = ServizioHash.generaCodice(codiceIstanza + nickname);
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.REGISTRA_ISCRIZIONE.getQuery())) {
+            stmt.setString(1, nickname);
+            stmt.setInt(2, codiceIstanza);
+            stmt.setString(3, codiceIscrizone);
+            stmt.setInt(4, numPartecipanti);
+            stmt.executeUpdate();
+            return codiceIscrizone;
+        } catch (SQLException e) {
+            throw new DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
     }
 
-    @Override
-    public boolean rimuoviIscrizioneVisita(int codiceIstanza, String nickname, String CodiceIscrizione)
-            throws DBConnectionException, RimozioneIscrizioneImpossibileException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'rimuoviIscrizioneVisita'");
+    public boolean rimuoviIscrizioneVisita(int codiceIstanza, String nickname, String codiceIscrizione)
+     throws DBConnectionException, RimozioneIscrizioneImpossibileException {
+
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.OTTENI_INFO_ISCRIZIONE.getQuery())) {
+            stmt.setInt(1, codiceIstanza);
+            stmt.setString(2, nickname);
+            ResultSet info = stmt.executeQuery();
+            if (!info.next() || info.getString("Stato Visita").equals("confermata")) {
+                throw new RimozioneIscrizioneImpossibileException("Visita non trovata", null);
+            }
+
+            //poi controllo se il numero di partecipanti è valido
+            if (!ServizioHash.passwordValida(info.getString("Codice prenotazione"), codiceIscrizione)) {
+                throw new RimozioneIscrizioneImpossibileException("Codice di iscrizione non valido", null);
+            }
+        } catch (SQLException e) {
+            throw new DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.RIMUOVI_ISCRIZIONE.getQuery())) {
+            stmt.setString(1, codiceIscrizione);
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            throw new DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+
     }
 
 

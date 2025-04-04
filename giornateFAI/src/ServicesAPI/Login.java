@@ -63,6 +63,6 @@ public interface Login {
      * @return lo stato della registrazione, true se è andata a buon fine, false altrimenti
      * @throws DBConnectionException In caso di errore di connessione al database.
      */
-	public boolean registraNuovoVolontario(DTObject dati) throws Eccezioni.DBConnectionException;
+	public boolean registraNuovoFruitore(DTObject dati) throws Eccezioni.DBConnectionException;
 
 }

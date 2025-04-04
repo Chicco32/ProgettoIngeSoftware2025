@@ -190,22 +190,27 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
         return traduciTabella(eseguiQuery(Queries.GIORNI_POSSIBILI_VISITA));
     }
 
-    @Override
     public DTObject[] VisualizzaIstanzeVisiteDisponibili() throws DBConnectionException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'VisualizzaIstanzeVisiteDisponibili'");
+        return traduciTabella(eseguiQuery(Queries.ISTANZE_VISITE_DISPONIBILI));
+    }
+
+    public DTObject[] VisualizzaIstanzeIscritte(String volontarioAssociato) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.VISUALIZZA_ISTANZE_ISCRITTO.getQuery())) {
+            stmt.setString(1, volontarioAssociato);
+            return traduciTabella(stmt.executeQuery());
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
     }
 
     @Override
-    public DTObject[] VisualizzaIstanzeIscritte(String nickname) throws DBConnectionException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'VisualizzaIstanzeIscritte'");
-    }
-
-    @Override
-    public DTObject[] VisualizzaIstanzeCancellate(String nickname) throws DBConnectionException {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'VisualizzaIstanzeCancellate'");
+    public DTObject[] VisualizzaIstanzeCancellate(String volontarioAssociato) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.VISUALIZZA_ISTANZE_CANCELLATE.getQuery())) {
+            stmt.setString(1, volontarioAssociato);
+            return traduciTabella(stmt.executeQuery());
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
     }
     
 }
