@@ -85,9 +85,11 @@ public class RegistroDateDisponibili extends RegistroDate {
 		}catch(IllegalArgumentException e){
 			e.printStackTrace();
 		}
+		return null;
 	}
 	
-	public void cancellaDate(DateRange periodo){
+	public void cancellaDate(DateRange periodo,String nome){
+		caricaDateDisponibili(nome);
 		ArrayList<Date> aux=new ArrayList<Date>();
 		ArrayList<Date> toRem=new ArrayList<Date>();
 		aux.addAll(Arrays.asList(dateDisponibili));
@@ -95,6 +97,12 @@ public class RegistroDateDisponibili extends RegistroDate {
 			if(periodo.insideRange(data))toRem.add(data);
 		}
 		aux.removeAll(toRem);
+		dateDisponibili=aux.toArray(new Date[0]);
+		try{
+			fileManager.registraDateDisponibili(new Calendario().getTime(), dateDisponibili,nome);
+		}catch(Exception e){
+			System.out.println("Errore nella cancellazione delle date disponibili");
+		}
 	}
 
 	/**
