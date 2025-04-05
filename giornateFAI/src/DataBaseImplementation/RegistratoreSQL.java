@@ -273,13 +273,10 @@ public class RegistratoreSQL implements Registratore, RegistratoreIscrizioni{
         try (PreparedStatement stmt = connection.prepareStatement(Queries.OTTENI_INFO_PRE_ISCRIZIONE.getQuery())) {
             stmt.setInt(1, codiceIstanza);
             ResultSet info = stmt.executeQuery();
-            if (!info.next() || !info.getString("Stato Visita").equals("proposta")) {
-                throw new IscrizioneImpossibileException("Visita non trovata", null);
-            }
-
             //poi controllo se il numero di partecipanti è valido
+            if (!info.next()) throw new IscrizioneImpossibileException("VIsista non trovata", null);;
             partecipantiAttuali = info.getInt("partecipanti");
-            maxPartecipanti = info.getInt("maxPartecipanti");
+            maxPartecipanti = info.getInt("Max Partecipanti");
             if (partecipantiAttuali + numPartecipanti > maxPartecipanti) {
                 throw new IscrizioneImpossibileException("Numero di partecipanti massimo superato", null);
             }
@@ -308,12 +305,14 @@ public class RegistratoreSQL implements Registratore, RegistratoreIscrizioni{
             stmt.setInt(1, codiceIstanza);
             stmt.setString(2, nickname);
             ResultSet info = stmt.executeQuery();
-            if (!info.next() || info.getString("Stato Visita").equals("confermata")) {
-                throw new RimozioneIscrizioneImpossibileException("Visita non trovata", null);
+            if(!info.next()) throw new RimozioneIscrizioneImpossibileException("Visita non trovata", null);
+            else if (info.getString("Stato Visita").equals("confermata")) {
+                throw new RimozioneIscrizioneImpossibileException("Non puoi più rimuovere questa iscrizione", null);
             }
 
             //poi controllo se il numero di partecipanti è valido
-            if (!ServizioHash.passwordValida(info.getString("Codice prenotazione"), codiceIscrizione)) {
+            String codiceSalvato = info.getString("Codice prenotazione");
+            if (!codiceIscrizione.equals(codiceSalvato)) {
                 throw new RimozioneIscrizioneImpossibileException("Codice di iscrizione non valido", null);
             }
         } catch (SQLException e) {

@@ -10,10 +10,11 @@ public interface VisualizzatoreFruitore {
 	 * <li> 'Confermata' </li>
 	 * </ul>
 	 * la funzione non filtra sulle visite su cui il fruitore è già iscritto.
+	 * @param nickname il nickname del fruitore su cui filtrare la ricerca
 	 * @return  Un oggetto di tipo {@code DTObject} che contiene le visite disponibili
 	 * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database
 	 */
-	public DTObject[] VisualizzaIstanzeVisiteDisponibili() throws Eccezioni.DBConnectionException;
+	public DTObject[] VisualizzaIstanzeVisiteDisponibili(String nickname) throws Eccezioni.DBConnectionException;
 
 	/**
 	 * Visualizza le istanze di visita a cui il fruitore è iscritto.

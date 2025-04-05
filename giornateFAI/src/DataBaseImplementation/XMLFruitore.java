@@ -10,10 +10,9 @@ public class XMLFruitore extends XMLManager implements GestoreFruitore {
 		super(path);
 	}
 
-	@Override
+	
 	public int getMaxNumeroPartecipantiIscrizione() throws FileNotFoundException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'getMaxNumeroPartecipantiIscrizione'");
+		return Integer.parseInt(this.leggiVariabile(GestoreFruitore.MAX_PARTECIPANTI));
 	}
 
 }

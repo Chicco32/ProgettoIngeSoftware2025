@@ -81,7 +81,7 @@ public class FruitoreController implements UtenteController {
 
 	private void visualizzaVisiteDisponibili() {
 		try {
-			CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().VisualizzaIstanzeVisiteDisponibili(), "Visite DIsponibili");
+			CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().VisualizzaIstanzeVisiteDisponibili(model.getNickname()), "Visite DIsponibili");
 		} catch (DBConnectionException e) {
 			CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
 		}
@@ -109,17 +109,17 @@ public class FruitoreController implements UtenteController {
 		int maxIscrivibili, numPartecipanti;
 		try {
 			maxIscrivibili = model.getMaxPartecipanti(); 
-			DTObject[] istanze = model.getVisualizzatore().VisualizzaIstanzeVisiteDisponibili();
+			DTObject[] istanze = model.getVisualizzatore().VisualizzaIstanzeVisiteDisponibili(model.getNickname());
 			CliVisualizzazione.visualizzaRisultati(istanze, "Visite Disponibili");
 			boolean indietro = CliInput.tornareIndietro();
-			if (indietro) return;
+			if (indietro || istanze.length == 0) return;
 			int codiceIstanza = CliInput.selezionaIstanza(istanze);
 			do {
 				numPartecipanti = CliInput.inserimentoPartecipantiVisita(1, "");
 				if (numPartecipanti > maxIscrivibili) {
 					CliNotifiche.avvisa(CliNotifiche.ERRORE_NUMERO_PARTECIPANTI);
 				}
-			} while (numPartecipanti <= maxIscrivibili);
+			} while (numPartecipanti > maxIscrivibili);
 			String codice = model.getRegistratoreIscrizioni().iscrivitiVisita(codiceIstanza, model.getNickname(), numPartecipanti);
 			CliNotifiche.avvisa(CliNotifiche.VISITA_CORRETTAMENTE_REGISTRATA);
 			CliVisualizzazione.VisualizzaCodiceIscrizione(codice);
@@ -127,6 +127,7 @@ public class FruitoreController implements UtenteController {
 			CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
 		} catch (Eccezioni.IscrizioneImpossibileException e) {
 			CliNotifiche.avvisa(CliNotifiche.ISCRIZIONE_IMPOSSIBILE);
+			CliInput.invioPerContinuare();
 		}
 		
 	}
@@ -138,7 +139,7 @@ public class FruitoreController implements UtenteController {
 			DTObject[] istanze = model.getVisualizzatore().VisualizzaIstanzeIscritte(model.getNickname());
 			CliVisualizzazione.visualizzaRisultati(istanze, "Iscrizioni fatte");
 			boolean indietro = CliInput.tornareIndietro();
-			if (indietro) return;
+			if (indietro || istanze.length == 0) return;
 			int codiceIstanza = CliInput.selezionaIstanza(istanze);
 			String codiceIscrizione = CliInput.chiediConConferma("Codice di iscrizione");
 			model.getRegistratoreIscrizioni().rimuoviIscrizioneVisita(codiceIstanza, model.getNickname(), codiceIscrizione);
@@ -147,6 +148,7 @@ public class FruitoreController implements UtenteController {
 			CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
 		} catch (Eccezioni.RimozioneIscrizioneImpossibileException e) {
 			CliNotifiche.avvisa(CliNotifiche.RIMOZIONE_IMPOSSIBILE);
+			CliInput.invioPerContinuare();
 		}
 		
 	}

@@ -28,7 +28,7 @@ public class Fruitore extends Utente {
 		try {
             // Carica i dati di default dal file
             if (GestoreFilesConfigurazione.fileExists(fileManager.getPath())) {
-                this.maxPartecipanti = Integer.parseInt(fileManager.leggiVariabile(GestoreFruitore.MAX_PARTECIPANTI));
+                this.maxPartecipanti = fileManager.getMaxNumeroPartecipantiIscrizione();
             }
             //avvia la creazione di un nuovo file default
             else {

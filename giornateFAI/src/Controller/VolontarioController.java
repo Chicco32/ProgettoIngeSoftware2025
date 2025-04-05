@@ -10,9 +10,11 @@ import Presentation.CliInput;
 import Presentation.CliNotifiche;
 import Presentation.CliVisualizzazione;
 import ServicesAPI.DTObject;
+import ServicesAPI.Eccezioni;
 import ServicesAPI.Login;
 import ServicesAPI.RegistroDateDisponibili;
 import ServicesAPI.Utente;
+import ServicesAPI.VisualizzatoreVolontario;
 import ServicesAPI.Volontario;
 import ServicesAPI.Eccezioni.ConfigFilesException;
 import ServicesAPI.Eccezioni.DBConnectionException;
@@ -62,7 +64,8 @@ public class VolontarioController implements UtenteController {
         //per nuove funzioni agigungere nuove righe
         Map<String, Runnable> actions = new LinkedHashMap<>();
         actions.put("Inserisci le disponibilità", this::inserisciDisponibilita);
-        actions.put("Visualizza visite a cui sei associato", this::visualizzaVisiteAssociate);  
+        actions.put("Visualizza visite a cui sei associato", this::visualizzaVisiteAssociate); 
+        actions.put("Visualizza lista Iscritti a una visita", this::vediListaIscritti); 
         actions.put("Esci",() -> System.exit(0));
 
         //genero dinamicamente il menu in base alle aizoni disponibili
@@ -97,8 +100,24 @@ public class VolontarioController implements UtenteController {
         CliVisualizzazione.barraIntestazione(aux);
         try {
             CliVisualizzazione.visualizzaRisultati(model.getVisualizzatore().visualizzaElenecoTipiDiVisiteAssociate(aux), "Visite Associate");
-        } catch (Exception e) {
+        } catch (DBConnectionException e) {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
+        }
+    }
+
+    private void vediListaIscritti() {
+        String name = model.getNickname();
+        CliVisualizzazione.barraIntestazione(name);
+        VisualizzatoreVolontario aux = model.getVisualizzatore();
+        try {
+            DTObject[] istanze = aux.visualizzaElencoIstanzeVolontario(name);
+            CliVisualizzazione.visualizzaRisultati(istanze, "Lista Iscrizioni");
+            if (istanze.length > 0) {
+                int codiceIscrizione = CliInput.selezionaIstanza(istanze);
+                CliVisualizzazione.visualizzaRisultati(aux.visualizzaElencoIscrittiIstanza(codiceIscrizione), "Lista Iscritti");
+            }
+        } catch (Eccezioni.DBConnectionException e) {
+            CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
         }
     }
 

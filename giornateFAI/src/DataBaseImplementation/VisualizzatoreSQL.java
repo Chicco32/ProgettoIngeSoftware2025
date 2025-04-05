@@ -190,12 +190,35 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
         return traduciTabella(eseguiQuery(Queries.GIORNI_POSSIBILI_VISITA));
     }
 
-    public DTObject[] VisualizzaIstanzeVisiteDisponibili() throws DBConnectionException {
-        return traduciTabella(eseguiQuery(Queries.ISTANZE_VISITE_DISPONIBILI));
+    public DTObject[] VisualizzaIstanzeVisiteDisponibili(String fruitoreAssociato) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.ISTANZE_VISITE_DISPONIBILI.getQuery())) {
+            stmt.setString(1, fruitoreAssociato);
+            return traduciTabella(stmt.executeQuery());
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
     }
 
-    public DTObject[] VisualizzaIstanzeIscritte(String volontarioAssociato) throws DBConnectionException {
+    public DTObject[] VisualizzaIstanzeIscritte(String fruitoreAssociato) throws DBConnectionException {
         try (PreparedStatement stmt = connection.prepareStatement(Queries.VISUALIZZA_ISTANZE_ISCRITTO.getQuery())) {
+            stmt.setString(1, fruitoreAssociato);
+            return traduciTabella(stmt.executeQuery());
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+    }
+
+    public DTObject[] VisualizzaIstanzeCancellate(String fruitoreAssociato) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.VISUALIZZA_ISTANZE_CANCELLATE.getQuery())) {
+            stmt.setString(1, fruitoreAssociato);
+            return traduciTabella(stmt.executeQuery());
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+    }
+
+    public DTObject[] visualizzaElencoIstanzeVolontario(String volontarioAssociato) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.VISUALIZZA_ISTANZE_VOLONTARIO.getQuery())) {
             stmt.setString(1, volontarioAssociato);
             return traduciTabella(stmt.executeQuery());
         } catch (SQLException e) {
@@ -203,10 +226,9 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
         }
     }
 
-    @Override
-    public DTObject[] VisualizzaIstanzeCancellate(String volontarioAssociato) throws DBConnectionException {
-        try (PreparedStatement stmt = connection.prepareStatement(Queries.VISUALIZZA_ISTANZE_CANCELLATE.getQuery())) {
-            stmt.setString(1, volontarioAssociato);
+    public DTObject[] visualizzaElencoIscrittiIstanza(int codiceIstanza) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.VISUALIZZA_ELENCO_ISCRITTI.getQuery())) {
+            stmt.setInt(1, codiceIstanza);
             return traduciTabella(stmt.executeQuery());
         } catch (SQLException e) {
             throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);

@@ -417,10 +417,11 @@ public class CliInput {
 	public static int selezionaIstanza(DTObject[] VisiteDisponibili) {
 
         while (true) {
-            int codiceArchivio = InputDati.leggiIntero("Inserisci il codice archivio della visita desiderata");
+            int codiceArchivio = InputDati.leggiIntero("Inserisci il codice archivio della visita desiderata: ");
 
             for (int i = 0; i < VisiteDisponibili.length; i++) {
-                if (VisiteDisponibili[i].getValoreCampo("codice archivio").equals(codiceArchivio)) {
+                if (VisiteDisponibili[i].getValoreCampo("Codice Archivio").equals(codiceArchivio)) {
+                    CliVisualizzazione.pulisciSchermo();
                     return codiceArchivio; // Ritorna l'indice della visita selezionata
                 }
             }
