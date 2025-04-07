@@ -37,7 +37,7 @@ public interface RegistratoreIscrizioni {
 	 * Permette di rimuovere un'iscrizione a una visita, in particolare questa funzione rimuove i dati dal DB riguardo l'iscrizione del fruitore.
 	 * Richiede come metro di controllo il codice di iscrizione del fruitore alla visita.
 	 * Questa funzione non controlla se l'iscrizione è già stata effettuata, ma lancia l'eccezione RimozioneIscrizioneImpossibileException in caso di errore.
-	 * Prima di rimuovere la visita la funzione controlla se il codice insertito
+	 * Prima di rimuovere la visita la funzione controlla se il codice inserito
 	 * corrisponde al codice di iscrizione del fruitore, in caso contrario lancia l'eccezione IscrizioneImpossibile.
 	 * Infine in caso di corretta rimozione ritorna true.
 	 * @param codiceIstanza il codice dell'istanza della visita a cui ci si vuole iscrivere

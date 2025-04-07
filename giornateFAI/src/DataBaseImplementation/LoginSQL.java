@@ -53,7 +53,7 @@ public class LoginSQL implements Login {
 
     public Utente loginUtente(String nickname, String passwordInserita) throws Eccezioni.DBConnectionException {
     
-        if (connection == null) throw new Eccezioni.DBConnectionException("Connesisone non riuscita", new SQLException());
+        if (connection == null) throw new Eccezioni.DBConnectionException("Connessione non riuscita", new SQLException());
         //prima controllo se non è un nuovo fruitore che tenta di iscriversi
         if (nickname.equals(defaultNicknameFruitore)) {
             return new Fruitore(true, defaultNicknameAdmin, servizi);
@@ -128,7 +128,7 @@ public class LoginSQL implements Login {
     );
 
     public boolean cambioPassword(DTObject dati, String ruolo) throws Eccezioni.DBConnectionException {
-        //in nmaniera trasparente all'utente aggiunge i layer di sicurezza
+        //in maniera trasparente all'utente aggiunge i layer di sicurezza
         ServizioHash.cifraPassword(dati);
         String nickname = (String)dati.getValoreCampo("Nickname");
         String password = (String)dati.getValoreCampo("Password");
@@ -147,7 +147,7 @@ public class LoginSQL implements Login {
     }
 
     public boolean registraNuovoConfiguratore(DTObject configuratore) throws Eccezioni.DBConnectionException {
-        //in nmaniera trasparente all'utente aggiunge i layer di sicurezza
+        //in maniera trasparente all'utente aggiunge i layer di sicurezza
         ServizioHash.cifraPassword(configuratore);
         String nickname = (String)configuratore.getValoreCampo("Nickname");
         String password = (String)configuratore.getValoreCampo("Password");
@@ -165,7 +165,7 @@ public class LoginSQL implements Login {
     }
 
     public boolean registraNuovoFruitore(DTObject fruitore) throws DBConnectionException {
-        //in nmaniera trasparente all'utente aggiunge i layer di sicurezza
+        //in maniera trasparente all'utente aggiunge i layer di sicurezza
         ServizioHash.cifraPassword(fruitore);
         String nickname = (String)fruitore.getValoreCampo("Nickname");
         String password = (String)fruitore.getValoreCampo("Password");

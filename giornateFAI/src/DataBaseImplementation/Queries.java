@@ -34,7 +34,7 @@ public enum Queries {
     ELIMINA_DATI_ORFANI("CALL dbingesw.EliminaDatiOrfani()"),
     RIMUOVI_LUOGO("DELETE FROM `dbingesw`.`luogo` WHERE Nome = ?"),
     RIMUOVI_VOLONTARIO("DELETE FROM `dbingesw`.`volontario` WHERE Nickname = ?"),
-    RIMUOVI_TIPO_DI_VISITA("DELETE FROM `dbingesw`.`tipo di visita` WHERE Titolo = ?"), //se ci sono due visite omonime le elmina entrambe non essendo chiave primaria
+    RIMUOVI_TIPO_DI_VISITA("DELETE FROM `dbingesw`.`tipo di visita` WHERE Titolo = ?"), //se ci sono due visite omonime le elimina entrambe non essendo chiave primaria
     REGISTRA_ISTANZA_VISITA("INSERT INTO `dbingesw`.`archivio visite attive` (`Codice Archivio`, `Stato Visita`, `Tipo di Visita`, `Volontario Selezionato`, `Data programmata`) VALUES (?,?,?,?,?)"),
     OTTENI_INFO_PRE_ISCRIZIONE("SELECT `Max Partecipanti`, `Stato Visita`, COALESCE(SUM(`Numero iscritti`), 0) AS partecipanti FROM dbingesw.`archivio visite attive` as av JOIN dbingesw.`tipo di visita` as tdv ON av.`Tipo di Visita` = tdv.`Codice Tipo di Visita` LEFT JOIN dbingesw.`fruitori iscritti alle visite` as fi ON fi.`Visita iscritta` = av.`Codice Archivio` WHERE `Codice Archivio` = ? GROUP BY `Visita iscritta`"),
     REGISTRA_ISCRIZIONE("INSERT INTO `dbingesw`.`fruitori iscritti alle visite` (`Fruitore`, `Visita iscritta`, `Codice prenotazione`, `Numero iscritti`) VALUES (?,?,?,?)"),

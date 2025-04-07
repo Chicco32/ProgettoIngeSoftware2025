@@ -61,14 +61,14 @@ public class VolontarioController implements UtenteController {
         
         CliVisualizzazione.ingressoBackendVolontario();
 
-        //per nuove funzioni agigungere nuove righe
+        //per nuove funzioni aggiungere nuove righe
         Map<String, Runnable> actions = new LinkedHashMap<>();
         actions.put("Inserisci le disponibilità", this::inserisciDisponibilita);
         actions.put("Visualizza visite a cui sei associato", this::visualizzaVisiteAssociate); 
         actions.put("Visualizza lista Iscritti a una visita", this::vediListaIscritti); 
         actions.put("Esci",() -> System.exit(0));
 
-        //genero dinamicamente il menu in base alle aizoni disponibili
+        //genero dinamicamente il menu in base alle azioni disponibili
         String[] opzioniConfiguratore = actions.keySet().toArray(new String[0]);
 
         while (true) {

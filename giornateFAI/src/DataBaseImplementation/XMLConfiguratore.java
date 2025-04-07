@@ -7,8 +7,8 @@ import ServicesAPI.GestoreFilesConfigurazione;
 
 /**
  * Classe implementativa di XMLManager specifica per questo programma. Esso
- * cerca i file di configuraizone richiesti e li mostra all'applicazione.
- * In particolare implementa la verisone XML dei metodi richiesti da Gestore
+ * cerca i file di configurazione richiesti e li mostra all'applicazione.
+ * In particolare implementa la versione XML dei metodi richiesti da Gestore
  * File di configurazione e per farlo si appoggia sulla creazione di
  * oggetti di lettura e scrittura xml forniti da XMLManager
  * 

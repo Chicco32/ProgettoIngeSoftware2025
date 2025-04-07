@@ -18,7 +18,7 @@ public interface VisualizzatoreConfiguratore {
 
     /**
      * Controlla se ci sono luoghi registrati per avviare la procedura di popolamento del DB
-     * @return true se non sono saalvati nessun luogo, false altrimenti
+     * @return true se non sono salvati nessun luogo, false altrimenti
      * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database
      */
     public boolean nonCisonoLuoghiRegistrati() throws Eccezioni.DBConnectionException;
@@ -62,8 +62,8 @@ public interface VisualizzatoreConfiguratore {
     public DTObject[] estraiDOWPossibiliVolontario(String volontarioAssociato) throws Eccezioni.DBConnectionException;
 
     /**
-     * Funzione che estrae le coppie di volontari e i tipi di visite asscoiati ad ognuno di essi per poter ricostruire 
-     * le associazioni durante la creaiozne del piano delle visite. Idealmente questo metodo dovrbbe essere
+     * Funzione che estrae le coppie di volontari e i tipi di visite associati ad ognuno di essi per poter ricostruire 
+     * le associazioni durante la creazione del piano delle visite. Idealmente questo metodo dovrebbe essere
      * utilizzato solo dal Planner delle visite
      * @return un {@code DTObject} contente le coppie
      * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database
@@ -72,8 +72,8 @@ public interface VisualizzatoreConfiguratore {
     public DTObject[] estraiTipiDiVisiteVolontario() throws Eccezioni.DBConnectionException;
 
     /**
-     * Funzione che estrae le coppie di giorni della setitmana e i tipi di visite asscoiati ad ognuno di essi per poter ricostruire 
-     * le associazioni durante la creazione del piano delle visite. Idealmente questo metodo dovrbbe essere
+     * Funzione che estrae le coppie di giorni della settimana e i tipi di visite associati ad ognuno di essi per poter ricostruire 
+     * le associazioni durante la creazione del piano delle visite. Idealmente questo metodo dovrebbe essere
      * utilizzato solo dal Planner delle visite
      * @return un {@code DTObject} contente le coppie
      * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database

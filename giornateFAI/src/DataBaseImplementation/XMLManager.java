@@ -15,7 +15,7 @@ import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Classe per la gestione dei file XML, provvede gli strumenti per la lettura e la scrittura di file XML
- * e per la gestione dei file stessi. Per usare la libreria anzichè interagire direttamente con il file XML
+ * e per la gestione dei file stessi. Per usare la libreria anziché interagire direttamente con il file XML
  * si interagisce con questa classe che si occuperà di gestire i dati contenuti in esso.
  */
 public class XMLManager{
@@ -31,9 +31,9 @@ public class XMLManager{
 
 
     /**
-     * Costruttore del XMLManager. Per utilizzare le funzioni di lettura e scrittura del manager bisogna istanziare un oggetto managaer che
-     * si concentra sul path inserito.
-     * @param path il percorso del file a da modificare
+     * Costruttore del XMLManager. Per utilizzare le funzioni di lettura e scrittura del manager bisogna istanza un oggetto della classe 
+     * che salverà il percorso del file a cui esso fa riferimento.
+     * @param path il percorso del file da modificare o leggere
      */
     public XMLManager (String path) {
         this.path = path;
@@ -60,7 +60,7 @@ public class XMLManager{
 
 
     /**
-     * Inizializza un writer per il file XML. Attenzione che esso evoca la sovrascrittutra del file, perciò
+     * Inizializza un writer per il file XML. Attenzione che esso evoca la sovrascrittura del file, perciò
      * deve essere invocato solo appena è necessaria la scrittura del file
      * @param path il percorso del file XML
      */
@@ -132,7 +132,7 @@ public class XMLManager{
     /**
      * Legge una variabile da un file XML sapendone il tag associato.
      * Questo metodo permette di leggere solo un valore e funziona solo se di quel tag c'è una sola occorrenza
-     * altrmenti legge la prima occorrenza disponibile nel file.
+     * altrimenti legge la prima occorrenza disponibile nel file.
      * @param path il percorso del file XML
      * @param tag il tag associato alla variabile da leggere
      * @return Il valore della variabile letta nel file XML

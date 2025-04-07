@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 /**
  * Interfaccia Repository per la gestione dei files di configurazione dei servizi di cui ha bisogno il configuratore.
  * Questa interfaccia dovrebbe essere implementata da un gestore di lettura e scrittura di dati per poter permettere
- * l'accesso persistente ai dati di configuraizone come la zona di competenza della società al programma. 
+ * l'accesso persistente ai dati di configurazione come la zona di competenza della società al programma. 
  * In particolare questa interfaccia estende le funzionalità di GestoreFilesConfigurazione per la gestione generica dei file di configurazione.
  * 
  * @see GestoreFilesConfigurazione

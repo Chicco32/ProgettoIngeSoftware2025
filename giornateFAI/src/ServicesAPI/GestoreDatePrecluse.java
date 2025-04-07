@@ -7,7 +7,7 @@ import java.util.Date;
  * Interfaccia Repository per la gestione delle date precluse.
  * Questa interfaccia dovrebbe essere implementata da un gestore di lettura e scrittura di dati per poter permettere
  * l'accesso persistente alle date precluse del programma. 
- * In particolare questa inerfaccia estende le funzionalità di GestoreFilesConfigurazione per la gestione generica dei file di configurazione..
+ * In particolare questa interfaccia estende le funzionalità di GestoreFilesConfigurazione per la gestione generica dei file di configurazione..
  * 
  * @see GestoreFilesConfigurazione
  */

@@ -15,8 +15,8 @@ public class Configuratore extends Utente {
     private int maxPartecipanti;
 
     /**
-     * Crea un nuovo utente di tipo configuratore. Il configuratore ha piu permessi rispoetto all'utente normale in quanto
-     * possiede il dirtitto  di registrare le informazioni. Richiede percio l'accesso sia al visulaizzatore che al registratore
+     * Crea un nuovo utente di tipo configuratore. Il configuratore ha piu permessi rispetto all'utente normale in quanto
+     * possiede il diritto  di registrare le informazioni. Richiede percio l'accesso sia al visualizzatore che al registratore
      * @param PrimoAccesso se è la prima volta che accede e che quindi dovrà registrarsi
      * @param nickname il nickname da usare in futuro per riferirsi all'utente
      * @param visualizzatore l'implementazione dell'API {@code VisualizzatoreConfiguratore}
@@ -88,7 +88,7 @@ public class Configuratore extends Utente {
      * Modifica l'area di competenza della società, Ogni volta che viene invocata questa funzione viene anche scritta nel file
      * di default. Puo' essere modificata solo da un Configuratore.
      * Può essere invocata la prima volta per settare il primo valore  in caso non fosse ancora inserito.
-     * @param areaCompetenza la nuova area di competenza in cui adopera la società che riguardeà i luoghi da inserire.
+     * @param areaCompetenza la nuova area di competenza in cui adopera la società che riguarderà i luoghi da inserire.
      * @throws ConfigFilesException In caso di errore di scrittura del file di configurazione.
      */
     public void modificaAreaCompetenza(String areaCompetenza) throws Eccezioni.ConfigFilesException {
@@ -105,7 +105,7 @@ public class Configuratore extends Utente {
      * Modifica il max numero di partecipanti che possono essere iscritti. Ogni volta che viene invocata questa funzione viene anche scritta nel file
      * di default. Puo' essere modificata solo da un Configuratore.
      * Può essere invocata la prima volta per settare il primo valore in caso non fosse ancora inserito.
-     * @param areaCompetenza la nuova area di competenza in cui adopera la società che riguardeà i luoghi da inserire.
+     * @param areaCompetenza la nuova area di competenza in cui adopera la società che riguarderà i luoghi da inserire.
      * @throws ConfigFilesException In caso di errore di scrittura del file di configurazione.
      */
     public void modificaMaxPartecipanti(int maxPartecipanti) throws Eccezioni.ConfigFilesException {

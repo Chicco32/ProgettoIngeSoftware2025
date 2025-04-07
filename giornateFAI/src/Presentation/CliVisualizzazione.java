@@ -56,8 +56,8 @@ public class CliVisualizzazione {
 
     /**
      * Funzione per stampare a video i dati di una qualche relazione in formato tabellare.
-     * In partcolare stampa ogni elemento {@code DtObject} della relazione in una riga della tabella.
-     * Prima di stamparne il contenutor stampa anche i nomi delle colonne.
+     * In particolare stampa ogni elemento {@code DtObject} della relazione in una riga della tabella.
+     * Prima di stamparne il contenuto stampa anche i nomi delle colonne.
      * @param results L'insieme di dati da stampare, in formato {@code DTObject[]}
      * @param tabella Il nome della tabella da stampare, che verrà visualizzato come titolo informativo.
      */
@@ -78,7 +78,7 @@ public class CliVisualizzazione {
                 //stampo i risultati
                 System.out.println(""); //per distanziare i dati dalla tabella
                 if (results != null) {
-                    for (int i = 0; i<results.length; i++) { //cicla per ogni riga della tabella
+                    for (int i = 0; i<results.length; i++) { //ciclo per ogni riga della tabella
                         for (int j = 0; j < numColonne; j++) { //stampa ogni elemento
                             System.out.print(results[i].getValoreCampo(colonne.get(j)) + "\t");
                         }
@@ -100,14 +100,14 @@ public class CliVisualizzazione {
         pulisciSchermo();        
     }
 
-    //Intestazione della pagina di rindirizzamento per l'inserimento di un certo tipo di dato
+    //Intestazione della pagina di reindirizzamento per l'inserimento di un certo tipo di dato
     public static void intestazionePaginaInserimento(String campo) {
         CliVisualizzazione.pulisciSchermo();
         System.out.println("Configuratore, questa è la pagina per l'inserimento di " + campo + " nel DB");
         System.out.println("Di seguito puoi riportare i dati su " + campo);
     }
     
-    //Intestazione della pagina di rindirizzamento per la rimozione di un certo tipo di dato
+    //Intestazione della pagina di reindirizzamento per la rimozione di un certo tipo di dato
     public static void intestazionePaginaRimozione(String campo) {
         CliVisualizzazione.pulisciSchermo();
         System.out.println("Configuratore, questa è la pagina per la rimozione di " + campo + " nel DB");
@@ -115,12 +115,12 @@ public class CliVisualizzazione {
     } 
 
     /**
-     * Avviso di rindirizzamento alla pagina di inserimento di un nuovo campo.
+     * Avviso di reindirizzamento alla pagina di inserimento di un nuovo campo.
      * @param campo il campo su cui si viene reindirizzati per l'inserimento
      * @param paginaCorrente la pagina su cui si trova al momento l'utente
      */
     public static void avvisaReindirizzamentoNuovoCampo(String campo, String paginaCorrente) {
-        System.out.println("Configuratore, per ogni nuovo " + paginaCorrente + " bisogna associare almeno un " + campo + ", verrai rindirizzato alla pagina per la registrazione"); 
+        System.out.println("Configuratore, per ogni nuovo " + paginaCorrente + " bisogna associare almeno un " + campo + ", verrai reindirizzato alla pagina per la registrazione"); 
         CliInput.invioPerContinuare();
         pulisciSchermo(); 
     }

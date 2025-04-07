@@ -47,7 +47,7 @@ public class FruitoreController implements UtenteController {
 
             } while (!registrato);
         } catch (Eccezioni.DBConnectionException e) {
-            //se c'è un errore salata la registraizone e va direttamente all'interno per non bloccare il flusso di esecuzione
+            //se c'è un errore salata la registrazione e va direttamente all'interno per non bloccare il flusso di esecuzione
             CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
         }  
 	}
@@ -60,7 +60,7 @@ public class FruitoreController implements UtenteController {
         
         CliVisualizzazione.ingressoFrontendFruitore();
 
-        //per nuove funzioni agigungere nuove righe
+        //per nuove funzioni aggiungere nuove righe
         Map<String, Runnable> actions = new LinkedHashMap<>();
         actions.put("Visualizza le visite disponibili", this::visualizzaVisiteDisponibili);
 		actions.put("Visualizza le visite a cui sei iscritto", this::visualizzaVisiteIscritte);
@@ -69,7 +69,7 @@ public class FruitoreController implements UtenteController {
 		actions.put("Disiscriviti da una visita", this::disiscrivitiVisita);  
         actions.put("Esci",() -> System.exit(0));
 
-        //genero dinamicamente il menu in base alle aizoni disponibili
+        //genero dinamicamente il menu in base alle azioni disponibili
         String[] opzioniConfiguratore = actions.keySet().toArray(new String[0]);
 
         while (true) {

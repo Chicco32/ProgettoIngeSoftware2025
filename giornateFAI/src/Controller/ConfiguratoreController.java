@@ -60,7 +60,7 @@ public class ConfiguratoreController implements UtenteController {
 
             } while (!registrato);
         } catch (Eccezioni.DBConnectionException e) {
-            //se c'è un errore salata la registraizone e va direttamente all'interno per non bloccare il flusso di esecuzione
+            //se c'è un errore salata la registrazione e va direttamente all'interno per non bloccare il flusso di esecuzione
             CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
         }   
     }
@@ -91,18 +91,18 @@ public class ConfiguratoreController implements UtenteController {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);
         }
 
-        //manda alla pagina di configuazione se rileva che è il giorno di configurazione
+        //manda alla pagina di configurazione se rileva che è il giorno di configurazione
         if (giornoDiConfigurazione()) {
             aggiungiDatePrecluse();
             registraNuovoPianoVisite();
         }
 
-        //per nuove funzioni agigungere nuove righe
+        //per nuove funzioni aggiungere nuove righe
         Map<String, Runnable> actions = new LinkedHashMap<>();
         actions.put("Modifica max numero partecipanti", this::inserisciMaxPartecipanti);
         actions.put("Introduzione nuovo tipo di visita", this::inserisciNuovoTipoDiVisita);
         actions.put("Introduzione nuovo volontario", this::inserisciNuovoVolontario);
-        actions.put("Introduzione nuovo luogo", this::popolaDBLuoghi); //se introducessi inserisci luogo sarrebbe una funzione identica
+        actions.put("Introduzione nuovo luogo", this::popolaDBLuoghi); //se introducessi inserisci luogo sarebbe una funzione identica
         actions.put("Visualizza elenco volontari", this::visualizzaElencoVolontari);     
         actions.put("Visualizza luoghi visitabili", this::visualizzaElencoLuoghi);
         actions.put("Visualizza tipi di visite", this::visualizzaElencoTipiDiVisite);
@@ -113,7 +113,7 @@ public class ConfiguratoreController implements UtenteController {
 
         actions.put("Esci",() -> System.exit(0));
 
-        //genero dinamicamente il menu in base alle aizoni disponibili
+        //genero dinamicamente il menu in base alle azioni disponibili
         String[] opzioniConfiguratore = actions.keySet().toArray(new String[0]);
 
         while (true) {
@@ -238,7 +238,7 @@ public class ConfiguratoreController implements UtenteController {
     }
 
     private void popolaDBLuoghiVisteVolontari() {
-        //struttra ricorsiva scomposta nelle 3 funzioni private di popolamento
+        //struttura ricorsiva scomposta nelle 3 funzioni private di popolamento
         boolean altroLuogo = true;
         while (altroLuogo) {
             this.popolaDBLuoghi();
@@ -278,9 +278,9 @@ public class ConfiguratoreController implements UtenteController {
             data.impostaValore(nomeLuogo, "Punto di Incontro");
             data.impostaValore(CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_TITOLO, CliInput.MAX_CARATTERI_TITOLO), "Titolo");
             data.impostaValore(CliInput.chiediConLunghezzaMax(CliVisualizzazione.VARIABILE_DESCRIZIONE, CliInput.MAX_CARATTERI_DESCRIZIONE), "Descrizione");
-            DateRange perido = CliInput.inserimentoPeriodoAnno();
-            data.impostaValore(perido.getStartDate(), "Giorno inzio");
-            data.impostaValore(perido.getEndDate(), "Giorno fine");
+            DateRange periodo = CliInput.inserimentoPeriodoAnno();
+            data.impostaValore(periodo.getStartDate(), "Giorno inizio");
+            data.impostaValore(periodo.getEndDate(), "Giorno fine");
             data.impostaValore(CliInput.inserimentoOraInizio(), "Ora di inizio");
             data.impostaValore(CliInput.inserimentoDurataVisita(), "Durata");
             data.impostaValore(CliInput.chiediNecessitaBiglietto(), "Necessita Biglietto");
@@ -335,7 +335,7 @@ public class ConfiguratoreController implements UtenteController {
             DTObject associazione = new Tupla("Volontari disponibili", new String[]{"CodiceVisita", "Volontario"});
         
             //In questa implementazione le visite sono identificate da un codice ma
-            //possono essere sostitutiti da altri tipi di chiave a seconda dell'implmentazione
+            //possono essere sostituiti da altri tipi di chiave a seconda dell'implementazione
             //in caso basta cambiare l'identificatore della visita
             int codiceVisita = (int) visita.getValoreCampo("Codice Tipo di Visita");
             associazione.impostaValore(codiceVisita, "CodiceVisita");
@@ -407,7 +407,7 @@ public class ConfiguratoreController implements UtenteController {
         try {
             DTObject[] tabella;
             tabella = aux.visualizzaElencoVolontari();
-            List<String> lista = estraiCampoTabella(tabella, "Volontario Nickname"); //violazione abbasstanza brutta di inversione della dipendenza
+            List<String> lista = estraiCampoTabella(tabella, "Volontario Nickname"); //violazione abbastanza brutta di inversione della dipendenza
             String volontarioSelezionato = CliInput.selezionaVolontario(lista);
             model.getRegistratore().rimozioneVolontario(volontarioSelezionato);
             model.getRegistratore().verificaCoerenzaPostRimozione();

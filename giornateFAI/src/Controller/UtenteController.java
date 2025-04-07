@@ -12,13 +12,13 @@ public interface UtenteController {
     public Utente getModel();
 
     /**
-     * Istanza specifica per l'utente che avvia la procedura di registraizone dell'utente nel database
+     * Istanza specifica per l'utente che avvia la procedura di registrazione dell'utente nel database
      */
     public void registrati(Login login);
 
     /**
      * Metodo che permette l'accesso al controller di sistema e alle funzionalità specifiche per l'utente a cui fa riferimento.
-     * Idealmente questo metodo va chiamato solo una volt aall'inzio per reindirizzare l'utente verso l'area del sistema di sua competenza
+     * Idealmente questo metodo va chiamato solo una volta all'inizio per reindirizzare l'utente verso l'area del sistema di sua competenza
      * o su cui ha i permessi di accesso
      */
     public void accediSistema();

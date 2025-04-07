@@ -19,8 +19,8 @@ public interface VisualizzatoreFruitore {
 	/**
 	 * Visualizza le istanze di visita a cui il fruitore è iscritto.
 	 * In particolare ritorna tutte le istanze di visite a cui il fruitore è iscritto e che siano nello stato.
-	 * In particolare per ogni iscriozne mostra: titolo, descrizione, numero partecipanti iscritti, data di svolgimento, 
-	 * ora di inizio, necessita bilgietto. Attenzione che NON mostra i codici di prenotazione, il fruitore dovrà salvarli
+	 * In particolare per ogni iscrizione mostra: titolo, descrizione, numero partecipanti iscritti, data di svolgimento, 
+	 * ora di inizio, necessita biglietto. Attenzione che NON mostra i codici di prenotazione, il fruitore dovrà salvarli
 	 * in un altro modo.
 	 * <ul>
 	 * <li> 'Proposta' </li>
@@ -35,7 +35,7 @@ public interface VisualizzatoreFruitore {
 	/**
 	 * Visualizza le istanze di visita a cui il fruitore è iscritto e che sono state cancellate.
 	 * Delle visite cancellate il fruitore visualizza solo titolo e data di mancato svolgimento.
-	 * Da notare come le visite cancellate siano eliminate il giorno successvio alla data di mancato svolgimento.
+	 * Da notare come le visite cancellate siano eliminate il giorno successivo alla data di mancato svolgimento.
 	 * @param nickname il nickname del fruitore su cui filtrare la ricerca
 	 * @return Un oggetto di tipo {@code DTObject} che contiene le visite cancellate
 	 * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database

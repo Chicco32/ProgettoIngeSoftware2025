@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat;
 /**
  * La classe per la scrittura lettura e salvataggio delle date, in particolare delle date precluse. La classe scrive le date registrate su file XML e si appoggia sul gestore per
  * la gestione dei file XML e utilizza la classe Calendario per poter ottenere info sulle date.
- * Si basa anch'essa sull'interfaccia dei file di configruazione per accedere ai dati dei files.
+ * Si basa anch'essa sull'interfaccia dei file di configurazione per accedere ai dati dei files.
  * 
  * @see GestoreFilesConfigurazione 
  * @see Calendario
@@ -30,8 +30,8 @@ public abstract class RegistroDate{
 	}
 
 	/**
-	 * Funzione che controlla se il mese salavato nel file corrisponde effetitvamente al mese corrente, ovvero che per il mese corrente la 
-	 * configuraizone è gia avvenuta.
+	 * Funzione che controlla se il mese salvato nel file corrisponde effettivamente al mese corrente, ovvero che per il mese corrente la 
+	 * configurazione è gia avvenuta.
 	 * @param path il path in cui cercare il file XML
 	 * @return false se il mese corrente è superiore al mese registrato o se non trova il file XML, true altrimenti
 	 */
@@ -55,7 +55,7 @@ public abstract class RegistroDate{
 
 	/**
 	 * Funzione che specifica se il giorno di esecuzione è effettivamente un giorno di configurazione. In particolare controlla
-	 * da calendario che sia un possibile giorno di configuraiozne e se non è gia stata fatta la configuraizone del mese
+	 * da calendario che sia un possibile giorno di configurazione e se non è gia stata fatta la configurazione del mese
 	 * @return
 	 * @throws Exception
 	 */

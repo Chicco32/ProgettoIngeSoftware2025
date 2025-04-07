@@ -21,12 +21,12 @@ import java.sql.Time;
 import java.text.SimpleDateFormat;
 
 /**
- * Classe per la gestione della registrazione di un nuovi uelementi nel DB.
- * Quasi tutte le sue funzioni sono void in quanto non ritornanto nulla ma inseriscono i valori richiesti nel DB.
+ * Classe per la gestione della registrazione di un nuovi elementi nel DB.
+ * Quasi tutte le sue funzioni sono void in quanto non ritornano nulla ma inseriscono i valori richiesti nel DB.
  * Per inserire i dati necessita di connettersi al DB con un connettore.
  * Richiede un implementazione dell'interfaccia Gestore Configurazione e in questo caso 
- * utilizza un file XML per la memorizzazione dei dati di default ma può essere sostiuto cambiando il gestore della scrittura.
- * I path sono salvati nella classe Percorsi files ma essendo richiesti solo in fase di creaizone possono essere modificati
+ * utilizza un file XML per la memorizzazione dei dati di default ma può essere sostituto cambiando il gestore della scrittura.
+ * I path sono salvati nella classe Percorsi files ma essendo richiesti solo in fase di creazione possono essere modificati
  * 
  * @see GestoreFilesConfigurazione
  * @see XMLConfiguratore
@@ -53,7 +53,7 @@ public class RegistratoreSQL implements Registratore, RegistratoreIscrizioni{
 
     /**
      * Inserisce dinamicamente un generico Elemento nel database. Il metodo per inserire l'oggetto nello schema corretto
-     * non potendolo capire dal tipo ha bisongo di un comando per eseguire la query. Il comando interpella la tabella dei comandi
+     * non potendolo capire dal tipo ha bisogno di un comando per eseguire la query. Il comando interpella la tabella dei comandi
      * disponibili e ne estrae la query corrispondente.
      * @param object L'oggetto da registrare con i suoi attributi
      * @param comando l'azione specifica su dove debba essere registrato l'oggetto
@@ -143,7 +143,7 @@ public class RegistratoreSQL implements Registratore, RegistratoreIscrizioni{
         tipoVisita.impostaValore(nuovoCodice, "Codice Tipo di Visita");
 
         //Prima registro nel DB la visita filtrata senza i giorni della settimana
-        String [] filtro = {"Codice Tipo di Visita","Punto di Incontro","Titolo", "Descrizione","Giorno inzio", 
+        String [] filtro = {"Codice Tipo di Visita","Punto di Incontro","Titolo", "Descrizione","Giorno inizio", 
          "Giorno fine", "Ora di inizio", "Durata", "Necessita Biglietto", "Min Partecipanti", "Max Partecipanti", "Configuratore referente"};
         DTObject visitaFiltrata = ((Tupla) tipoVisita).filtraCampi(filtro);
         Boolean visitaInserita = false;
@@ -188,7 +188,8 @@ public class RegistratoreSQL implements Registratore, RegistratoreIscrizioni{
      * numero progressivo successivo come numero da usare come chiave, in questa maniera permette la generazione di chiavi anche in caso di eliminazioni di righe dalla tabella. 
      * 
      * @param tabella la tabella da selezionare in cui generare la chiave
-     * @return un {@code int} che rappresenta il valore della chiave da inserire. In caso di tabella di tabella vuota restitutisce valore {@code 1} e in caso di errori nella generezione restituisce {@code -1}
+     * @return un {@code int} che rappresenta il valore della chiave da inserire. In caso di tabella di tabella vuota restituisce valore {@code 1} 
+     * e in caso di errori nella generazione restituisce {@code -1}
      */
     private int generaNuovaChiave(String tabella) {
 
@@ -198,7 +199,7 @@ public class RegistratoreSQL implements Registratore, RegistratoreIscrizioni{
             String query = chiaviNuove.get(CostantiDB.fromString(tabella)).getQuery();
             ResultSet result = connection.createStatement().executeQuery(query);
             if (result.next()) {
-                //la chiave deve essere in un campo chimato maxCodice per essere letta
+                //la chiave deve essere in un campo chiamato maxCodice per essere letta
                 nuovaChiave = result.getInt("maxCodice");
             }
         }
@@ -274,7 +275,7 @@ public class RegistratoreSQL implements Registratore, RegistratoreIscrizioni{
             stmt.setInt(1, codiceIstanza);
             ResultSet info = stmt.executeQuery();
             //poi controllo se il numero di partecipanti è valido
-            if (!info.next()) throw new IscrizioneImpossibileException("VIsista non trovata", null);;
+            if (!info.next()) throw new IscrizioneImpossibileException("Visita non trovata", null);;
             partecipantiAttuali = info.getInt("partecipanti");
             maxPartecipanti = info.getInt("Max Partecipanti");
             if (partecipantiAttuali + numPartecipanti > maxPartecipanti) {
@@ -285,14 +286,14 @@ public class RegistratoreSQL implements Registratore, RegistratoreIscrizioni{
         }
 
         //se non ci sono problemi di iscrizione procedo a registrare l'iscrizione
-        String codiceIscrizone = ServizioHash.generaCodice(codiceIstanza + nickname);
+        String codiceIscrizione = ServizioHash.generaCodice(codiceIstanza + nickname);
         try (PreparedStatement stmt = connection.prepareStatement(Queries.REGISTRA_ISCRIZIONE.getQuery())) {
             stmt.setString(1, nickname);
             stmt.setInt(2, codiceIstanza);
-            stmt.setString(3, codiceIscrizone);
+            stmt.setString(3, codiceIscrizione);
             stmt.setInt(4, numPartecipanti);
             stmt.executeUpdate();
-            return codiceIscrizone;
+            return codiceIscrizione;
         } catch (SQLException e) {
             throw new DBConnectionException("Errore durante l'esecuzione della query: ", e);
         }
