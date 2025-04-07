@@ -160,8 +160,6 @@ public class PlannerVisite {
 		return piano.toArray(new DTObject[0]);
 	}
 
-	//TODO @Diego ricordati di pulire le date disponibili e precluse alla fine del piano visite
-	//TODO @Diego ricordati che le date dispoonibili da pulire e ottenere contengono dei duplicati
 	/**
 	 * Metodo che controlla se una data data(in formato di {@code ServicesAPI.Calendario}) è contenuta in una collezione di di date
 	 * @param cal la data in formato calendario
