@@ -20,13 +20,13 @@ public class App {
 		    connection = ConnessioneSQL.getConnection();
 	    }
 
-		if (notificaConnesione(connection)) {
+		if (notificaConnessione(connection)) {
 			Avvio avvio = new Avvio(new LoginSQL());
 			avvio.avviaApp();
 		}
     }
 
-	private static boolean notificaConnesione(Connection connection) {
+	private static boolean notificaConnessione(Connection connection) {
 	if (connection != null){
 		CliNotifiche.avvisa(CliNotifiche.CONNESSIONE_RIUSCITA);
 		return true;
