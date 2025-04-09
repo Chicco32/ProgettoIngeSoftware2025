@@ -63,7 +63,9 @@ public class PlannerVisite {
 		visite=new HashMap<>();
 		dateDisponibili=new HashMap<String,Queue<Date>>();
 		for(String vol:volontari){
-			dateDisponibili.put(vol,new LinkedList(Arrays.asList(registroDateDisponibili.getDateDisponibili(vol))));
+			Date[] date=registroDateDisponibili.getDateDisponibili(vol);
+			if(date!=null)
+			dateDisponibili.put(vol,new LinkedList(Arrays.asList(date)));
 		}
 		DTObject[] tipiVisiteVolontari;
 		try{
