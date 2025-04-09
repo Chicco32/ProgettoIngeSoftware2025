@@ -268,14 +268,13 @@ public class RegistratoreSQL implements Registratore{
         }
     }
 
-    //TODO L'implementazione dipende da come @Diego mette i parametri nel DTOBject di ingresso
     public boolean registraIstanzaDiVisita(DTObject istanza) throws DBConnectionException {
         try (PreparedStatement stmt = connection.prepareStatement(Queries.REGISTRA_ISTANZA_VISITA.getQuery())) {
             stmt.setInt(1, generaNuovaChiave("archivio visite attive"));
             stmt.setString(2, "proposta");
-            stmt.setString(3, (String) istanza.getValoreCampo("Codice Tipo di Visita"));
-            stmt.setString(4, (String) istanza.getValoreCampo("Volontario"));
-            stmt.setString(5, formatoDataPerSQL((Date) istanza.getValoreCampo("Data")));
+            stmt.setString(3, (String) istanza.getValoreCampo("codice visita"));
+            stmt.setString(4, (String) istanza.getValoreCampo("nickname volontario"));
+            stmt.setString(5, formatoDataPerSQL((Date) istanza.getValoreCampo("data")));
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
