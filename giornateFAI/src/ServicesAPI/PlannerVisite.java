@@ -19,12 +19,10 @@ public class PlannerVisite {
 
 		private int codice;
 		private String nome;
-		private Date data;
 		IstanzaDiVisita(int codice,String nome,Date data){
 			super("Visite programmabili",campi);
 			this.codice=codice;
 			this.nome=nome;
-			this.data=data;
 			impostaValore(codice,"codice visita");
 			impostaValore(nome,"nickname volontario");
 			impostaValore(data,"data");
@@ -65,12 +63,12 @@ public class PlannerVisite {
 		for(String vol:volontari){
 			Date[] date=registroDateDisponibili.getDateDisponibili(vol);
 			if(date!=null)
-			dateDisponibili.put(vol,new LinkedList(Arrays.asList(date)));
+			dateDisponibili.put(vol,new LinkedList<>(Arrays.asList(date)));
 		}
 		DTObject[] tipiVisiteVolontari;
 		try{
 			tipiVisiteVolontari=visualizzatore.estraiTipiDiVisiteVolontario();
-		}catch(Exception e){
+		}catch(Eccezioni.DBConnectionException e){
 			e.printStackTrace();
 			return null;
 		}
@@ -89,7 +87,7 @@ public class PlannerVisite {
 		DTObject[] datiTipiVisita;
 		try{
 			datiTipiVisita=visualizzatore.estraiGiorniTipoDiVisita();
-		}catch(Exception e){
+		}catch(Eccezioni.DBConnectionException e){
 			e.printStackTrace();
 			return null;
 		}
@@ -113,7 +111,7 @@ public class PlannerVisite {
 		programmabili=new HashMap<>();
 		for(TipoDiVisita tdv:visite.values()){
 			Date[] date=tdv.getDatePossibili(meseBersaglio);
-			Queue<Date> queue=new LinkedList(Arrays.asList(date));
+			Queue<Date> queue = new LinkedList<>(Arrays.asList(date));
 			programmabili.put(tdv.getCodice(),queue);
 		}
 		DateRange meseDaPianificare=Calendario.getWholeMonth(meseBersaglio);
@@ -122,11 +120,11 @@ public class PlannerVisite {
 		for(Date data:dateDaPiazzare){
 			HashMap<TipoDiVisita,Integer> prioritàVisite=priorityMappingVisite(data);
 			HashMap<String,Integer> prioritàVolontari=priorityMappingVolontari(data);
-			HashMap<Object,Integer> priorità=new HashMap<>(prioritàVisite);
+			HashMap<Object,Integer> priorità = new HashMap<>(prioritàVisite);
 			priorità.putAll(prioritàVolontari);
 			while(!prioritàVisite.isEmpty()&&!prioritàVolontari.isEmpty()){
-				ArrayList<TipoDiVisita> visiteDaAppaiare=new ArrayList(prioritàVisite.keySet());
-				ArrayList<String> volDaAppaiare=new ArrayList(volontari);
+				ArrayList<TipoDiVisita> visiteDaAppaiare = new ArrayList<>(prioritàVisite.keySet());
+				ArrayList<String> volDaAppaiare = new ArrayList<>(prioritàVolontari.keySet());
 
 				Comparator<Object> compPriorità=Comparator.comparingInt((obj)->priorità.get(obj));
 				visiteDaAppaiare.sort(compPriorità);
@@ -144,7 +142,7 @@ public class PlannerVisite {
 				}else{
 					TipoDiVisita tdv=visiteDaAppaiare.get(0);
 					for(String vol:volDaAppaiare){
-						if(appaiamentiTipoVol.get(tdv).contains(vol)){
+						if(appaiamentiTipoVol.get(tdv.getCodice()).contains(vol)){
 							piano.add(new IstanzaDiVisita(tdv.getCodice(),vol,data));
 							dateDisponibili.get(vol).poll();
 							break;
@@ -172,19 +170,41 @@ public class PlannerVisite {
 		return input.contains(cal.getTime());
 	}
 
+	/**
+	 * Il priority mapping visite assegna a ogni tipo di visita da istanziare alla data in ingresso una priorità.
+	 * la funzione ritorna una mappa che assegna a ogni tipo di visita una priorità espressa come intero.
+	 * Per leggere la lista dei tipi di visite utilizza i campi dell'oggetto.
+	 * @param data la data su cui valutare le differenti priorità
+	 * @return un oggetto {@code HashMap} che contiene i tipi di viste come chiave e le priorità calcolate come valori
+	 */
 	private HashMap<TipoDiVisita,Integer> priorityMappingVisite(Date data){
+		//priorità è un intero. Il valore di priorità è inversamente proporzionale al valore dell'intero
 		int priorità;
-		HashMap<TipoDiVisita,Integer> risultati=new HashMap<>();
+		HashMap<TipoDiVisita,Integer> risultati = new HashMap<>();
+
+		//prende da programmabili che associa i tipi di visite alle date in cui possono essere effettuate
 		for(int codice:programmabili.keySet()){
-			Queue<Date> visiteFuture=programmabili.get(codice);
-			priorità=visiteFuture.size();
+			Queue<Date> visiteFuture = programmabili.get(codice);
+			//se è possibile essere istanziata in futuro parte con un valore di priorità più alto
+			priorità = visiteFuture.size();
+
+			//prende la data tra quelle in coda e controlla se contiene la data passata in input
 			if(visiteFuture.contains(data)){
-				priorità+=numeroVisiteIstanziate(codice);
+
+				//se lo contiene procede a calcolarne la priorità associata.
+				//le visite gia istanziate dello stesso tipo aumentano il valore priorità.
+				priorità += numeroVisiteIstanziate(codice);
+
+				//appaiamentiTipoVol associa a a ogni codice di tipo di visita l'arrayList di volontari che sono in grado di svolgerla
 				for(String nickname:appaiamentiTipoVol.get(codice)){
+
+					//se trova qualcuno che ha dato disponibilità nella data odierna aumenta il valore priorità
 					Queue<Date> dateVol=dateDisponibili.get(nickname);
-					if(dateVol.contains(data)){
+					if(dateVol != null && dateVol.contains(data)){
 						priorità+=10;
 					}
+				
+				//salva il valore di priorità
 				risultati.put(visite.get(codice),priorità);
 				}
 			}
@@ -192,22 +212,32 @@ public class PlannerVisite {
 		return risultati;
 	}
 
+	/**
+	 * Il priority mapping visite assegna a ogni volontario che ha dato disponibilità nella data ingresso una priorità.
+	 * La funzione ritorna una mappa che assegna a ogni volontario una priorità espressa come intero.
+	 * Il comportamento è analogo a <pre> priorityMappingVisite(Date data) </pre>
+	 * Per leggere la lista dei tipi di visite utilizza i campi dell'oggetto.
+	 * @param data la data su cui valutare le differenti priorità
+	 * @return un oggetto {@code HashMap} che contiene i tipi di viste come chiave e le priorità calcolate come valori
+	 */
 	private HashMap<String,Integer> priorityMappingVolontari(Date data){	
 		int priorità;
 		HashMap<String,Integer> risultati=new HashMap<>();
 		for(String nome:volontari){
 			Queue<Date> disponibilità=dateDisponibili.get(nome);
-			priorità=disponibilità.size();
-			if(disponibilità.contains(data)){
-				priorità+=numeroVisiteIstanziate(nome);
-				for(int codice:programmabili.keySet()){
-					if(appaiamentiTipoVol.get(codice).contains(nome)){
-						Queue<Date> dateVisita=programmabili.get(codice);
-						if(dateVisita.contains(data)){
-							priorità+=10;
+			if(disponibilità!=null){
+				priorità=disponibilità.size();
+				if(disponibilità.contains(data)){
+					priorità+=numeroVisiteIstanziate(nome);
+					for(int codice:programmabili.keySet()){
+						if(appaiamentiTipoVol.get(codice).contains(nome)){
+							Queue<Date> dateVisita=programmabili.get(codice);
+							if(dateVisita.contains(data)){
+								priorità+=10;
+							}
 						}
+					risultati.put(nome,priorità);
 					}
-				risultati.put(nome,priorità);
 				}
 			}
 		}

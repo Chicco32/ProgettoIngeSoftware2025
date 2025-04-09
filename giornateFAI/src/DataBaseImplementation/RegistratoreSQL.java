@@ -270,9 +270,9 @@ public class RegistratoreSQL implements Registratore{
 
     public boolean registraIstanzaDiVisita(DTObject istanza) throws DBConnectionException {
         try (PreparedStatement stmt = connection.prepareStatement(Queries.REGISTRA_ISTANZA_VISITA.getQuery())) {
-            stmt.setInt(1, generaNuovaChiave("archivio visite attive"));
+            stmt.setInt(1, generaNuovaChiave(CostantiDB.ARCHIVIO_VISITE_ATTIVE.getNome()));
             stmt.setString(2, "proposta");
-            stmt.setString(3, (String) istanza.getValoreCampo("codice visita"));
+            stmt.setInt(3, (int) istanza.getValoreCampo("codice visita"));
             stmt.setString(4, (String) istanza.getValoreCampo("nickname volontario"));
             stmt.setString(5, formatoDataPerSQL((Date) istanza.getValoreCampo("data")));
             stmt.executeUpdate();

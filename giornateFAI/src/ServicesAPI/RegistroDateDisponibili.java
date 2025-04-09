@@ -89,7 +89,13 @@ public class RegistroDateDisponibili extends RegistroDate {
 	}
 	
 	public void cancellaDate(DateRange periodo,String nome){
-		caricaDateDisponibili(nome);
+		try {
+			caricaDateDisponibili(nome);
+		} catch (IllegalArgumentException e) {
+			//Se non trova il file non non fa nulla
+			e.printStackTrace(); 
+		}
+		
 		ArrayList<Date> aux=new ArrayList<Date>();
 		ArrayList<Date> toRem=new ArrayList<Date>();
 		aux.addAll(Arrays.asList(dateDisponibili));

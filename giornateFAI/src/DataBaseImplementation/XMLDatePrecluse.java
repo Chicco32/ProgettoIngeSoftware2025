@@ -44,6 +44,7 @@ public class XMLDatePrecluse extends XMLManager implements GestoreDatePrecluse{
 			}
 			xmlw.writeCharacters(form.valueToString(current[current.length-1])+"]");
 		}
+		else xmlw.writeCharacters("[]");
 		xmlw.writeEndElement();
 		xmlw.writeEndElement();
 	    }catch(Exception e){
