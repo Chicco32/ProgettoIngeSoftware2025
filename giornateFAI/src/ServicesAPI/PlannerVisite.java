@@ -18,7 +18,7 @@ public class PlannerVisite {
 		this.registroDateDisponibili = dateDisponibili;
 	}
 
-	public DTObject[] creaPianoVisite(List<String> volontari) {
+	/*public DTObject[] creaPianoVisite(List<String> volontari) {
 		HashMap<String,RegistroDateDisponibili> rdd=new HashMap<>();
 		HashMap<TipoDiVisita,String> appaiamenti=new HashMap<>();
 		dateDisponibili=new HashMap<String,Date[]>();
@@ -40,7 +40,7 @@ public class PlannerVisite {
 		//	Assegnare la visita a chi ha meno visite assegnate
 		//	In caso di ulteriore pareggio si va un po' a caso (o si chiede?)
 			
-	}
+	}*/
 
 	//TODO @Diego ricordati di pulire le date disponibili e precluse alla fine del piano visite
 }

@@ -94,7 +94,7 @@ public class ConfiguratoreController implements UtenteController {
         //manda alla pagina di configuazione se rileva che è il giorno di configurazione
         if (giornoDiConfigurazione()) {
             aggiungiDatePrecluse();
-            registraNuovoPianoVisite();
+            //registraNuovoPianoVisite();
         }
 
         //per nuove funzioni agigungere nuove righe
@@ -362,7 +362,7 @@ public class ConfiguratoreController implements UtenteController {
         return true;
     }
 
-    private boolean registraNuovoPianoVisite() {
+    /*private boolean registraNuovoPianoVisite() {
 		VisualizzatoreConfiguratore aux = model.getVisualizzatore();
         PlannerVisite planner = new PlannerVisite(model.getRegistroDateDisponibili(), aux);
         boolean statoPianoVisite = true;
@@ -380,7 +380,7 @@ public class ConfiguratoreController implements UtenteController {
             CliNotifiche.avvisa(CliNotifiche.ERRORE_CONNESSIONE);
         }
         return false;
-	}
+	} */
 
     private List<String> estraiCampoTabella(DTObject[] tabella, String nomeCampo) {
 
