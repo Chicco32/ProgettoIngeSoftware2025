@@ -19,5 +19,17 @@ public class Eccezioni extends Exception {
             super(message, cause); // Il costruttore di Exception accetta una causa
         } 
     }
+
+    public static class RimozioneIscrizioneImpossibileException extends Exception {
+        public RimozioneIscrizioneImpossibileException(String message, Throwable cause) {
+            super(message, cause); // Il costruttore di Exception accetta una causa
+        } 
+    }
+
+    public static class IscrizioneImpossibileException extends Exception {
+        public IscrizioneImpossibileException(String message, Throwable cause) {
+            super(message, cause); // Il costruttore di Exception accetta una causa
+        } 
+    }
 }
 

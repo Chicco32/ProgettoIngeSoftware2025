@@ -164,7 +164,7 @@ public class CliInput {
         List<String> giorniSettimana = new ArrayList<>();
         String[] settimana = {"Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"};
 
-        //all'inizio tutti i gionri della setitmana sono validi e poi la lista si riduce
+        //all'inizio tutti i giorni della settimana sono validi e poi la lista si riduce
         List<String> giorniValidi = new ArrayList<>();
         for (String giorno : settimana) giorniValidi.add(giorno);
         boolean continua = true;
@@ -178,7 +178,7 @@ public class CliInput {
             int scelta = InputDati.leggiIntero("Seleziona il numero del giorno della settimana: ", 1, giorniValidi.size());
             String giornoSelezionato = giorniValidi.get(scelta - 1);
             
-            //se conferma il giorno giusot lo sposta dai giorni validi a quelli selezionati
+            //se conferma il giorno giusto lo sposta dai giorni validi a quelli selezionati
             if (InputDati.yesOrNo("Confermi " + giornoSelezionato + "? ")) {
                 giorniSettimana.add(giornoSelezionato);
                 giorniValidi.remove(giornoSelezionato);
@@ -293,12 +293,12 @@ public class CliInput {
     }
 
     /**
-     * Funzione che chiede se riavviare la pagina di inserimento di un tipo di dato dipendende da un altro. 
-     * In particolare il dato da rinserire è campo da aggiungere, mentre la pagina corrente è il valore da cui dipende.
+     * Funzione che chiede se riavviare la pagina di inserimento di un tipo di dato dipendente da un altro. 
+     * In particolare il dato da reinserire è campo da aggiungere, mentre la pagina corrente è il valore da cui dipende.
      * Se il campo da aggiungere non dipende da nessun altro campo, inserire null a paginaCorrente
      * @param campoDaAggiungere il valore su cui si interroga se ricominciare
      * @param paginaCorrente la pagina su ci si trova ora l'utente
-     * @return true se l'utente vuole inserire un altra istanza di capo da agigungere, false altrimenti
+     * @return true se l'utente vuole inserire un altra istanza di capo da aggiungere, false altrimenti
      */
     public static boolean aggiungiAltroCampo (String campoDaAggiungere, String paginaCorrente) {
         String messaggio = "Vuoi inserire un altro " + campoDaAggiungere + (paginaCorrente != null ? " a questo " + paginaCorrente : "") + "?";
@@ -412,6 +412,22 @@ public class CliInput {
         } while (continua);
 
         return dateDisponibili.toArray(new Date[0]);
+	}
+
+	public static int selezionaIstanza(DTObject[] VisiteDisponibili) {
+
+        while (true) {
+            int codiceArchivio = InputDati.leggiIntero("Inserisci il codice archivio della visita desiderata: ");
+
+            for (int i = 0; i < VisiteDisponibili.length; i++) {
+                if (VisiteDisponibili[i].getValoreCampo("Codice Archivio").equals(codiceArchivio)) {
+                    CliVisualizzazione.pulisciSchermo();
+                    return codiceArchivio; // Ritorna l'indice della visita selezionata
+                }
+            }
+
+            System.out.println("Codice archivio non valido. Riprova.");
+        }
 	}
 
 }

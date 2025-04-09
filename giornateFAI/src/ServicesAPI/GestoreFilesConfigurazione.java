@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 
 /**
  * Interfaccia Repository per la gestione delle impostazioni di Configurazione.
- * Questa inerfaccia dovrebbe essere implementata da un gestore di lettura e scrittura di dati per poter permettere
+ * Questa interfaccia dovrebbe essere implementata da un gestore di lettura e scrittura di dati per poter permettere
  * l'accesso persistente alle impostazioni di configurazione del programma. 
  */
 public abstract interface GestoreFilesConfigurazione {
@@ -20,7 +20,7 @@ public abstract interface GestoreFilesConfigurazione {
     }
 
     /**
-     * Crea un file nel percorso speficato se il file non esiste gia, altrimenti non fa nulla.
+     * Crea un file nel percorso specificato se il file non esiste gia, altrimenti non fa nulla.
      * @param path il percorso del file
      */
     public static void creaFile(String path) {
@@ -41,7 +41,7 @@ public abstract interface GestoreFilesConfigurazione {
     /**
      * Legge una variabile da un file sapendone il tag associato.
      * Questo metodo permette di leggere solo un valore e funziona solo se di quel tag c'è una sola occorrenza
-     * altrmenti legge la prima occorrenza disponibile nel file.
+     * altrimenti legge la prima occorrenza disponibile nel file.
      * @param path il percorso del file
      * @param tag il tag associato alla variabile da leggere
      * @return Il valore della variabile letta nel file

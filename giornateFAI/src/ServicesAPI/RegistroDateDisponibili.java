@@ -17,7 +17,7 @@ public class RegistroDateDisponibili extends RegistroDate {
 	private GestoreDateDisponibili fileManager;
 	
 	/**
-	 * Costruttore con nome specifico per il volontario, usa il nome per funzioni di creazione e modifica dei file riferiti al volntario stesso
+	 * Costruttore con nome specifico per il volontario, usa il nome per funzioni di creazione e modifica dei file riferiti al volontario stesso
 	 * @param fileManager
 	 * @param datePrecluse
 	 * @param nome

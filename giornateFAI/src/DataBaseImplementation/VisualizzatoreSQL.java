@@ -1,5 +1,4 @@
 package DataBaseImplementation;
-
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,22 +12,24 @@ import ServicesAPI.Eccezioni;
 import ServicesAPI.Eccezioni.DBConnectionException;
 import ServicesAPI.StatiVisite;
 import ServicesAPI.VisualizzatoreConfiguratore;
+import ServicesAPI.VisualizzatoreFruitore;
 import ServicesAPI.VisualizzatoreVolontario;
 
 
 /**
  * Classe per la gestione della estrazione di elementi all'interno del DB e per la loro visualizzazione.
  * Questa classe serve per interpellare il DB attraverso le query SQL e visualizzare i risultati.
- * Il risultato restitutito dai metodi è il contenuto del DB richiesto dalla query specifica del metodo.
+ * Il risultato restituito dai metodi è il contenuto del DB richiesto dalla query specifica del metodo.
  * Per inserire i dati necessita di connettersi al DB con un connettore.
  * Utilizza un file XML per la memorizzazione dei dati di default.
  * 
  * @see ConnessioneSQL
  * @see VisualizzatoreConfiguratore
  * @see VisualizzatoreVolontario
+ * @see VisualizzatoreFruitore
  * @see Queries
  */
-public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, VisualizzatoreVolontario {
+public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, VisualizzatoreVolontario, VisualizzatoreFruitore {
 
     private Connection connection;
 
@@ -37,14 +38,14 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
     }
 
     /**
-     * Traduce l'oggetto {@code Resulset} derivato dal database SQL in una serie di Tuple di tipo DTObject
+     * Traduce l'oggetto {@code ResultSet} derivato dal database SQL in una serie di Tuple di tipo DTObject
      * @param tabellaSQL la tabella originaria della query
      * @return la tabella con gli stessi valori in formato {@code DTObject}, altrimenti <pre> new DTObject[0] </pre> in caso di tabella vuota
      */
     private DTObject[] traduciTabella(ResultSet tabellaSQL) {
         ArrayList<DTObject> listaOggetti = new ArrayList<>();
         try {
-            //prima ottieni la struttra della tabella come lista di colonne
+            //prima ottieni la struttura della tabella come lista di colonne
             int columnCount = tabellaSQL.getMetaData().getColumnCount();
             String[] colonne = new String[columnCount];
             for (int i = 0; i < columnCount; i++) {
@@ -52,7 +53,7 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
             }
 
             while (tabellaSQL.next()) {
-                //istanzia una nuova riga
+                //istanza una nuova riga
                 DTObject oggetto = new Tupla(tabellaSQL.getMetaData().getTableName(1), colonne);
     
                 //e la riempie con i valori
@@ -70,8 +71,9 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
     }
 
     /**
-     * Ritorna i risultati dell'esecuzone di una certa query sul database
-     * @param query la query da far eseguire, il metodo è specifico per le query solo di visualizzazione non di modifica, per quelle usare il registratore
+     * Ritorna i risultati dell'esecuzione di una certa query sul database
+     * @param query la query da far eseguire, il metodo è specifico per le query solo di visualizzazione non di modifica, 
+     * per quelle usare il registratore.
      * @return Un oggetto {@code ResultSet} con le tuple risultate dalla interrogazione
      */
     private ResultSet eseguiQuery(Queries query) throws Eccezioni.DBConnectionException {
@@ -86,10 +88,11 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
     }
 
     /**
-     * Estrae solo tutti i valori assunti da uno specifico atributo. Siccome esso sposta avanti il puntatore va evocato su un oggetto non ancora letto altrimenti causerà eccezioni
-     * @param resul un oggetto che rappresenta tutti i risultati della query su cui filtrare
+     * Estrae solo tutti i valori assunti da uno specifico attributo. 
+     * Siccome esso sposta avanti il puntatore va evocato su un oggetto non ancora letto altrimenti causerà eccezioni.
+     * @param results un oggetto che rappresenta tutti i risultati della query su cui filtrare
      * @param campo la colonna selezionata su cui filtrare
-     * @return un arraylist contenente tuttti i valori assunti dalla colonna selezionata
+     * @return un arraylist contenente tutti i valori assunti dalla colonna selezionata
      * @throws IllegalArgumentException se l'oggetto results o se campo sono {@code null}
      */
     private List<String> estraiColonna(ResultSet results, String campo) throws IllegalArgumentException{
@@ -181,16 +184,53 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
     }
 
     public DTObject[] estraiTipiDiVisiteVolontario() throws DBConnectionException {
-        try (PreparedStatement stmt = connection.prepareStatement(Queries.VISITE_PER_OGNI_VOLONTARIO.getQuery())) {
+        return traduciTabella(eseguiQuery(Queries.VISITE_PER_OGNI_VOLONTARIO));
+    }
+
+    
+    public DTObject[] estraiGiorniTipoDiVisita() throws DBConnectionException {
+        return traduciTabella(eseguiQuery(Queries.GIORNI_POSSIBILI_VISITA));
+    }
+
+    public DTObject[] VisualizzaIstanzeVisiteDisponibili(String fruitoreAssociato) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.ISTANZE_VISITE_DISPONIBILI.getQuery())) {
+            stmt.setString(1, fruitoreAssociato);
             return traduciTabella(stmt.executeQuery());
         } catch (SQLException e) {
             throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
         }
     }
 
-    
-    public DTObject[] estraiGiorniTipoDiVisita() throws DBConnectionException {
-        try (PreparedStatement stmt = connection.prepareStatement(Queries.GIORNI_POSSIBILI_VISITA.getQuery())) {
+    public DTObject[] VisualizzaIstanzeIscritte(String fruitoreAssociato) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.VISUALIZZA_ISTANZE_ISCRITTO.getQuery())) {
+            stmt.setString(1, fruitoreAssociato);
+            return traduciTabella(stmt.executeQuery());
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+    }
+
+    public DTObject[] VisualizzaIstanzeCancellate(String fruitoreAssociato) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.VISUALIZZA_ISTANZE_CANCELLATE.getQuery())) {
+            stmt.setString(1, fruitoreAssociato);
+            return traduciTabella(stmt.executeQuery());
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+    }
+
+    public DTObject[] visualizzaElencoIstanzeVolontario(String volontarioAssociato) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.VISUALIZZA_ISTANZE_VOLONTARIO.getQuery())) {
+            stmt.setString(1, volontarioAssociato);
+            return traduciTabella(stmt.executeQuery());
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+    }
+
+    public DTObject[] visualizzaElencoIscrittiIstanza(int codiceIstanza) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.VISUALIZZA_ELENCO_ISCRITTI.getQuery())) {
+            stmt.setInt(1, codiceIstanza);
             return traduciTabella(stmt.executeQuery());
         } catch (SQLException e) {
             throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);

@@ -7,7 +7,7 @@ package ServicesAPI;
 public interface VisualizzatoreVolontario {
 
 	/**
-	 * Visualizzza le visite a cui questo volontario è associato ed è disponibile a fare da guida
+	 * Visualizza le visite a cui questo volontario è associato ed è disponibile a fare da guida
 	 * @param volontarioAssociato il nickname del volontario associato
 	 * @return Un oggetto di tipo {@code DTObject} che contiene le visite associate al volontario
 	 * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database
@@ -22,5 +22,26 @@ public interface VisualizzatoreVolontario {
      * @return un array di {@code DTObject} contenente i giorni della settimana e i tipi di visita associati
      * @throws Eccezioni.DBConnectionException
      */
-    public DTObject[] estraiDOWPossibiliVolontario(String volontarioAssociato) throws Eccezioni.DBConnectionException; 
+    public DTObject[] estraiDOWPossibiliVolontario(String volontarioAssociato) throws Eccezioni.DBConnectionException;
+	
+	/**
+	 * Funzione che mostra l'elenco Di istanze a cui un volontario è stato associato nella produzione del piano delle visite.
+	 * In particolare a differenza di {@link #visualizzaElenecoTipiDiVisiteAssociate() visualizzaElencoTipiDiVisiteAssociate} questa funzione
+	 * restituisce non i tipi di visita ma tutte le istanze in stato 'Proposta', 'Completa', 'Confermata' a cui il volontario afferisce.
+	 * per ogni istanza restituisce il codice archivio, il titolo, il numero di iscrizioni e il numero di partecipanti attuali. 
+	 * @param volontarioAssociato il volontario su cui filtrare la visita
+	 * @return un array di {@code DTObject} contente i risultati della ricerca
+	 * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database
+	 */
+	public DTObject[] visualizzaElencoIstanzeVolontario (String volontarioAssociato) throws Eccezioni.DBConnectionException;
+
+	/**
+	 * Funzione che ritorna l'elenco di iscrizioni per una specifica istanza di visita.
+	 * In particolare ritorna il nome del fruitore che ha eseguito l'iscrizione, il numero di iscritti per quella iscrizione e il codice univoco associato.
+	 * Questa funzione permette al volontario di controllare tutte le iscrizioni a una specifica iscrizione effettuata 
+	 * @param codiceIstanza il codice archivio che rappresenta l'istanza di quella visita
+	 * @return un array di {@code DTObject} contente i risultati della ricerca
+	 * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database
+	 */
+	public DTObject[] visualizzaElencoIscrittiIstanza (int codiceIstanza) throws Eccezioni.DBConnectionException;
 }

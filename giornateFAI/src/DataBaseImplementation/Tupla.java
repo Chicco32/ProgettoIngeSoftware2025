@@ -17,7 +17,7 @@ public class Tupla implements DTObject {
     public static final String[] FORMATO_UTENTE = {"Nickname", "Password", "Salt"};
     public static final String[] FORMATO_LUOGO = {"Nome", "Descrizione", "Indirizzo"};
     public static final String[] FORMATO_TIPO_VISITA = {
-        "Codice Tipo di Visita","Punto di Incontro","Titolo", "Descrizione","Giorno inzio", 
+        "Codice Tipo di Visita","Punto di Incontro","Titolo", "Descrizione","Giorno inizio", 
             "Giorno fine", "Ora di inizio", "Durata", "Necessita Biglietto", "Min Partecipanti", "Max Partecipanti", "Configuratore referente", "Giorni settimana"};
 
     private String tabellaOrigine;
@@ -28,7 +28,7 @@ public class Tupla implements DTObject {
 
     /**
      * Costruttore di un oggetto Tupla che crea una tupla vuota da riempire.
-     * @param tabella il nome della tabella a cui riferisce o un nome identificativo per riconoscere a che relaiozne si riferisce
+     * @param tabella il nome della tabella a cui riferisce o un nome identificativo per riconoscere a che relazione si riferisce
      * @param campi la lista di attributi che la tupla dovrà salvare
      */
     public Tupla (String tabella, String[] campi) {
@@ -36,7 +36,7 @@ public class Tupla implements DTObject {
         this.numCampi = campi.length;
         this.campi = campi;
         this.valori = new HashMap<>();
-        //iniziliazza una tupla vuota, la chiave è la posizione del corrispondente attributo
+        //inizializza una tupla vuota, la chiave è la posizione del corrispondente attributo
         for (int i = 0; i<numCampi; i++) valori.put(i, null);
     }
 
@@ -101,9 +101,9 @@ public class Tupla implements DTObject {
     }
 
     /**
-     * Il metodo restituisce un nuovo DTOBject contentenente meno dati di quello originale filtrati.
-     * In particolare il metodo ritorna l'ogetto filtrato sui campi inseriti
-     * @param campi la lista ordinata di campi su cui filtrare l'oggetto. Deve essere un sottoinsieme dei campi che hanno originato l'oggeto
+     * Il metodo restituisce un nuovo DTObject contenente meno dati di quello originale filtrati.
+     * In particolare il metodo ritorna l'oggetto filtrato sui campi inseriti
+     * @param campi la lista ordinata di campi su cui filtrare l'oggetto. Deve essere un sottoinsieme dei campi che hanno originato l'oggetto
      * @return Un nuova {@code Tupla} filtrata.
      * @throws IllegalArgumentException se si filtra su campi non contenuti nella tupla originaria
      */

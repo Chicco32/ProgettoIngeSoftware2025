@@ -53,4 +53,16 @@ public interface Login {
      */
     public boolean registraNuovoConfiguratore(DTObject configuratore) throws Eccezioni.DBConnectionException;
 
+    /**
+     * Funzione per la registrazione di un nuovo fruitore nel DB.
+     * In particolare la funzione richiede al DB l'inserimento dei dati forniti e riporta la risposta del DB in caso di avvenuto inserimento o meno
+     * La funzione ritorna true se la registrazione è andata a buon fine, false altrimenti.
+     * 
+     * @param nickname il possibile nickname da registrare
+     * @param password la password inserita dall'utente
+     * @return lo stato della registrazione, true se è andata a buon fine, false altrimenti
+     * @throws DBConnectionException In caso di errore di connessione al database.
+     */
+	public boolean registraNuovoFruitore(DTObject dati) throws Eccezioni.DBConnectionException;
+
 }

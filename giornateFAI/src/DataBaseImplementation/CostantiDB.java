@@ -2,7 +2,7 @@ package DataBaseImplementation;
 
 /**
  * Classe contenitore con tutti i nomi di schemi e chiavi per poter accedere ai valori corretti durante le query senza ambiguità.
- * Questa classe permetee anche di evitare conflitti in caso di cambi di nomi all'interno del database.
+ * Questa classe permette anche di evitare conflitti in caso di cambi di nomi all'interno del database.
  */
 public enum CostantiDB {
 

@@ -9,7 +9,9 @@ import java.util.Map;
 import ServicesAPI.Configuratore;
 import ServicesAPI.DTObject;
 import ServicesAPI.Eccezioni;
+import ServicesAPI.Eccezioni.DBConnectionException;
 import ServicesAPI.FactoryServizi;
+import ServicesAPI.Fruitore;
 import ServicesAPI.Login;
 import ServicesAPI.Utente;
 import ServicesAPI.Volontario;
@@ -27,12 +29,14 @@ import ServicesAPI.Volontario;
  * @see Utente
  * @see Configuratore
  * @see Volontario
+ * @see Fruitore
  * @see Login
  */
 public class LoginSQL implements Login {
 
     private static final String defaultNicknameAdmin = "admin";
     private static final String defaultPasswordAdmin = "admin";
+    private static final String defaultNicknameFruitore = "new";
     private Connection connection;
     private FactoryServizi servizi;
 
@@ -43,29 +47,38 @@ public class LoginSQL implements Login {
 
     private static final Map<Class<? extends Utente>, Queries> accessi = Map.of(
         Configuratore.class, Queries.PASSWORD_ACCESSO_CONFIGURATORE,
-        Volontario.class, Queries.PASSWORD_ACCESSO_VOLONTARIO
+        Volontario.class, Queries.PASSWORD_ACCESSO_VOLONTARIO,
+        Fruitore.class, Queries.PASSWORD_ACCESSO_FRUITORE
     );
 
     public Utente loginUtente(String nickname, String passwordInserita) throws Eccezioni.DBConnectionException {
     
-        if (connection == null) throw new Eccezioni.DBConnectionException("Connesisone non riuscita", new SQLException());
-        
+        if (connection == null) throw new Eccezioni.DBConnectionException("Connessione non riuscita", new SQLException());
+        //prima controllo se non è un nuovo fruitore che tenta di iscriversi
+        if (nickname.equals(defaultNicknameFruitore)) {
+            return new Fruitore(true, defaultNicknameAdmin, servizi);
+        }
+
         //prima un controllo sulle credenziali di default
         if (nickname.equals(defaultNicknameAdmin) && passwordInserita.equals(defaultPasswordAdmin)) {
             return new Configuratore(true, defaultNicknameAdmin, servizi);
         }
 
         //se entra con le credenziali di un utente già registrato si crea una catena di richieste per capire il tipo di utente
-        //Configuratore:
         try {
+            boolean primoAccesso = false;
+            //Configuratore:
             if (presenteNelDB(nickname, passwordInserita, accessi.get(Configuratore.class))) {
-                return new Configuratore(false, nickname, servizi);
+                return new Configuratore(primoAccesso, nickname, servizi);
             }
             //Volontario:
             else if (presenteNelDB(nickname, passwordInserita, accessi.get(Volontario.class))) {
-                Boolean primoAccesso = false;
                 if (passwordInserita.equals(defaultPasswordVolontario)) primoAccesso = true; 
                 return new Volontario(primoAccesso, nickname, servizi);
+            }
+            //Fruitore:
+            else if (presenteNelDB(nickname, passwordInserita, accessi.get(Fruitore.class))) {
+                return new Fruitore(primoAccesso, nickname, servizi);
             }
         } catch (SQLException e) {
             throw new Eccezioni.DBConnectionException("Errore durante la connessione al DB", e);
@@ -115,7 +128,7 @@ public class LoginSQL implements Login {
     );
 
     public boolean cambioPassword(DTObject dati, String ruolo) throws Eccezioni.DBConnectionException {
-        //in nmaniera trasparente all'utente aggiunge i layer di sicurezza
+        //in maniera trasparente all'utente aggiunge i layer di sicurezza
         ServizioHash.cifraPassword(dati);
         String nickname = (String)dati.getValoreCampo("Nickname");
         String password = (String)dati.getValoreCampo("Password");
@@ -134,13 +147,31 @@ public class LoginSQL implements Login {
     }
 
     public boolean registraNuovoConfiguratore(DTObject configuratore) throws Eccezioni.DBConnectionException {
-        //in nmaniera trasparente all'utente aggiunge i layer di sicurezza
+        //in maniera trasparente all'utente aggiunge i layer di sicurezza
         ServizioHash.cifraPassword(configuratore);
         String nickname = (String)configuratore.getValoreCampo("Nickname");
         String password = (String)configuratore.getValoreCampo("Password");
         String sale = (String)configuratore.getValoreCampo("Salt");
 
         try (PreparedStatement stmt = connection.prepareStatement(Queries.REGISTRA_CONFIGURATORE.getQuery())) {
+            stmt.setString(1,nickname);
+            stmt.setString(2, password);
+            stmt.setString(3, sale);
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            throw new Eccezioni.DBConnectionException("Errore durante la connessione al DB", e);
+        }
+    }
+
+    public boolean registraNuovoFruitore(DTObject fruitore) throws DBConnectionException {
+        //in maniera trasparente all'utente aggiunge i layer di sicurezza
+        ServizioHash.cifraPassword(fruitore);
+        String nickname = (String)fruitore.getValoreCampo("Nickname");
+        String password = (String)fruitore.getValoreCampo("Password");
+        String sale = (String)fruitore.getValoreCampo("Salt");
+
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.REGISTRA_FRUITORE.getQuery())) {
             stmt.setString(1,nickname);
             stmt.setString(2, password);
             stmt.setString(3, sale);

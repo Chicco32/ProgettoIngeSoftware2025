@@ -56,7 +56,7 @@ public class RegistroDatePrecluse extends RegistroDate {
 	}
 
 	/**
-	 * Ovverride del RegistroDate
+	 * Override del RegistroDate
 	 */
 	public boolean giornoDiConfigurazione() throws ConfigFilesException {
 		try {
