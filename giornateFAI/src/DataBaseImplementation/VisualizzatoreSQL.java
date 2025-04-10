@@ -236,5 +236,17 @@ public class VisualizzatoreSQL implements VisualizzatoreConfiguratore, Visualizz
             throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
         }
     }
+
+    public int ottieniPostiDisponibili(int codiceIscrizione) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.CALCOLA_POSTI_DISPONIBILI.getQuery())) {
+            stmt.setInt(1, codiceIscrizione);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            return rs.getInt("Posti Disponibili");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Eccezioni.DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+    }
     
 }

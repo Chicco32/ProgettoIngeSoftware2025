@@ -40,6 +40,10 @@ public enum Queries {
     REGISTRA_ISCRIZIONE("INSERT INTO `dbingesw`.`fruitori iscritti alle visite` (`Fruitore`, `Visita iscritta`, `Codice prenotazione`, `Numero iscritti`) VALUES (?,?,?,?)"),
     OTTENI_INFO_ISCRIZIONE("SELECT `Codice prenotazione`, `Stato Visita` FROM dbingesw.`fruitori iscritti alle visite` AS fi JOIN dbingesw.`archivio visite attive` AS av ON fi.`Visita iscritta` = av.`Codice Archivio` WHERE `Visita iscritta` = ? AND Fruitore = ?"),
     RIMUOVI_ISCRIZIONE("DELETE FROM dbingesw.`fruitori iscritti alle visite` WHERE `Codice prenotazione` = ?"),
+    AGGIORNA_POST_ISCRIZIONE("UPDATE `dbingesw`.`archivio visite attive` SET `Stato Visita` = 'completa' WHERE `Codice Archivio` = ?"),
+    AGGIORNA_POST_RIMOZIONE("UPDATE `dbingesw`.`archivio visite attive` SET `Stato Visita` = 'proposta' WHERE `Codice Archivio` = ?"),
+    OTTIENI_STATO_ISTANZA("SELECT `Stato Visita` FROM dbingesw.`archivio visite attive` WHERE `Codice Archivio` = ?"),
+    CALCOLA_POSTI_DISPONIBILI("SELECT COALESCE(`Max Partecipanti` - dbingesw.calcolaIscrittiAttuali(av.`Codice Archivio`), 0) AS `Posti Disponibili` FROM dbingesw.`tipo di visita` AS tdv JOIN dbingesw.`archivio visite attive` AS av ON av.`Tipo di Visita` = tdv.`Codice Tipo di Visita` WHERE `Codice Archivio` = ?"),
 
     //XMLDateDisponibili
     GIORNI_POSSIBILI_VOLONTARIO("SELECT `Codice Tipo di Visita`, `Giorno di Inizio (periodo anno)`, `Giorno di Fine (periodo anno)`, `Giorno della Settimana` FROM dbingesw.`tipo di visita` AS tpv JOIN dbingesw.`volontari disponibili` AS vd ON tpv.`Codice Tipo di Visita` = vd.`Tipo di Visita` JOIN dbingesw.`giorni programmabili delle visite` AS gpv ON tpv.`Codice Tipo di Visita` = gpv.`Tipo di Visita` WHERE vd.`Volontario Nickname` = ? ORDER BY `Codice Tipo di Visita`"),
@@ -51,7 +55,7 @@ public enum Queries {
     GENERA_CHIAVE_ARCHIVIO("select dbingesw.generaChiaveArchivio() as maxCodice");
 
     //CREAZIONE PIANO VISITE
-    // per poter tornare il tipo di visita dato il volontario e il giorno della settimana ("SELECT DISTINCT tpv.`Codice Tipo di Visita`FROM `tipo di visita` tpv JOIN `volontari disponibili` vd ON tpv.`Codice Tipo di Visita` = vd.`Tipo di Visita` JOIN `giorni programmabili delle visite` gpv ON tpv.`Codice Tipo di Visita` = gpv.`Tipo di Visita` WHERE vd.`Volontario Nickname` = ? AND gpv.`Giorno della Settimana` = DAYNAME(?)")
+    // per poter tornare il tipo di visita dato il volontario e il giorno della settimana
     private final String query;
     
     private Queries(String string) {

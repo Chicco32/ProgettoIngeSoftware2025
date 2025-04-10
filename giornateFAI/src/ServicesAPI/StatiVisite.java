@@ -29,15 +29,15 @@ public enum StatiVisite {
 
     public static StatiVisite fromString(String stato) {
         switch (stato) {
-            case "Proposta":
+            case "proposta":
                 return PROPOSTA;
-            case "Completa":
+            case "completa":
                 return COMPLETA;
             case "cancellata":
                 return CANCELLATA;
-            case "Confermata":
+            case "confermata":
                 return CONFERMATA;
-            case "Effettuata":
+            case "effettuata":
                 return EFFETTUATA;
             default:
                 return null;

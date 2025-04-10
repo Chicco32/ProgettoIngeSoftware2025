@@ -106,7 +106,7 @@ public class FruitoreController implements UtenteController {
 	private void iscrivitiVisita() {
 
 		CliVisualizzazione.intestazionePaginaInserimento("iscrizione");
-		int maxIscrivibili, numPartecipanti;
+		int maxIscrivibili, numPartecipanti, postiDisponibili;
 		try {
 			maxIscrivibili = model.getMaxPartecipanti(); 
 			DTObject[] istanze = model.getVisualizzatore().VisualizzaIstanzeVisiteDisponibili(model.getNickname());
@@ -114,13 +114,18 @@ public class FruitoreController implements UtenteController {
 			boolean indietro = CliInput.tornareIndietro();
 			if (indietro || istanze.length == 0) return;
 			int codiceIstanza = CliInput.selezionaIstanza(istanze);
+			postiDisponibili = model.getVisualizzatore().ottieniPostiDisponibili(codiceIstanza);
 			do {
 				numPartecipanti = CliInput.inserimentoPartecipantiVisita(1, "");
-				if (numPartecipanti > maxIscrivibili) {
+				if (numPartecipanti > maxIscrivibili || numPartecipanti > postiDisponibili) {
 					CliNotifiche.avvisa(CliNotifiche.ERRORE_NUMERO_PARTECIPANTI);
 				}
-			} while (numPartecipanti > maxIscrivibili);
+			} while (numPartecipanti > maxIscrivibili || numPartecipanti > postiDisponibili);
 			String codice = model.getRegistratoreIscrizioni().iscrivitiVisita(codiceIstanza, model.getNickname(), numPartecipanti);
+
+			//se il numero è esattamente quello dei posti rimasti
+			if (numPartecipanti == postiDisponibili)
+				model.getRegistratoreIscrizioni().aggiornaStatoPostIscrizione(codiceIstanza);
 			CliNotifiche.avvisa(CliNotifiche.VISITA_CORRETTAMENTE_REGISTRATA);
 			CliVisualizzazione.VisualizzaCodiceIscrizione(codice);
 		} catch (DBConnectionException e) {
@@ -143,6 +148,7 @@ public class FruitoreController implements UtenteController {
 			int codiceIstanza = CliInput.selezionaIstanza(istanze);
 			String codiceIscrizione = CliInput.chiediConConferma("Codice di iscrizione");
 			model.getRegistratoreIscrizioni().rimuoviIscrizioneVisita(codiceIstanza, model.getNickname(), codiceIscrizione);
+			model.getRegistratoreIscrizioni().aggiornaStatoPostRimozione(codiceIstanza);
 			CliNotifiche.avvisa(CliNotifiche.VISITA_CORRETTAMENTE_RIMOSSA);
 		}catch (DBConnectionException e) {
 			CliNotifiche.avvisa(CliNotifiche.ERRORE_REGISTRAZIONE);

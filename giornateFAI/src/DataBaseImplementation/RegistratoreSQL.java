@@ -13,6 +13,7 @@ import ServicesAPI.Eccezioni.RimozioneIscrizioneImpossibileException;
 import ServicesAPI.GestoreFilesConfigurazione;
 import ServicesAPI.Registratore;
 import ServicesAPI.RegistratoreIscrizioni;
+import ServicesAPI.StatiVisite;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -329,5 +330,36 @@ public class RegistratoreSQL implements Registratore, RegistratoreIscrizioni{
 
     }
 
+    public void aggiornaStatoPostIscrizione(int codiceIstanza) throws DBConnectionException {
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.AGGIORNA_POST_ISCRIZIONE.getQuery())) {
+            stmt.setInt(1, codiceIstanza);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+    }
+
+    public void aggiornaStatoPostRimozione(int codiceIstanza) throws DBConnectionException {
+        //Prima ottieni lo stato della visita
+        StatiVisite stato = null;
+        try (PreparedStatement stmt = connection.prepareStatement(Queries.OTTIENI_STATO_ISTANZA.getQuery())) {
+        stmt.setInt(1, codiceIstanza);
+            ResultSet rs = stmt.executeQuery();
+            rs.next();
+            stato = StatiVisite.fromString(rs.getString("Stato Visita"));
+        } catch (SQLException e) {
+            throw new DBConnectionException("Errore durante l'esecuzione della query: ", e);
+        }
+
+        //Se è completa rimettila a proposta
+        if (stato.equals(StatiVisite.COMPLETA)) {
+            try (PreparedStatement stmt = connection.prepareStatement(Queries.AGGIORNA_POST_RIMOZIONE.getQuery())) {
+                stmt.setInt(1, codiceIstanza);
+                stmt.executeUpdate();
+            } catch (SQLException e) {
+                throw new DBConnectionException("Errore durante l'esecuzione della query: ", e);
+            }
+        }
+    }
 
 }   

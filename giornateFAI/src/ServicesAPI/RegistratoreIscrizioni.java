@@ -34,6 +34,15 @@ public interface RegistratoreIscrizioni {
 	public String iscrivitiVisita(int codiceIstanza, String nickname, int numPartecipanti) throws Eccezioni.DBConnectionException, Eccezioni.IscrizioneImpossibileException;
 
 	/**
+	 * Funzione che aggiorna lo stato dell'istanza di visita a seguito dell'iscrizione. 
+	 * In particolare se il numero di iscritti con l'aggiunta dell'iscrizione totale raggiunge il massimo, cambia lo stato in 'Completa'.
+	 * La funzione richiede che il numero di iscritti non sia superiore al massimo di persone che possono iscriversi.
+	 * @param codiceIstanza il codice dell'istanza a cui l'iscrizione fa riferimento
+	 * @throws DBConnectionException In caso di errore di connessione al database.
+	 */
+	public void aggiornaStatoPostIscrizione(int codiceIstanza) throws Eccezioni.DBConnectionException;
+
+	/**
 	 * Permette di rimuovere un'iscrizione a una visita, in particolare questa funzione rimuove i dati dal DB riguardo l'iscrizione del fruitore.
 	 * Richiede come metro di controllo il codice di iscrizione del fruitore alla visita.
 	 * Questa funzione non controlla se l'iscrizione è già stata effettuata, ma lancia l'eccezione RimozioneIscrizioneImpossibileException in caso di errore.
@@ -49,6 +58,14 @@ public interface RegistratoreIscrizioni {
 	 */
 	public boolean rimuoviIscrizioneVisita(int codiceIstanza, String nickname, String CodiceIscrizione) throws Eccezioni.DBConnectionException, Eccezioni.RimozioneIscrizioneImpossibileException;
 
+	/**
+	 * Funzione che aggiorna lo stato della visita a seguito della rimozione dell'iscrizione.
+	 * In particolare la funzione controlla lo stato dell'iscrizione prima della rimozione e se era in stato 'completa' lo aggiorna in 'proposta',
+	 * altrimenti se la funzione era già in stato 'proposta' non fa nulla.
+	 * @param codiceIstanza il codice dell'istanza a cui l'iscrizione fa riferimento
+	 * @throws DBConnectionException In caso di errore di connessione al database.
+	 */
+	public void aggiornaStatoPostRimozione(int codiceIstanza) throws Eccezioni.DBConnectionException;
 
 
 }

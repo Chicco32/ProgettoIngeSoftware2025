@@ -237,6 +237,26 @@ END */ ;;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;;
 /*!50003 SET character_set_results = @saved_cs_results */ ;;
 /*!50003 SET collation_connection  = @saved_col_connection */ ;;
+/*!50106 DROP EVENT IF EXISTS `Evento_Aggiorna_Stati_Visite` */;;
+DELIMITER ;;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;;
+/*!50003 SET character_set_client  = utf8mb4 */ ;;
+/*!50003 SET character_set_results = utf8mb4 */ ;;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;;
+/*!50003 SET @saved_time_zone      = @@time_zone */ ;;
+/*!50003 SET time_zone             = 'SYSTEM' */ ;;
+/*!50106 CREATE*/ /*!50117 DEFINER=`root`@`localhost`*/ /*!50106 EVENT `Evento_Aggiorna_Stati_Visite` ON SCHEDULE EVERY 1 DAY STARTS '2025-04-10 02:00:00' ON COMPLETION NOT PRESERVE ENABLE DO BEGIN
+    CALL AggiornaStatiVisite();
+END */ ;;
+/*!50003 SET time_zone             = @saved_time_zone */ ;;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;;
+/*!50003 SET character_set_results = @saved_cs_results */ ;;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;;
 /*!50106 DROP EVENT IF EXISTS `SpostaVisiteScadute` */;;
 DELIMITER ;;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;;
@@ -263,6 +283,32 @@ DELIMITER ;
 --
 -- Dumping routines for database 'dbingesw'
 --
+/*!50003 DROP FUNCTION IF EXISTS `calcolaIscrittiAttuali` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` FUNCTION `calcolaIscrittiAttuali`(codice_visita INTEGER) RETURNS int(11)
+BEGIN
+DECLARE
+    totale INTEGER;
+SELECT COALESCE(SUM(`Numero iscritti`), 0)
+INTO totale
+FROM dbingesw.`fruitori iscritti alle visite`
+WHERE `Visita iscritta` = codice_visita;
+
+RETURN totale;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 /*!50003 DROP FUNCTION IF EXISTS `generaChiaveArchivio` */;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
 /*!50003 SET @saved_cs_results     = @@character_set_results */ ;
@@ -310,6 +356,65 @@ BEGIN
     SELECT COALESCE(MAX(`Codice Tipo di Visita`), 0) + 1 INTO max_val FROM `tipo di visita`;
     
     RETURN max_val;
+END ;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
+/*!50003 DROP PROCEDURE IF EXISTS `AggiornaStatiVisite` */;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8mb4 */ ;
+/*!50003 SET character_set_results = utf8mb4 */ ;
+/*!50003 SET collation_connection  = utf8mb4_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION' */ ;
+DELIMITER ;;
+CREATE DEFINER=`root`@`localhost` PROCEDURE `AggiornaStatiVisite`()
+BEGIN
+    -- Passo 1: Visite PROGRAMMATE da analizzare
+	DECLARE done INT DEFAULT 0;
+    DECLARE codice INT;
+    DECLARE minPartecipanti INT;
+    DECLARE nIscritti INT;
+    DECLARE cur CURSOR FOR
+         SELECT `Codice Archivio`, `Min Partecipanti`
+			FROM dbingesw.`archivio visite attive` av
+			JOIN dbingesw.`tipo di visita` tpv ON av.`Tipo di Visita` = tpv.`Codice Tipo di Visita`
+			WHERE av.`Stato Visita` = 'proposta' AND `Data programmata` = CURDATE() + INTERVAL 3 DAY;
+
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+    OPEN cur;
+
+    ciclo: LOOP
+        FETCH cur INTO codice, minPartecipanti;
+        IF done THEN
+            LEAVE ciclo;
+        END IF;
+
+        SET nIscritti = calcolaIscrittiAttuali(codice);
+
+        IF nIscritti >= minPartecipanti THEN
+            UPDATE dbingesw.`archivio visite attive`
+            SET `Stato Visita` = 'confermata'
+            WHERE `Codice Archivio` = codice;
+        ELSE
+            UPDATE dbingesw.`archivio visite attive`
+            SET `Stato Visita` = 'cancellata'
+            WHERE `Codice Archivio` = codice;
+        END IF;
+    END LOOP;
+
+    CLOSE cur;
+    
+        -- Passo 2: COMPLETA → CONFERMATA
+    UPDATE dbingesw.`archivio visite attive`
+    SET `Stato Visita` = 'confermata'
+    WHERE `Stato Visita` = 'completa'
+      AND DataProgramm = CURDATE() + INTERVAL 3 DAY;
+
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -420,4 +525,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-06 20:13:14
+-- Dump completed on 2025-04-10 19:19:31

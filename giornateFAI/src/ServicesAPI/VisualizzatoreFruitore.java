@@ -42,4 +42,13 @@ public interface VisualizzatoreFruitore {
 	 */
 	public DTObject[] VisualizzaIstanzeCancellate(String nickname) throws Eccezioni.DBConnectionException;
 
+	/**
+	 * Funzione che ritorna il numero di posti ancora disponili in una visita in stato 'proposta'.
+	 * La funzione non controlla lo stato della visita inserita.
+	 * @param codiceIscrizione il codice su cui fare il calcolo
+	 * @return un int con il numero di posti ancora disponibili
+	 * @throws Eccezioni.DBConnectionException Se si verifica un errore di connessione al database o se si filtra su una visita non proposta
+	 */
+	public int ottieniPostiDisponibili(int codiceIscrizione) throws Eccezioni.DBConnectionException;
+
 }
