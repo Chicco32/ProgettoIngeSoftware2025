@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+    <classpathentry kind="src" path="_/giornateFAI/src"/>
+    <classpathentry kind="lib" path="_/Librerie Esterne/jBCrypt.jar"/>
+    <classpathentry kind="lib" path="_/Librerie Esterne/mysql-connector-j-9.2.0.jar"/>
+    <classpathentry kind="lib" path="_/Librerie Esterne/UniBSFpLib.jar"/>
+    <classpathentry kind="lib" path="_/junit.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

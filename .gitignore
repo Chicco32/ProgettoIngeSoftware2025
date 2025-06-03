@@ -1,2 +1,3 @@
 #ignora le librerie esterne per il test (Junit)
-lib/*.jar
+giornatefai/src/lib/*.jar
+junit.jar
