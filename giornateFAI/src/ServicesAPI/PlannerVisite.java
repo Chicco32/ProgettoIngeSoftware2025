@@ -130,28 +130,18 @@ public class PlannerVisite {
 				visiteDaAppaiare.sort(compPriorità);
 				volDaAppaiare.sort(compPriorità);
 				if(prioritàVisite.get(visiteDaAppaiare.get(0))>prioritàVolontari.get(volDaAppaiare.get(0))){
-					String vol=volDaAppaiare.get(0);
-					for(TipoDiVisita v:visiteDaAppaiare){
-						if(appaiamentiTipoVol.get(v.getCodice()).contains(vol)){
-							piano.add(new IstanzaDiVisita(v.getCodice(),vol,data));
-							programmabili.get(v.getCodice()).poll();
-							break;
-						}
-					}
-					dateDisponibili.get(vol).poll();
+					appaiaVolontario(volDaAppaiare.get(0),visiteDaAppaiare,data);
 				}else{
-					TipoDiVisita tdv=visiteDaAppaiare.get(0);
-					for(String vol:volDaAppaiare){
-						if(appaiamentiTipoVol.get(tdv.getCodice()).contains(vol)){
-							piano.add(new IstanzaDiVisita(tdv.getCodice(),vol,data));
-							dateDisponibili.get(vol).poll();
-							break;
-						}
-					}
-					programmabili.get(tdv.getCodice()).poll();
+					appaiaVisita(visiteDaAppaiare.get(0),volDaAppaiare,data);
 				}
 				prioritàVisite=priorityMappingVisite(data);
 				prioritàVolontari=priorityMappingVolontari(data);
+			}
+			for(TipoDiVisita visita:prioritàVisite.keySet()){
+				purge(data,programmabili.get(visita.getCodice()));
+			}
+			for(String vol:prioritàVolontari.keySet()){
+				purge(data,dateDisponibili.get(vol));
 			}
 		}
 		for(String vol:volontari){
@@ -260,5 +250,32 @@ public class PlannerVisite {
 		return count;
 	}
 	
+	private void appaiaVolontario(String vol,ArrayList<TipoDiVisita> visite,Date data){
+		for(TipoDiVisita v:visite){
+			if(appaiamentiTipoVol.get(v.getCodice()).contains(vol)){
+				piano.add(new IstanzaDiVisita(v.getCodice(),vol,data));
+				programmabili.get(v.getCodice()).poll();
+				break;
+			}
+		}
+		dateDisponibili.get(vol).poll();
+	}
 
+	private void appaiaVisita(TipoDiVisita tdv,ArrayList<String> volontari,Date data){
+		int codice=tdv.getCodice();
+		for(String vol:volontari){
+			if(appaiamentiTipoVol.get(codice).contains(vol)){
+				piano.add(new IstanzaDiVisita(codice,vol,data));
+				dateDisponibili.get(vol).poll();
+				break;
+			}
+		}
+		programmabili.get(codice).poll();
+	}
+
+	private void purge(Date data,Queue<Date> lista){
+		if(lista.contains(data)){
+			lista.remove(data);
+		}
+	}
 }
