@@ -1,4 +1,4 @@
-package lib.Test;
+package Test;
 
 import static org.junit.Assert.assertNotNull;
 

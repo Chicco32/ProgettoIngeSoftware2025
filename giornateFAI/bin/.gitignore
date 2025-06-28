@@ -1,0 +1,11 @@
+# Ignora tutto
+*
+
+# Ma NON ignorare il .gitignore della cartella attuale
+!.gitignore
+
+# E NON ignorare tutte le sottocartelle (necessario per farli esplorare da Git)
+!*/
+
+# (facoltativo) puoi aggiungere anche questa per mantenere visibili certi tipi di file se ti servono
+# !*.keep

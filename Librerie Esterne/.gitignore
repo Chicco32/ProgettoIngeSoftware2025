@@ -1,2 +1,2 @@
 #ignora le librerie esterne per il test (Junit)
-lib/*.jar
+junit-platform-console-standalone-1.9.3.jar
