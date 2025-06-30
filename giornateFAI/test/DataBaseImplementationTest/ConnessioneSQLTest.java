@@ -1,10 +1,9 @@
-package Test;
-
-import static org.junit.Assert.assertNotNull;
+package DataBaseImplementationTest;
 
 import java.sql.Connection;
 
 import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import DataBaseImplementation.ConnessioneSQL;
 
@@ -14,6 +13,6 @@ public class ConnessioneSQLTest {
 	@DisplayName("Test se si connette correttamente al database")
 	public void getConnectionTest() {
 		Connection connection = ConnessioneSQL.getConnection();
-		assertNotNull("Ottengo una connessione", connection);
+		assertNotNull(connection, "Ottengo una connessione");
 	} 
 }

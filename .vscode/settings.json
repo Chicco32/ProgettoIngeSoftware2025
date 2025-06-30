@@ -11,16 +11,24 @@
         "dbingesw",
         "jdbc",
         "rinizia",
-        "tupla"
+        "tupla",
+        "xmlif",
+        "xmlof",
+        "xmlr"
     ],
+    "java.project.sourcePaths": [
+        "giornateFAI/src",
+        "giornateFAI/test",
+    ],
+    "java.project.outputPath": "giornateFAI/bin",
     "java.test.config": {
         "coverage": {
             "appendResult": false,
+            "include": ["giornateFAI/src"], 
+            "reporter": ["html", "lcov"], 
+            "enabled": true
         }
-    },
-    "java.project.sourcePaths": [
-        "giornateFAI/src",
-    ],
-    "java.project.outputPath": "giornateFAI/bin",
+    }
+
 
 }

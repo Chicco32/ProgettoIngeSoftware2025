@@ -43,7 +43,7 @@ public class XMLManager{
      * Inizializza un reader per il file XML
      * @param path il percorso del file XML
      */
-    protected void inzializzaReader() throws FileNotFoundException {
+    protected void inizializzaReader() throws FileNotFoundException {
         XMLInputFactory xmlif = null;
         XMLStreamReader newReader = null;
         try {
@@ -138,7 +138,7 @@ public class XMLManager{
      * @return Il valore della variabile letta nel file XML
      */
     public String leggiVariabile (String tag) throws FileNotFoundException {
-        inzializzaReader();
+        inizializzaReader();
         String variabile = null;
         try {
             while (xmlr.hasNext()) {

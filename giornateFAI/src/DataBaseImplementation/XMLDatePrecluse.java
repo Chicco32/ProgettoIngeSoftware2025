@@ -56,7 +56,7 @@ public class XMLDatePrecluse extends XMLManager implements GestoreDatePrecluse{
     }
 
     public Date[] leggiDatePrecluse() throws FileNotFoundException{
-		inzializzaReader();
+		inizializzaReader();
 		String[] aux={leggiVariabile("datePrecluse")};
 		Date[] res; 
 		if(!aux[0].equals("")){aux=aux[0].substring(1,aux[0].length()-1).split(",");

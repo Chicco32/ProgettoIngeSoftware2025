@@ -69,7 +69,7 @@ public class XMLDateDisponibili extends XMLManager  implements GestoreDateDispon
 		//appurata che la cartella esiste, bisogna verificare se il file del volontario esista a sua volta
 		if (fileExists(this.path)) {
 			
-			inzializzaReader();
+			inizializzaReader();
 			String[] aux = {leggiVariabile("dateDisponibili")};
 			if(!aux[0].equals("[]")){
 				aux = aux[0].substring(1,aux[0].length()-1).split(",");
