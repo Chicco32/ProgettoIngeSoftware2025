@@ -27,12 +27,12 @@ public class Fruitore extends Utente {
 
 		try {
             // Carica i dati di default dal file
-            if (GestoreFilesConfigurazione.fileExists(fileManager.getPath())) {
+            if (fileManager.fileExists(fileManager.getPath())) {
                 this.maxPartecipanti = fileManager.getMaxNumeroPartecipantiIscrizione();
             }
             //avvia la creazione di un nuovo file default
             else {
-                GestoreFilesConfigurazione.creaFile(fileManager.getPath());
+                fileManager.creaFile(fileManager.getPath());
                 this.maxPartecipanti = 0;
             }
         } catch (Exception e) {

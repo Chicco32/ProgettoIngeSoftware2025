@@ -1,7 +1,5 @@
 package ServicesAPI;
 
-import java.io.FileNotFoundException;
-
 import ServicesAPI.Eccezioni.ConfigFilesException;
 
 public class Configuratore extends Utente {
@@ -40,15 +38,16 @@ public class Configuratore extends Utente {
 
         try {
             // Carica i dati di default dal file
-            if (GestoreFilesConfigurazione.fileExists(fileManager.getPath())) {
-                this.maxPartecipanti = Integer.parseInt(fileManager.leggiVariabile(GestoreConfiguratore.MAX_PARTECIPANTI));
-                this.areaCompetenza = fileManager.leggiVariabile( GestoreConfiguratore.AREA_COMPETENZA);
+            if (fileManager.fileExists(fileManager.getPath())) {
+                this.maxPartecipanti = fileManager.leggiNumeroPartecipanti();
+                this.areaCompetenza = fileManager.leggiAreaCompetenza();
             }
             //avvia la creazione di un nuovo file default
             else {
-                GestoreFilesConfigurazione.creaFile(fileManager.getPath());
+                fileManager.creaFile(fileManager.getPath());
                 this.areaCompetenza = null;
                 this.maxPartecipanti = 0;
+                fileManager.scriviRegistratoreDefault("", maxPartecipanti);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,37 +83,19 @@ public class Configuratore extends Utente {
         this.maxPartecipanti = maxPartecipanti;
     }
 
-    /**
-     * Modifica l'area di competenza della società, Ogni volta che viene invocata questa funzione viene anche scritta nel file
-     * di default. Puo' essere modificata solo da un Configuratore.
-     * Può essere invocata la prima volta per settare il primo valore  in caso non fosse ancora inserito.
-     * @param areaCompetenza la nuova area di competenza in cui adopera la società che riguarderà i luoghi da inserire.
-     * @throws ConfigFilesException In caso di errore di scrittura del file di configurazione.
-     */
-    public void modificaAreaCompetenza(String areaCompetenza) throws Eccezioni.ConfigFilesException {
+    public void modificaAreaCompetenza(String areaCompetenza) throws ConfigFilesException {
         try {
-            this.areaCompetenza = areaCompetenza;
-            int maxPartecipanti = Integer.parseInt(fileManager.leggiVariabile(GestoreConfiguratore.MAX_PARTECIPANTI));
-            fileManager.scriviRegistratoreDefault(areaCompetenza, maxPartecipanti);
-        } catch (FileNotFoundException e) {
-            throw new Eccezioni.ConfigFilesException("File non trovato", e);
+            fileManager.modificaAreaCompetenza(areaCompetenza);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    /**
-     * Modifica il max numero di partecipanti che possono essere iscritti. Ogni volta che viene invocata questa funzione viene anche scritta nel file
-     * di default. Puo' essere modificata solo da un Configuratore.
-     * Può essere invocata la prima volta per settare il primo valore in caso non fosse ancora inserito.
-     * @param areaCompetenza la nuova area di competenza in cui adopera la società che riguarderà i luoghi da inserire.
-     * @throws ConfigFilesException In caso di errore di scrittura del file di configurazione.
-     */
-    public void modificaMaxPartecipanti(int maxPartecipanti) throws Eccezioni.ConfigFilesException {
+    public void modificaMaxPartecipanti(int maxPartecipanti) throws ConfigFilesException {
         try {
-            this.maxPartecipanti = maxPartecipanti;
-            String areaCompetenza = fileManager.leggiVariabile(GestoreConfiguratore.AREA_COMPETENZA);
-            fileManager.scriviRegistratoreDefault(areaCompetenza, maxPartecipanti);
-        } catch (FileNotFoundException e) {
-            throw new Eccezioni.ConfigFilesException("File non trovato", e);
+            fileManager.modificaMaxPartecipanti(maxPartecipanti);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

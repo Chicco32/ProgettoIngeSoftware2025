@@ -36,7 +36,7 @@ public abstract class RegistroDate{
 	 * @return false se il mese corrente è superiore al mese registrato o se non trova il file XML, true altrimenti
 	 */
 	protected boolean meseGiaConfigurato(String path)  throws ParseException, ConfigFilesException {
-		if(GestoreFilesConfigurazione.fileExists(path)){
+		if(fileManager.fileExists(path)){
 			String ultimaDataStr;
 			try {
 				ultimaDataStr = fileManager.leggiVariabile("dataCorrente");

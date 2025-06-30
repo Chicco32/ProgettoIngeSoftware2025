@@ -1,6 +1,5 @@
 package ServicesAPI;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 
 /**
@@ -15,22 +14,13 @@ public abstract interface GestoreFilesConfigurazione {
      * @param path il percorso del file
      * @return true se il file esiste, false altrimenti
      */
-    public static boolean fileExists(String path) {
-        return new File(path).exists();
-    }
+    public boolean fileExists(String path);
 
     /**
      * Crea un file nel percorso specificato se il file non esiste gia, altrimenti non fa nulla.
      * @param path il percorso del file
      */
-    public static void creaFile(String path) {
-        try {
-            File file = new File(path);
-            file.createNewFile();
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-    }
+    public void creaFile(String path);
 
     /**
      * Ritorna il percorso del file di configurazione associato al gestore.

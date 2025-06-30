@@ -25,9 +25,10 @@ public class XMLManagerTest {
 	public void fileExists() {
 		String path = "testPath.xml";
 		File file = new File(path);
+		XMLManager manager = new XMLManager(path);
 		try {
 			file.createNewFile();
-			if (XMLManager.fileExists(path)) assertTrue(true);
+			if (manager.fileExists(path)) assertTrue(true);
 			file.delete();
 		} catch (Exception e) {
 			assertFalse(false);
@@ -37,13 +38,15 @@ public class XMLManagerTest {
 	@Test
 	public void fileNotExists() {
 		String path = "testPath.xml";
-		assert !XMLManager.fileExists(path);
+		XMLManager manager = new XMLManager(path);
+		assert !manager.fileExists(path);
 	}
 
 	@Test
 	public void createFile() {
 		String path = "testPath.xml";
-		XMLManager.creaFile(path);
+		XMLManager manager = new XMLManager(path);
+		manager.creaFile(path);
 		File file = new File(path);
 		assert file.exists();
 		file.delete();
@@ -67,7 +70,7 @@ public class XMLManagerTest {
 	public void readVariable() {
 		try {
 			XMLManager manager = new XMLManager("testPath.xml");
-			XMLManager.creaFile(manager.getPath());
+			manager.creaFile(manager.getPath());
 			File file = new File(manager.getPath());
 			String content = "<root><tag>value</tag></root>";
 			java.nio.file.Files.write(file.toPath(), content.getBytes());

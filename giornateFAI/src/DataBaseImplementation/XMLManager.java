@@ -111,7 +111,7 @@ public class XMLManager{
      * @param path il percorso del file
      * @return true se il file esiste, false altrimenti
      */
-    public static boolean fileExists(String path) {
+    public boolean fileExists(String path) {
         return new File(path).exists();
     }
 
@@ -119,7 +119,7 @@ public class XMLManager{
      * Crea un file
      * @param path il percorso del file
      */
-    public static void creaFile(String path) {
+    public void creaFile(String path) {
         try {
             File file = new File(path);
             file.createNewFile();
