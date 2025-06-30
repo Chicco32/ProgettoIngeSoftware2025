@@ -1,0 +1,6 @@
+#ingora i file di compilazione
+bin/*
+
+#ignora i filexml di configurazione
+default_data/*.xml
+default_data/**/*.xml
