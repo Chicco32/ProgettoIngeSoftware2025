@@ -1,3 +1,4 @@
 #ignora le librerie esterne per il test (Junit)
 giornatefai/src/lib/*.jar
 junit.jar
+Librerie Esterne/junit-platform-console-standalone-1.9.3.jar

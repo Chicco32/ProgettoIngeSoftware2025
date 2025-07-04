@@ -43,7 +43,7 @@ public class XMLManager{
      * Inizializza un reader per il file XML
      * @param path il percorso del file XML
      */
-    protected void inzializzaReader() throws FileNotFoundException {
+    protected void inizializzaReader() throws FileNotFoundException {
         XMLInputFactory xmlif = null;
         XMLStreamReader newReader = null;
         try {
@@ -111,7 +111,7 @@ public class XMLManager{
      * @param path il percorso del file
      * @return true se il file esiste, false altrimenti
      */
-    public static boolean fileExists(String path) {
+    public boolean fileExists(String path) {
         return new File(path).exists();
     }
 
@@ -119,7 +119,7 @@ public class XMLManager{
      * Crea un file
      * @param path il percorso del file
      */
-    public static void creaFile(String path) {
+    public void creaFile(String path) {
         try {
             File file = new File(path);
             file.createNewFile();
@@ -138,7 +138,7 @@ public class XMLManager{
      * @return Il valore della variabile letta nel file XML
      */
     public String leggiVariabile (String tag) throws FileNotFoundException {
-        inzializzaReader();
+        inizializzaReader();
         String variabile = null;
         try {
             while (xmlr.hasNext()) {

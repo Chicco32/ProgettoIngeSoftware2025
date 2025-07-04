@@ -22,7 +22,7 @@ public class RegistroDatePrecluse extends RegistroDate {
 			this.datePrecluse=fileManager.leggiDatePrecluse();
 		}
 		catch (FileNotFoundException e) {
-			GestoreFilesConfigurazione.creaFile(path);
+			fileManager.creaFile(path);
 			fileManager.cleanDates(calendario.getTime());
 		}
          

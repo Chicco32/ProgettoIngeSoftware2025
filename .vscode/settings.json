@@ -4,13 +4,31 @@
         "Librerie Esterne/mysql-connector-j-9.2.0.jar",
         "Librerie Esterne/UniBSFpLib.jar",
         "Librerie Esterne/jBCrypt.jar",
-        "giornateFAI/src/lib/junit-platform-console-standalone-1.9.3.jar"
+        "Librerie Esterne/junit-platform-console-standalone-1.9.3.jar"
     ],
     "cSpell.words": [
         "Bject",
         "dbingesw",
         "jdbc",
         "rinizia",
-        "tupla"
-    ]
+        "tupla",
+        "xmlif",
+        "xmlof",
+        "xmlr"
+    ],
+    "java.project.sourcePaths": [
+        "giornateFAI/src",
+        "giornateFAI/test",
+    ],
+    "java.project.outputPath": "giornateFAI/bin",
+    "java.test.config": {
+        "coverage": {
+            "appendResult": false,
+            "include": ["giornateFAI/src"], 
+            "reporter": ["html", "lcov"], 
+            "enabled": true
+        }
+    }
+
+
 }
