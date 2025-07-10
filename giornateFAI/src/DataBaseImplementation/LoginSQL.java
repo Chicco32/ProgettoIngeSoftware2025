@@ -40,16 +40,13 @@ public class LoginSQL implements Login {
     private Connection connection;
     private FactoryServizi servizi;
 
-    public LoginSQL() {
+    public LoginSQL(Map<Class<? extends Utente>, QueryAccess> accessi) {
         this.connection = ConnessioneSQL.getConnection();
         this.servizi = AvviaServiziDatabase.getFactory();
+        this.accessi = accessi;
     }
 
-    private static final Map<Class<? extends Utente>, Queries> accessi = Map.of(
-        Configuratore.class, Queries.PASSWORD_ACCESSO_CONFIGURATORE,
-        Volontario.class, Queries.PASSWORD_ACCESSO_VOLONTARIO,
-        Fruitore.class, Queries.PASSWORD_ACCESSO_FRUITORE
-    );
+    private Map<Class<? extends Utente>, QueryAccess> accessi;
 
     public Utente loginUtente(String nickname, String passwordInserita) throws Eccezioni.DBConnectionException {
     
@@ -94,7 +91,7 @@ public class LoginSQL implements Login {
      * @param interrogazione l'effettiva richiesta al DB di controllare, questo permette di essere riusata in caso di salvataggi su db diversi o su schemi diversi
      * @return true se le credenziali sono valide, false altrimenti
      */
-    private boolean presenteNelDB(String nickname, String passwordInserita, Queries interrogazione) throws SQLException {
+    private boolean presenteNelDB(String nickname, String passwordInserita, QueryAccess interrogazione) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(interrogazione.getQuery())) {
             stmt.setString(1, nickname);
             try (ResultSet rs = stmt.executeQuery()) {

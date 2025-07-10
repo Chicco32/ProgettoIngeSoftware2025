@@ -1,6 +1,13 @@
 package DataBaseImplementation;
 
-public enum Queries {
+import java.util.Map;
+
+import ServicesAPI.Configuratore;
+import ServicesAPI.Fruitore;
+import ServicesAPI.Utente;
+import ServicesAPI.Volontario;
+
+public enum Queries implements QueryAccess {
 
     //Login utenti e controllo password
     NICKNAME_UNIVOCO("SELECT Nickname FROM(SELECT * FROM dbingesw.configuratore UNION ALL SELECT * FROM dbingesw.volontario UNION ALL SELECT * FROM dbingesw.fruitori) AS utenti WHERE utenti.Nickname = ?"),
@@ -65,5 +72,11 @@ public enum Queries {
     public String getQuery() {
         return query;
     }
+
+    public static final Map<Class<? extends Utente>, QueryAccess> accessi = Map.of(
+        Configuratore.class, Queries.PASSWORD_ACCESSO_CONFIGURATORE,
+        Volontario.class, Queries.PASSWORD_ACCESSO_VOLONTARIO,
+        Fruitore.class, Queries.PASSWORD_ACCESSO_FRUITORE
+    );
     
 }
