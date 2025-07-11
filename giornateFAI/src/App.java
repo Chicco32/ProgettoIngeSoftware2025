@@ -5,7 +5,6 @@ import java.sql.Connection;
 import Controller.Avvio;
 import DataBaseImplementation.ConnessioneSQL;
 import DataBaseImplementation.LoginSQL;
-import DataBaseImplementation.Queries;
 import Presentation.CliNotifiche;
 
 public class App {
@@ -22,7 +21,7 @@ public class App {
 	    }
 
 		if (notificaConnessione(connection)) {
-			Avvio avvio = new Avvio(new LoginSQL(Queries.accessi));
+			Avvio avvio = new Avvio(new LoginSQL());
 			avvio.avviaApp();
 		}
     }

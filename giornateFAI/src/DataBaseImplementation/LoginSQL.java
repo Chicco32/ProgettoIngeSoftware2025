@@ -40,13 +40,16 @@ public class LoginSQL implements Login {
     private Connection connection;
     private FactoryServizi servizi;
 
-    public LoginSQL(Map<Class<? extends Utente>, QueryAccess> accessi) {
+    public LoginSQL() {
         this.connection = ConnessioneSQL.getConnection();
         this.servizi = AvviaServiziDatabase.getFactory();
-        this.accessi = accessi;
     }
 
-    private Map<Class<? extends Utente>, QueryAccess> accessi;
+    private static final Map<Class<? extends Utente>, Queries> accessi = Map.of(
+        Configuratore.class, Queries.PASSWORD_ACCESSO_CONFIGURATORE,
+        Volontario.class, Queries.PASSWORD_ACCESSO_VOLONTARIO,
+        Fruitore.class, Queries.PASSWORD_ACCESSO_FRUITORE
+    );
 
     public Utente loginUtente(String nickname, String passwordInserita) throws Eccezioni.DBConnectionException {
     
@@ -85,13 +88,13 @@ public class LoginSQL implements Login {
     }
 
     /**
-     * Funzione che chiede all'utente se il nickname inserito è effettivamente presente e se la password coincide
+     * Funzione che chiede all'database se il nickname inserito è effettivamente presente e se la password coincide
      * @param nickname il nickname che si tenta di cercare
      * @param passwordInserita la password che l'utente ha inserito
      * @param interrogazione l'effettiva richiesta al DB di controllare, questo permette di essere riusata in caso di salvataggi su db diversi o su schemi diversi
      * @return true se le credenziali sono valide, false altrimenti
      */
-    private boolean presenteNelDB(String nickname, String passwordInserita, QueryAccess interrogazione) throws SQLException {
+    private boolean presenteNelDB(String nickname, String passwordInserita, Queries interrogazione) throws SQLException {
         try (PreparedStatement stmt = connection.prepareStatement(interrogazione.getQuery())) {
             stmt.setString(1, nickname);
             try (ResultSet rs = stmt.executeQuery()) {

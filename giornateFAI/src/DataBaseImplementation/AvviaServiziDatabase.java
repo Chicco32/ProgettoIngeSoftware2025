@@ -24,7 +24,7 @@ public class AvviaServiziDatabase implements FactoryServizi {
 
     private AvviaServiziDatabase() {
         // Inizializzazione dei servizi
-        this.registratoreSQL = new RegistratoreSQL(PercorsiFiles.pathRegistratore);
+        this.registratoreSQL = new RegistratoreSQL();
         this.visualizzatoreSQL = new VisualizzatoreSQL();
         this.xmlDateDisponibili = new XMLDateDisponibili(PercorsiFiles.pathDateDisponibili);
         this.xmlDatePrecluse = new XMLDatePrecluse(PercorsiFiles.pathDatePrecluse);

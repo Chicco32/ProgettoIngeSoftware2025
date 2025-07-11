@@ -9,12 +9,14 @@ import ServicesAPI.Configuratore;
 import ServicesAPI.DTObject;
 import ServicesAPI.Fruitore;
 import ServicesAPI.Utente;
+import DataBaseImplementation.Queries;
 import ServicesAPI.Volontario;
 
 import org.junit.jupiter.api.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 
 public class LoginSQLTest {
 
@@ -24,7 +26,9 @@ public class LoginSQLTest {
     @BeforeEach
     void setUp() throws Exception {
 
-        login = new LoginSQL(Queries.accessi);
+        login = new LoginSQL();
+        Queries.setDatabase("dbingeswtest");
+
 				connection = ConnessioneSQLTest.getTestDbConnection();
 				DTObject configuratore = new Tupla(null, Tupla.FORMATO_UTENTE);
 				configuratore.impostaValore("hashedPassword", "Password");
@@ -125,6 +129,104 @@ public class LoginSQLTest {
         Utente utente = login.loginUtente("nonEsisto", "ciao");
         assertNull(utente);
     }
+
+    @Test
+    void loginUtente_nomeUnivocoNonPresente_restituisceTrue() throws Exception {
+      String nomeUnivoco = "nomeUnivoco";
+      assertTrue(login.nomeUtenteUnivoco(nomeUnivoco));
+    }
+
+    @Test
+    void loginUtente_nomeUnivocoPresenteConfiguratore_restituisceFalse() throws Exception {
+      String nomeUnivoco = "testConfig";
+      assertFalse(login.nomeUtenteUnivoco(nomeUnivoco));
+    }
+
+    @Test
+    void loginUtente_nomeUnivocoPresenteVolontario_restituisceFalse() throws Exception {
+      String nomeUnivoco = "testVol";
+      assertFalse(login.nomeUtenteUnivoco(nomeUnivoco));
+    }
+
+    @Test
+    void loginUtente_nomeUnivocoPresenteFruitore_restituisceFalse() throws Exception {
+      String nomeUnivoco = "testGuest";
+      assertFalse(login.nomeUtenteUnivoco(nomeUnivoco));
+    }
+
+    @Test
+    void registraNuovoConfiguratore_configuratoreRegistratoNelDB_restituisceTrue() throws Exception {
+        DTObject nuovoConfiguratore = new Tupla("tabella", Tupla.FORMATO_UTENTE);
+        nuovoConfiguratore.impostaValore("nuovoConfig", "Nickname");
+        nuovoConfiguratore.impostaValore("hashedPassword", "Password");
+        ServizioHash.cifraPassword(nuovoConfiguratore);
+
+        boolean risultato = login.registraNuovoConfiguratore(nuovoConfiguratore);
+        assertTrue(risultato);
+
+        // Verifica che sia effettivamente nel DB
+        try (PreparedStatement stmt = connection.prepareStatement("SELECT * FROM dbingeswtest.configuratore WHERE Nickname = ?")) {
+            stmt.setString(1, "nuovoConfig");
+            try (ResultSet rs = stmt.executeQuery()) {
+                assertTrue(rs.next());
+            }
+        }
+
+        // Pulizia
+        try (PreparedStatement stmt = connection.prepareStatement("DELETE FROM dbingeswtest.configuratore WHERE Nickname = ?")) {
+            stmt.setString(1, "nuovoConfig");
+            stmt.executeUpdate();
+        }
+    }
+
+    @Test
+    void registraNuovoFruitore_fruitoreRegistratoNelDB_restituisceTrue() throws Exception {
+        DTObject nuovoFruitore = new Tupla(null, Tupla.FORMATO_UTENTE);
+        nuovoFruitore.impostaValore("nuovoGuest", "Nickname");
+        nuovoFruitore.impostaValore("hashedPassword", "Password");
+        ServizioHash.cifraPassword(nuovoFruitore);
+
+        boolean risultato = login.registraNuovoFruitore(nuovoFruitore);
+        assertTrue(risultato);
+
+        try (PreparedStatement stmt = connection.prepareStatement("SELECT * FROM dbingeswtest.fruitori WHERE Nickname = ?")) {
+            stmt.setString(1, "nuovoGuest");
+            try (ResultSet rs = stmt.executeQuery()) {
+                assertTrue(rs.next());
+            }
+        }
+
+        // Pulizia
+        try (PreparedStatement stmt = connection.prepareStatement("DELETE FROM dbingeswtest.fruitori WHERE Nickname = ?")) {
+            stmt.setString(1, "nuovoGuest");
+            stmt.executeUpdate();
+        }
+    }
+
+    @Test
+    void cambioPassword_configuratorePasswordAggiornataNelDB_restituisceTrue() throws Exception {
+        DTObject nuovoDato = new Tupla(null, Tupla.FORMATO_UTENTE);
+        nuovoDato.impostaValore("testConfig", "Nickname"); // già presente in DB
+        nuovoDato.impostaValore("hashedPassword", "Password");
+        ServizioHash.cifraPassword(nuovoDato);
+
+        boolean risultato = login.cambioPassword(nuovoDato, "Configuratore");
+        assertTrue(risultato);
+
+        // Recupera password e salt aggiornati
+        try (PreparedStatement stmt = connection.prepareStatement(
+                "SELECT Password, Salt FROM dbingeswtest.configuratore WHERE Nickname = ?")) {
+            stmt.setString(1, "testConfig");
+            try (ResultSet rs = stmt.executeQuery()) {
+                assertTrue(rs.next());
+                String nuovaPasswordCifrata = (String) nuovoDato.getValoreCampo("Password");
+                String nuovaSalt = (String) nuovoDato.getValoreCampo("Salt");
+                assertEquals(nuovaPasswordCifrata, rs.getString("Password"));
+                assertEquals(nuovaSalt, rs.getString("Salt"));
+            }
+        }
+    }
+
 }
 
 

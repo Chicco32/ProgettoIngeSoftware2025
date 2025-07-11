@@ -25,9 +25,6 @@ import java.text.SimpleDateFormat;
  * Classe per la gestione della registrazione di un nuovi elementi nel DB.
  * Quasi tutte le sue funzioni sono void in quanto non ritornano nulla ma inseriscono i valori richiesti nel DB.
  * Per inserire i dati necessita di connettersi al DB con un connettore.
- * Richiede un implementazione dell'interfaccia Gestore Configurazione e in questo caso 
- * utilizza un file XML per la memorizzazione dei dati di default ma può essere sostituto cambiando il gestore della scrittura.
- * I path sono salvati nella classe Percorsi files ma essendo richiesti solo in fase di creazione possono essere modificati
  * 
  * @see GestoreFilesConfigurazione
  * @see XMLConfiguratore
@@ -48,7 +45,7 @@ public class RegistratoreSQL implements Registratore, RegistratoreIscrizioni{
 
     private Connection connection;
 
-    public RegistratoreSQL(String path){
+    public RegistratoreSQL(){
         this.connection = ConnessioneSQL.getConnection();
     }
 
