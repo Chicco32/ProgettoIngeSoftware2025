@@ -7,6 +7,7 @@ import ServicesAPI.DTObject;
 import ServicesAPI.Eccezioni.CoerenzaException;
 import ServicesAPI.Eccezioni.DBConnectionException;
 import ServicesAPI.FactoryServizi;
+import ServicesAPI.Fruitore;
 import ServicesAPI.GestoreConfiguratore;
 import ServicesAPI.GestoreDateDisponibili;
 import ServicesAPI.GestoreDatePrecluse;
@@ -17,6 +18,7 @@ import ServicesAPI.StatiVisite;
 import ServicesAPI.VisualizzatoreConfiguratore;
 import ServicesAPI.VisualizzatoreFruitore;
 import ServicesAPI.VisualizzatoreVolontario;
+import ServicesAPI.Volontario;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -223,8 +225,7 @@ public class UsersTest {
 
 		@Override
 		public Date[] leggiDateDisponibili(String nomeVolontario) throws FileNotFoundException {
-			// TODO Auto-generated method stub
-			throw new UnsupportedOperationException("Unimplemented method 'leggiDateDisponibili'");
+			return new Date[0];
 		}
 
 		@Override
@@ -312,7 +313,7 @@ public class UsersTest {
 	}
 
 	@Test
-	void creaConfiguratoreconFileEsistente() {
+	void creaConfiguratoreInizializzatoConFileEsistente() {
 		Configuratore configuratore = new Configuratore(
 			false, "Prova",
 			 new FactoryServiziStub(true));
@@ -320,11 +321,91 @@ public class UsersTest {
 	}
 
 	@Test
-	void creaConfiguratoreconFileNonEsistente() {
+	void creaConfiguratoreInizializzatoConFileNonEsistente() {
 		Configuratore configuratore = new Configuratore(
 			false, "Prova",
 			 new FactoryServiziStub(false));
 		assertNotNull(configuratore);
+	}
+
+		@Test
+	void creaConfiguratoreNonInizializzatoConFileEsistente() {
+		Configuratore configuratore = new Configuratore(
+			true, "Prova",
+			 new FactoryServiziStub(true));
+		assertNotNull(configuratore);
+	}
+
+	@Test
+	void creaConfiguratoreNonInizializzatoConFileNonEsistente() {
+		Configuratore configuratore = new Configuratore(
+			true, "Prova",
+			 new FactoryServiziStub(false));
+		assertNotNull(configuratore);
+	}
+
+		@Test
+	void creaFruitoreInizializzatoConFileEsistente() {
+		Fruitore fruitore = new Fruitore(
+			false, "Prova",
+			 new FactoryServiziStub(true));
+		assertNotNull(fruitore);
+	}
+
+	@Test
+	void creaFruitoreInizializzatoConFileNonEsistente() {
+		Fruitore fruitore = new Fruitore(
+			false, "Prova",
+			 new FactoryServiziStub(false));
+		assertNotNull(fruitore);
+	}
+
+		@Test
+	void creaFruitoreNonInizializzatoConFileEsistente() {
+		Fruitore fruitore = new Fruitore(
+			true, "Prova",
+			 new FactoryServiziStub(true));
+		assertNotNull(fruitore);
+	}
+
+	@Test
+	void creaFruitoreNonInizializzatoConFileNonEsistente() {
+		Fruitore fruitore = new Fruitore(
+			true, "Prova",
+			 new FactoryServiziStub(false));
+		assertNotNull(fruitore);
+	}
+
+		@Test
+	void creaVolontarioInizializzatoConFileEsistente() {
+		Volontario volontario = new Volontario(
+			false, "Prova",
+			 new FactoryServiziStub(true));
+		assertNotNull(volontario);
+	}
+
+	@Test
+	void creaVolontarioInizializzatoConFileNonEsistente() {
+		Volontario volontario = new Volontario(
+			false, "Prova",
+			 new FactoryServiziStub(false));
+		assertNotNull(volontario);
+	}
+
+		@Test
+	void creaVolontarioNonInizializzatoConFileEsistente() {
+		Volontario volontario = new Volontario(
+			true, "Prova",
+			 new FactoryServiziStub(true));
+		assertNotNull(volontario);
+	}
+
+	@Test
+	void creaVolontarioNonInizializzatoConFileNonEsistente() {
+		Volontario volontario = new Volontario(
+			true, "Prova",
+			 new FactoryServiziStub(false));
+		assertNotNull(volontario);
 	}
 
 

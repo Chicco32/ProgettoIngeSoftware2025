@@ -88,7 +88,7 @@ public class LoginSQL implements Login {
     }
 
     /**
-     * Funzione che chiede all'utente se il nickname inserito è effettivamente presente e se la password coincide
+     * Funzione che chiede all'database se il nickname inserito è effettivamente presente e se la password coincide
      * @param nickname il nickname che si tenta di cercare
      * @param passwordInserita la password che l'utente ha inserito
      * @param interrogazione l'effettiva richiesta al DB di controllare, questo permette di essere riusata in caso di salvataggi su db diversi o su schemi diversi
