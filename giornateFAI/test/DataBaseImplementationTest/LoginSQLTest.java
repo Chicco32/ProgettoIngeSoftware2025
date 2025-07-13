@@ -91,14 +91,14 @@ public class LoginSQLTest {
     }
 
 		@Test
-    void loginUtente_volontarioPresenteNelDB_restituisceConfiguratore() throws Exception {
+    void loginUtente_volontarioPresenteNelDB_restituisceVolontario() throws Exception {
         Utente utente = login.loginUtente("testVol", "hashedPassword");
         assertNotNull(utente);
         assertTrue(utente instanceof Volontario);
     }
 
 		@Test
-    void loginUtente_fruitorePresenteNelDB_restituisceConfiguratore() throws Exception {
+    void loginUtente_fruitorePresenteNelDB_restituisceFruitore() throws Exception {
         Utente utente = login.loginUtente("testGuest", "hashedPassword");
         assertNotNull(utente);
         assertTrue(utente instanceof Fruitore);
