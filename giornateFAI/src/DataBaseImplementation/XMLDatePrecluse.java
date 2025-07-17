@@ -59,7 +59,8 @@ public class XMLDatePrecluse extends XMLManager implements GestoreDatePrecluse{
 		inizializzaReader();
 		String[] aux={leggiVariabile("datePrecluse")};
 		Date[] res; 
-		if(!aux[0].equals("")){aux=aux[0].substring(1,aux[0].length()-1).split(",");
+		aux=aux[0].substring(1,aux[0].length()-1).split(",");
+		if(!aux[0].equals("")){
 			res=new Date[aux.length];
 			for(int i=0;i<aux.length;i++){
 				try{
